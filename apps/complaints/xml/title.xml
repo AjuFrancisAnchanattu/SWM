@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8" ?> 
+<envelope>
+	<item display="{TRANSLATE:mr}" value="{TRANSLATE:mr}" />
+	<item display="{TRANSLATE:mrs}" value="{TRANSLATE:mrs}" />
+	<item display="{TRANSLATE:ms}" value="{TRANSLATE:ms}" />
+</envelope>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<menu>
+	<item title="Home (News)" url="/apps/comms/" perms="comm_admin" />
+	<item title="Add News" url="/apps/comms/addNews?" perms="comm_admin" />
+	<item title="View News" url="/apps/comms/viewAllArticles?" />
+	<item title="Home (Ask A Question)" url="/apps/comms/indexAskAQuestion?" perms="comm_admin" />
+	<item title="Add Question" url="/apps/comms/askAQuestion?type=askAQuestion" />
+	<item title="View Questions" url="/apps/comms/viewAllQuestions?" perms="comm_admin_question" />
+</menu>

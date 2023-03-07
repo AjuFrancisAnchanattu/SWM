@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8" ?> 
+<envelope>
+	<item value="Customer Care" />
+	<item value="Coating/Calendering" />
+	<item value="Converting" />
+	<item value="Direct Factory" />
+	<item value="Factory Management" />
+	<item value="Finance" />
+	<item value="HR" />
+	<item value="IT" />
+	<item value="Maintenance" />
+	<item value="Mixing" />
+	<item value="Planning" />
+	<item value="Purchasing" />
+	<item value="Quality" />
+	<item value="R&amp;D" />
+	<!--<item value="RMT" />-->
+	<item value="Sales" />
+	<item value="Shipping" />
+	<item value="Site General" />
+	<!--<item value="SET" />-->
+	<item value="Warehouse" />
+</envelope>

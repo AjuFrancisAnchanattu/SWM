@@ -1,0 +1,53 @@
+<%
+		if bIsInit then
+		%>
+		<intranet:textbox 
+			objectid="3-9"
+			text="NPI_3-9"
+			rowstart="true"
+			rowend="true"
+			required="false"
+			multiline="true"
+			runat="server" 
+			ID="Textbox200" 		
+		/>
+		<%else%>
+		<intranet:readonly 
+			objectid="r3-9"
+			text="NPI_3-9"
+			rowstart="true"
+			rowend="true"
+			required="true"
+			multiline="true"
+			runat="server" 
+			ID="Readonly200"	
+			translateitem="false"						
+		/>	
+	<%end if%>
+	
+	<%
+			if bIsInit then
+			%>
+			<intranet:textbox 
+				objectid="3-10"
+				text="NPI_3-10"
+				rowstart="true"
+				rowend="true"
+				required="false"
+				multiline="true"
+				runat="server" 
+				ID="Textbox201" 		
+			/>
+			<%else%>
+			<intranet:readonly 
+				objectid="r3-10"
+				text="NPI_3-10"
+				rowstart="true"
+				rowend="true"
+				required="true"
+				multiline="true"
+				runat="server" 
+				ID="Readonly201"	
+				translateitem="false"						
+			/>	
+	<%end if%>

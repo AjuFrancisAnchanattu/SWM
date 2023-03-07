@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8" ?> 
+<envelope>
+	<item display="Material ID" value="materialKey"/>
+	<item display="Priority" value="priority"/>
+	<item display="Annual Volume" value="annual_volume_quantity"/>
+	<item display="Fiscal Volume" value="fiscal_volume_quantity" />
+	<item display="Annual Value" value="annual_value_quantity"/>
+	<item display="Fiscal Value" value="fiscal_value_quantity"/>
+	<item display="Budget Value" value="budget_value_quantity"/>
+	<item display="Success Chance" value="success_chance"/>
+	<item display="Project Start Date" value="project_start_date"/>
+	<item display="Project Owner" value="project_owner"/>
+	<item display="Site" value="site"/>
+	<item display="Customer Group" value="customer_group"/>
+	<item display="Business Unit" value="business_unit"/>
+	<item display="Next Action" value="nextAction"/>
+
+</envelope>

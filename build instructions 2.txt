@@ -1,0 +1,188 @@
+At the console, login as root.
+
+
+Make sure eth0 is down
+
+> cd /etc/sysconfig/network-scripts
+> ifdown ifcfg-eth0
+
+
+Set the gateway traffic to go over eth1 as eth0 is not set-up
+
+nano -w /etc/sysconfig/network
+
+Add:
+
+GATEWAYDEV=eth1
+
+
+reboot
+
+
+
+
+
+
+
+
+
+Edit the host file
+
+> nano -w /etc/hosts
+
+
+add:
+
+10.1.10.6       scapanet
+10.1.10.6       scapanetdev
+10.1.0.2        stdunbdc001
+10.20.99.1      stmadpdc001
+10.1.199.11     ukdundc001
+10.1.10.105     mysql1
+
+
+Save the file
+
+> Ctrl + O
+
+
+Exit
+
+> Ctrl + X
+
+
+
+
+Set-up Yum
+
+
+cd /etc
+mv -f yum.conf yum.conf.bak
+wget http://www.fedorafaq.org/samples/yum.conf
+
+
+cd ~
+wget http://www.fedorafaq.org/yum
+rpm -Uvh yum
+
+
+// install apache
+
+yum install httpd
+
+
+yum install httpd-devel
+
+yum install mod_perl
+
+
+yum install libxml2
+
+
+yum install mysql-devel
+
+yum install php
+yum install php-mysql
+yum install php-xml
+yum install php-ldap
+yum install php-gd
+yum install php-mbstring
+
+
+yum install samba
+#yum install winbind
+
+/etc/rc.d/init.d/winbind start
+
+yum install xinetd
+
+
+########################################
+
+Setup xinetd.d
+
+########################################
+
+nano -w /etc/xinetd.d/rsync
+
+set:
+
+disable = no
+
+
+
+> /etc/rc.d/init.d/xinetd start
+
+
+########################################
+
+
+
+nano -w /etc/rsyncd.conf
+
+
+
+
+# fallover stuff
+
+yum install heartbeat
+
+cp /usr/share/doc/heartbeat-2.0.3/ha.cf /etc/ha.d/
+cp /usr/share/doc/heartbeat-2.0.3/haresources /etc/ha.d/
+
+
+
+
+
+
+perl -MCPAN -e shell
+
+select default options, then select some uk mirrors
+
+install Apache2::AuthenNTLM
+
+exit to quit
+
+
+
+
+
+
+
+Set-up PHP
+
+> nano -w /etc/php.d/mbstring.ini
+
+mbstring.internal_encoding = UTF-8
+mbstring.encoding_translation = On
+
+
+
+
+#####
+#
+# cd /etc/sysconfig/network-scripts
+# ifdown ifcfg-eth0
+# ifup ifcfg-eth0
+# 
+#####
+
+
+
+
+rsync -av --delete /etc/httpd/conf/httpd.conf rsync://root@10.1.50.2/APACHE/
+
+rsync -av --delete /home/* rsync://root@10.1.50.2/INTRANET/
+
+
+yum install subversion
+
+svnadmin create /home/repository
+
+mkdir intranet
+cd intranet
+mkdir branches tags trunk
+
+svn import /home/intranet file:///home/repository/intranet -m "initial import"
+
+svn checkout file:///home/repository/intranet/trunk /home/dev

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8" ?> 
+<envelope>
+	<item display="003 / Beschichtungsmaschine Kleine" value="003 / Beschichtungsmaschine Kleine" />
+	<item display="004 / Beschichtungsmaschine Pagendarm" value="004 / Beschichtungsmaschine Pagendarm" />
+	<item display="005 / Beschichtungsmaschine Dival" value="005 / Beschichtungsmaschine Dival" />
+	<item display="006 / Beschichtungsmaschine kaschieren" value="006 / Beschichtungsmaschine kaschieren" />
+	<item display="007 /  Beschichtungsmaschine Schleifen" value="007 /  Beschichtungsmaschine Schleifen" />
+	<item display="705 / Schneidmaschine Guzzetti" value="705 / Schneidmaschine Guzzetti" />
+	<item display="706 / Schneidmaschine Guzzetti  1990" value="706 / Schneidmaschine Guzzetti  1990" />
+	<item display="712 /  Schneidmaschine Guzzetti  2005" value="712 /  Schneidmaschine Guzzetti  2005" />
+	<item display="715 / Schneidmaschine Ghezzi  1994" value="715 / Schneidmaschine Ghezzi  1994" />
+	<item display="718 / Schneidmaschine Guzzetti  1987" value="718 / Schneidmaschine Guzzetti  1987" />
+	<item display="719 / Schneidmaschine Guzzetti  1989" value="719 / Schneidmaschine Guzzetti  1989" />
+	<item display="721 / Schneidmaschine Appatex" value="721 / Schneidmaschine Appatex" />
+	<item display="722 / Schneidmaschine Appatex" value="722 / Schneidmaschine Appatex" />
+	<item display="723 / Schneidmaschine Appatex" value="723 / Schneidmaschine Appatex" />
+	<item display="725 / Schneidmaschine Appatex" value="725 / Schneidmaschine Appatex" />
+	<item display="726 / Schneidmaschine Appatex" value="726 / Schneidmaschine Appatex" />
+	<item display="727 / Schneidmaschine Appatex" value="727 / Schneidmaschine Appatex" />
+	<item display="729 / Schneidmaschine Appatex" value="729 / Schneidmaschine Appatex" />
+	<item display="730 / Schneidmaschine Appatex" value="730 / Schneidmaschine Appatex" />
+	<item display="733 / Schneidmaschine Appatex" value="733 / Schneidmaschine Appatex" />
+	<item display="740 / Schneidmaschine Herold" value="740 / Schneidmaschine Herold" />
+	<item display="745 / Schneidmaschine Ghezzi" value="745 / Schneidmaschine Ghezzi" />
+	<item display="761 / Stanzmaschine Baier Prägmaschine- Rotation" value="761 / Stanzmaschine Baier Prägmaschine- Rotation" />
+	<item display="763 / Stanzmaschine Baier Prägmaschine" value="763 / Stanzmaschine Baier Prägmaschine" />
+	<item display="780 / Druckmaschine Rüesch Gallus A130" value="780 / Druckmaschine Rüesch Gallus A130" />
+	<item display="781 / Druckmaschine Rüesch Gallus A160" value="781 / Druckmaschine Rüesch Gallus A160" />
+	<item display="830 / Verpackungsmaschine Brandenburger" value="830 / Verpackungsmaschine Brandenburger" />
+	<item display="835 / Verpackungsmaschine GTD150" value="835 / Verpackungsmaschine GTD150" />
+	<item display="836 / Verpackungsmaschine Sleever/Pester" value="836 / Verpackungsmaschine Sleever/Pester" />
+	<item display="840 / Verpackungsmaschine SIG" value="840 / Verpackungsmaschine SIG" />
+	<item display="841 / Verpackungsmaschine SIG" value="841 / Verpackungsmaschine SIG" />
+	<item display="843 /  Red Pag" value="843 /  Red Pag" />
+	<item display="850 / Verpackungsmaschine CAM" value="850 / Verpackungsmaschine CAM" />
+	<item display="R&#38;D" value="R&#38;D" />
+	<item display="Prozesstechnik" value="Prozesstechnik" />
+	<item display="Planung" value="Planung" />
+	<item display="Verkauf" value="Verkauf" />
+	<item display="Marketing" value="Marketing" />
+	<item display="Techn. Service" value="Techn. Service" />
+	<item display="Q-Labor" value="Q-Labor" />
+	<item display="andere" value="andere" />
+</envelope>

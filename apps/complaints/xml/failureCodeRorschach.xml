@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8" ?> 
+<envelope>
+	<item display="{TRANSLATE:no_release_coating}" value="{TRANSLATE:no_release_coating}" />
+	<item display="{TRANSLATE:high_unwind_force}" value="{TRANSLATE:high_unwind_force}" />
+	<item display="{TRANSLATE:liner_problem}" value="{TRANSLATE:liner_problem}" />
+	<item display="{TRANSLATE:transfer_of_release_coating}" value="{TRANSLATE:transfer_of_release_coating}" />
+	<item display="{TRANSLATE:peel_adhesion_off_tolerances}" value="{TRANSLATE:peel_adhesion_off_tolerances}" />
+	<item display="{TRANSLATE:coating_weight_off_tolerances}" value="{TRANSLATE:coating_weight_off_tolerances}" />
+	<item display="{TRANSLATE:release_force_off_tolerances}" value="{TRANSLATE:release_force_off_tolerances}" />
+	<item display="{TRANSLATE:coating}" value="{TRANSLATE:coating}" />
+	<item display="{TRANSLATE:crosslinking}" value="{TRANSLATE:crosslinking}" />
+	<item display="{TRANSLATE:anchorage}" value="{TRANSLATE:anchorage}" />
+	<item display="{TRANSLATE:rolling_in}" value="{TRANSLATE:rolling_in}" />
+	<item display="{TRANSLATE:dirt_contamination}" value="{TRANSLATE:dirt_contamination}" />
+	<item display="{TRANSLATE:crosswise_wrinkles}" value="{TRANSLATE:crosswise_wrinkles}" />
+	<item display="{TRANSLATE:lengthwise_wrinkles}" value="{TRANSLATE:lengthwise_wrinkles}" />
+	<item display="{TRANSLATE:diagonal_wrinkles}" value="{TRANSLATE:diagonal_wrinkles}" />
+	<item display="{TRANSLATE:defective_printing}" value="{TRANSLATE:defective_printing}" />
+	<item display="{TRANSLATE:roll_winding_structure}" value="{TRANSLATE:roll_winding_structure}" />
+	<item display="{TRANSLATE:bobines_winding_structure}" value="{TRANSLATE:bobines_winding_structure}" />
+	<item display="{TRANSLATE:telescoping}" value="{TRANSLATE:telescoping}" />
+	<item display="{TRANSLATE:polygon}" value="{TRANSLATE:polygon}" />
+	<item display="{TRANSLATE:core_displacement}" value="{TRANSLATE:core_displacement}" />
+	<item display="{TRANSLATE:wet_face_side}" value="{TRANSLATE:wet_face_side}" />
+	<item display="{TRANSLATE:splice}" value="{TRANSLATE:splice}" />
+	<item display="{TRANSLATE:dimensions}" value="{TRANSLATE:dimensions}" />
+	<item display="{TRANSLATE:identification_marking}" value="{TRANSLATE:identification_marking}" />
+	<item display="{TRANSLATE:loose_winding}" value="{TRANSLATE:loose_winding}" />
+	<item display="{TRANSLATE:breaks}" value="{TRANSLATE:breaks}" />
+	<item display="{TRANSLATE:incorrect_packaging}" value="{TRANSLATE:incorrect_packaging}" />
+	<item display="{TRANSLATE:incorrect_labels}" value="{TRANSLATE:incorrect_labels}" />
+	<item display="{TRANSLATE:wrong_application}" value="{TRANSLATE:wrong_application}" />
+	<item display="{TRANSLATE:handling_problem}" value="{TRANSLATE:handling_problem}" />
+	<item display="{TRANSLATE:lines}" value="{TRANSLATE:lines}" />
+	<item display="{TRANSLATE:stripes}" value="{TRANSLATE:stripes}" />
+	<item display="{TRANSLATE:delamination}" value="{TRANSLATE:delamination}" />
+	<item display="{TRANSLATE:bubbles_stains}" value="{TRANSLATE:bubbles_stains}" />
+	<item display="{TRANSLATE:non_coated_spots_areas}" value="{TRANSLATE:non_coated_spots_areas}" />
+	<item display="{TRANSLATE:colour_off_spec}" value="{TRANSLATE:colour_off_spec}" />
+	<item display="{TRANSLATE:fisheyes}" value="{TRANSLATE:fisheyes}" />
+	<item display="{TRANSLATE:printing_off_spec}" value="{TRANSLATE:printing_off_spec}" />
+</envelope>

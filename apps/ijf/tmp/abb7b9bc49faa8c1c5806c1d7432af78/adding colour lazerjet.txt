@@ -1,0 +1,10 @@
+Installing a the colour lazerjet on a system:
+
+Log on to the workstation as the Administrator
+
+Go to add printers in Printers and Faxes > Add Printers
+
+CLick Next
+
+Click Local printer attached to this computer > Next >
+

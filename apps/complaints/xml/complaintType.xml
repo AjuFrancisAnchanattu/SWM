@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8" ?> 
+<envelope>
+	<!--<item display="HS" value="hs" />	
+	<item display="Environment" value="environment" />	-->
+	<item display="Quality Complaint" value="quality_complaint" />
+	<item display="Customer Complaint" value="customer_complaint" />	
+	<item display="Supplier Complaint" value="supplier_complaint" />
+	<!--<item display="Survey Scorecard" value="survey_scorecard" />-->
+</envelope>

@@ -1,0 +1,46 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<style type="text/css">
+				td {border:1px dotted #000;}
+			</style>
+</head>
+<body><table cellspacing="0" border="0" style="border-collapse:collapse;">
+<tr>
+<th filter="ALL">ID</th>
+<th filter="ALL">ID</th>
+<th filter="ALL">customer_account_number_report</th>
+<th filter="ALL">customer_name_report</th>
+<th filter="ALL">IJF Initiator</th>
+<th filter="ALL">sales_rep_report</th>
+<th filter="ALL">bar_man_view_report</th>
+<th filter="ALL">Status</th>
+<th filter="ALL">Creator</th>
+<th filter="ALL">Creation Date</th>
+</tr>
+<tr>
+<td><a href="/apps/complaints/index?id=10625" target="_blank">10625</a></td>
+<td><a href="/apps/complaints/index?id=10625" target="_blank">10625</a></td>
+<td>100000</td>
+<td>Preston Technical Ltd</td>
+<td>dpickwell</td>
+<td>Richard Jones</td>
+<td>yes</td>
+<td>commercialPlanning</td>
+<td>dpickwell</td>
+<td>2008-07-15</td>
+</tr>
+<tr>
+<td><a href="/apps/complaints/index?id=10627" target="_blank">10627</a></td>
+<td><a href="/apps/complaints/index?id=10627" target="_blank">10627</a></td>
+<td></td>
+<td>fsdf</td>
+<td>dpickwell</td>
+<td></td>
+<td>yes</td>
+<td>dataAdministration</td>
+<td>dpickwell</td>
+<td>2008-07-15</td>
+</tr>
+</table></body>
+</html>

@@ -1,0 +1,123 @@
+/* CSS RESET BEGIN */
+
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, font, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	outline: 0;
+	font-size: 100%;
+	vertical-align: baseline;
+	background: transparent;
+}
+body {
+	line-height: 1;
+}
+ol, ul {
+	list-style: none;
+}
+blockquote, q {
+	quotes: none;
+}
+blockquote:before, blockquote:after,
+q:before, q:after {
+	content: '';
+	content: none;
+}
+
+/* remember to define focus styles! */
+:focus {
+	outline: 0;
+}
+
+/* remember to highlight inserts somehow! */
+ins {
+	text-decoration: none;
+}
+del {
+	text-decoration: line-through;
+}
+
+/* tables still need 'cellspacing="0"' in the markup */
+table {
+	border-collapse: collapse;
+	border-spacing: 1;
+}
+
+/* CSS RESET END */
+
+
+/* RED */
+.title-box2 { background:url(/images/title-box-bg2.gif) left top repeat-x #a82c16; width:100%;}
+.title-box2 .left-top-corner {background:url(/images/left-top-corner2.gif) no-repeat left top;}
+.title-box2 .right-top-corner {background:url(/images/right-top-corner2.gif) no-repeat right top;}
+.title-box2 .left-top-corner1 {background:url(/images/left-top-corner2-1.gif) no-repeat left top;}
+.title-box2 .right-top-corner1 {background:url(/images/right-top-corner2-1.gif) no-repeat right top;}
+.title-box2 .left-bot-corner {background:url(/images/left-bot-corner2.gif) no-repeat left bottom;}
+.title-box2 .right-bot-corner {background:url(/images/right-bot-corner2.gif) no-repeat right bottom; }
+.title-box2 .inner { padding:6px 9px 7px 9px;}
+
+/* GREY */
+.title-boxgrey { background:url(/images/title-box4-bg.gif) left top repeat-x #2d2e2e; width:100%;}
+.title-boxgrey .left-top-corner {background:url(/images/left-top-cornergrey.gif) no-repeat left top;}
+.title-boxgrey .right-top-corner {background:url(/images/right-top-cornergrey.gif) no-repeat right top;}
+.title-boxgrey .left-top-corner1 {background:url(/images/left-top-corner2-1.gif) no-repeat left top;}
+.title-boxgrey .right-top-corner1 {background:url(/images/right-top-corner-1.gif) no-repeat right top;}
+.title-boxgrey .left-bot-corner {background:url(/images/left-bot-cornergrey.gif) no-repeat left bottom;}
+.title-boxgrey .right-bot-corner {background:url(/images/right-bot-cornergrey.gif) no-repeat right bottom; }
+.title-boxgrey .inner { padding: 0 0 0 10px;}
+
+
+body { font-family: tahoma; font-size: 10pt;}
+
+body p, body h1 { margin-left: 10px; }
+
+p.news { font-size: 10pt; }
+
+h3 { margin: 12px 0 8px 10px; }
+
+.wrapper p { padding: 10px 0; }
+
+div.content { padding: 10px 0 10px 0px; font-size: 10pt; }
+
+div.content ul { list-style-type: circle; margin: 0 0 0 10px; }
+div.content ul li { margin: 0 0 4px 0;; }
+
+a.contents { color: #000; padding: 5px 5px 1px 5px; margin-bottom: 5px; display: block; margin-right: 10px; text-decoration: none; border-bottom: 1px dotted #333;}
+
+td { padding: 5px; width: 50%; }
+td.light { background-color: #eaeaea; }
+td.dark { background-color: #ddd; }
+
+#mainHeader { height: 26px; padding-top: 13px; }
+#mainHeaderIcon { width: 15px; margin: -4px 10px 0 0 ; float: left; }
+#mainHeaderTitle { margin: 0; display: inline; font-weight: bold; color: #fff; }
+#mainHeaderLink { display: block; cursor: pointer; text-decoration: none; }
+
+#headlineBox { display: inline; color: #fff; }
+#headlineBox a { color: #fff; }
+p.headline a { color: #000; }
+p.headline { margin-top: 10px; }
+#newsSubject { padding: 10px; }
+#newsContent { background: #eaeaea; padding: 20px 10px; }
+#newsDate { font-style: italic; padding: 10px 0; }
+#newsTitle { margin: 0; font-weight: bold; color: #FFFFFF; float: left; }
+#newsUpper { width: 100%; background: #BF2400; }
+
+#backLink { color: #BF2400; padding: 10px; display: block; }
+
+#contentsTitle { margin: 0; font-weight: bold; color: #fff; float: left; }
+
+a.topLink { display: block; float: right; padding: 0 4px 3px 10px; }
+img.topLinkImage { margin-top: 8px; }
+
+#salesAndOrdersTitle { margin: 0; font-weight: bold; color: #FFFFFF; float: left; }
+
+a.linkAsButton { background: #BF2400; border: 1px solid #222; color: #fff; text-decoration: none; padding: 2px 4px; margin: 10px 0 0 10px; font-size: 8pt; }

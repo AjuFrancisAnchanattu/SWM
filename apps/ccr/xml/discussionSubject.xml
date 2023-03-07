@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<envelope>
+	<item value="quality" />
+	<item value="service" />
+	<item value="product" />
+	<item value="price" />
+</envelope>

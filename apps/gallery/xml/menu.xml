@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<menu>
+	<item title="Home" url="/apps/gallery/" />
+	<item title="Add Album" url="/apps/gallery/add" />
+	<item title="Translations" url="/apps/translations/?application=gallery" perms="admin" />
+</menu>

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8" ?> 
+<envelope>
+	<item display="Ashton" value="Ashton" />
+	<item display="Ashton Factored" value="Ashton Factored" />
+	<item display="Barcelona" value="Barcelona" />
+	<item display="Bellegarde" value="Bellegarde" />
+	<item display="Bellegarde Factored" value="Bellegarde Factored" />
+	<item display="Bought in" value="Bought in" />
+	<item display="Carlstadt" value="Carlstadt" />
+	<item display="Dunstable" value="Dunstable" />
+	<item display="Dunstable Factored" value="Dunstable Factored" />
+	<item display="Ghislarengo" value="Ghislarengo" />
+	<item display="Ghislarengo Factored" value="Ghislarengo Factored" />
+	<item display="Hong Kong" value="Hong Kong" />
+	<item display="Inglewood" value="Inglewood" />
+	<item display="Korea " value="Korea " />
+	<item display="Kuala Lumpur" value="Kuala Lumpur" />
+	<item display="Luton" value="Luton" />
+	<item display="Lymingtom" value="Lymingtom" />
+	<item display="Mannheim" value="Mannheim" />
+	<item display="Renfrew (inc Mannsfield)" value="Renfrew (inc Mannsfield)" />
+	<item display="Rorschach" value="Rorschach" />
+	<item display="Rorschach Factored" value="Rorschach Factored" />
+	<item display="Shanghai" value="Shanghai" />
+	<item display="Syracuse" value="Syracuse" />
+	<item display="Valence " value="Valence " />
+	<item display="Valence Factored" value="Valence Factored" />
+	<item display="Windsor " value="Windsor " />
+	<item display="Other" value="Other" />
+</envelope>

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8" ?> 
+<envelope>	
+	<item display="Active" value="active" />
+	<item display="Closed" value="closed" />
+	<item display="Pending" value="pending" />
+</envelope>

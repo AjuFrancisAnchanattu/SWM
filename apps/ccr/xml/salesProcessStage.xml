@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8" ?> 
+<envelope>
+	<item value="initial_discussion" />
+	<item value="technical_audit_-_understand_customer_needs" />
+	<item value="sample_request_and_trial" />
+	<item value="quotation_requested" />
+	<item value="business_gained" />
+	<item value="business_lost" />
+	<item value="product_/_price_approved_-_awaiting_decision_on_project" />
+</envelope>

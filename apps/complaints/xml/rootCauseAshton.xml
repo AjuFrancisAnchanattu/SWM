@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8" ?> 
+<envelope>
+	<item display="{TRANSLATE:Blade_jump}" value="{TRANSLATE:Blade_jump}" />
+	<item display="{TRANSLATE:Blade_or_bowl_profile_poor}" value="{TRANSLATE:Blade_or_bowl_profile_poor}" />
+	<item display="{TRANSLATE:Blade_set_up_incorrect}" value="{TRANSLATE:Blade_set_up_incorrect}" />
+	<item display="{TRANSLATE:Core_alignment_wrong}" value="{TRANSLATE:Core_alignment_wrong}" />
+	<item display="{TRANSLATE:Damaged_due_to_handling}" value="{TRANSLATE:Damaged_due_to_handling}" />
+	<item display="{TRANSLATE:Factory_experiment_deemed_unsucessful}" value="{TRANSLATE:Factory_experiment_deemed_unsucessful}" />
+	<item display="{TRANSLATE:Ingredient_used_or_added_incorrectly}" value="{TRANSLATE:Ingredient_used_or_added_incorrectly}" />
+	<item display="{TRANSLATE:Ingredients_missing_or_not_added}" value="{TRANSLATE:Ingredients_missing_or_not_added}" />
+	<item display="{TRANSLATE:Instruction_incorrect_or_missing}" value="{TRANSLATE:Instruction_incorrect_or_missing}" />
+	<item display="{TRANSLATE:Interruption_of_feed_(or_blockage)}" value="{TRANSLATE:Interruption_of_feed_(or_blockage)}" />
+	<item display="{TRANSLATE:Jumbo_left_too_long_before_converting}" value="{TRANSLATE:Jumbo_left_too_long_before_converting}" />
+	<item display="{TRANSLATE:Label_applied_was_incorrect}" value="{TRANSLATE:Label_applied_was_incorrect}" />
+	<item display="{TRANSLATE:Machine_set-up_or_settings_used_incorrect}" value="{TRANSLATE:Machine_set-up_or_settings_used_incorrect}" />
+	<item display="{TRANSLATE:Machine_or_equipment_not_serviced_or_calibrated}" value="{TRANSLATE:Machine_or_equipment_not_serviced_or_calibrated}" />
+	<item display="{TRANSLATE:Material_not_used_or_needed}" value="{TRANSLATE:Material_not_used_or_needed}" />
+	<item display="{TRANSLATE:Mixing_time_incorrect}" value="{TRANSLATE:Mixing_time_incorrect}" />
+	<item display="{TRANSLATE:Operator_distraction}" value="{TRANSLATE:Operator_distraction}" />
+	<item display="{TRANSLATE:Operator_error}" value="{TRANSLATE:Operator_error}" />
+	<item display="{TRANSLATE:Oven_or_Process_temperatures_incorrect}" value="{TRANSLATE:Oven_or_Process_temperatures_incorrect}" />
+	<item display="{TRANSLATE:Packaging_used_is_wrong_or_inadequate}" value="{TRANSLATE:Packaging_used_is_wrong_or_inadequate}" />
+	<item display="{TRANSLATE:Poor_dispersion_or_mixing_or_blending}" value="{TRANSLATE:Poor_dispersion_or_mixing_or_blending}" />
+	<item display="{TRANSLATE:Poor_start-up_or_material_not_removed}" value="{TRANSLATE:Poor_start-up_or_material_not_removed}" />
+	<item display="{TRANSLATE:Pot_life_of_mix_exceeded}" value="{TRANSLATE:Pot_life_of_mix_exceeded}" />
+	<item display="{TRANSLATE:Recipe_used_incorrect}" value="{TRANSLATE:Recipe_used_incorrect}" />
+	<item display="{TRANSLATE:Sample_not_provided_or_not_tested}" value="{TRANSLATE:Sample_not_provided_or_not_tested}" />
+	<item display="{TRANSLATE:Spread_out_of_alignment}" value="{TRANSLATE:Spread_out_of_alignment}" />
+	<item display="{TRANSLATE:Stenter_clips_not_releasing}" value="{TRANSLATE:Stenter_clips_not_releasing}" />
+	<item display="{TRANSLATE:Subcontractor_problem}" value="{TRANSLATE:Subcontractor_problem}" />
+	<item display="{TRANSLATE:Supplier_problem}" value="{TRANSLATE:Supplier_problem}" />
+	<item display="{TRANSLATE:Thickness_incorrect_(low_or_high)}" value="{TRANSLATE:Thickness_incorrect_(low_or_high)}" />
+	<item display="{TRANSLATE:Training_inadequate}" value="{TRANSLATE:Training_inadequate}" />
+	<item display="{TRANSLATE:Unknown_(to_be_established)}" value="{TRANSLATE:Unknown_(to_be_established)}" />
+	<item display="{TRANSLATE:Web_tension_problem_on_spreading}" value="{TRANSLATE:Web_tension_problem_on_spreading}" />
+	<item display="{TRANSLATE:Weighout_error}" value="{TRANSLATE:Weighout_error}" />
+	<item display="{TRANSLATE:Winding_tension_incorrect_(low_or_high)}" value="{TRANSLATE:Winding_tension_incorrect_(low_or_high)}" />
+</envelope>

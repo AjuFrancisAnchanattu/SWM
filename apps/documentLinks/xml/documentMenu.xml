@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8" ?> 
+<envelope>
+	<item display="This Menu" value="" />
+	<item display="Expense Documents" value="expenseDocuments" />
+	<item display="IT Training" value="itTraining" />
+	<item display="Medical Literature" value="medicalLiterature" />
+	<item display="New Account Opening Docs" value="newAccountOpeningDocs" />
+	<item display="Risk Suite" value="riskSuite" />
+	<item display="Supply Chain Information" value="supplyChainInformation" />
+</envelope>

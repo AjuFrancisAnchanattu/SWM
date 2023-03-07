@@ -1,0 +1,5 @@
+competitor_profile_list
+
+details
+
+profile_name

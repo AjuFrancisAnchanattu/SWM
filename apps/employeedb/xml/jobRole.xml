@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8" ?> 
+<envelope>
+	<item value="European/Site Manager" />
+	<item value="Department Manager" />
+	<item value="Supervisor" />
+	<item value="Operator" />
+	<item value="Clerical" />
+	<item value="Sales Person" />
+	<item value="Technician" />
+</envelope>

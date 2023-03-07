@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" ?> 
+<envelope>
+	<item display="Coater11" value="Coater11" />
+	<item display="Coater2" value="Coater2" />
+	<item display="Pilot Coater" value="Pilot Coater" />
+	<item display="Laminator" value="Laminator" />
+	<item display="Mill room" value="Mill room" />
+	<item display="Large Mix room" value="Large Mix room" />
+	<item display="Small mix room" value="Small mix room" />
+	<item display="Slitter1" value="Slitter1" />
+	<item display="Slitter2" value="Slitter2" />
+	<item display="Siat Slitter" value="Siat Slitter" />
+	<item display="Lathe Slitter1" value="Lathe Slitter1" />
+	<item display="Lathe Slitter2" value="Lathe Slitter2" />
+	<item display="Rewinders" value="Rewinders" />
+	<item display="Shrink wrapper" value="Shrink wrapper" />
+	<item display="Core cutter" value="Core cutter" />
+	<item display="Logger" value="Logger" />
+	<item display="G&#38;A Slitter" value="G&#38;A Slitter" />
+	<item display="Shipping" value="Shipping" />
+	<item display="Receiving" value="Receiving" />
+	<item display="Warehouse" value="Warehouse" />
+	<item display="other" value="other" />
+</envelope>

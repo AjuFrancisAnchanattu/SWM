@@ -1,0 +1,75 @@
+a:2:{s:4:"date";i:1657289881;s:4:"data";s:3742:"<?xml version="1.0" encoding="ISO-8859-1"?>
+<envelope>
+	<item value="A1" display="Auto - Harnessing" />
+	<item value="A2" display="Auto - Trim" />
+	<item value="A3" display="Auto - Protection" />
+	<item value="A4" display="Auto - Weatherstrip" />
+	<item value="A5" display="Auto - NVH" />
+	<item value="A6" display="Auto - Assembly" />
+	<item value="A7" display="Auto - Truck and Bus" />
+	<item value="C1" display="CO - HVAC" />
+	<item value="C2" display="CO - Building tools" />
+	<item value="C3" display="CO - Glazing" />
+	<item value="C4" display="CO - Roofing and clad." />
+	<item value="C5" display="CO - Pipeline" />
+	<item value="C6" display="CO - Electrical" />
+	<item value="D1" display="CH - Other tape distr" />
+	<item value="D2" display="CH - Tape manufacture" />
+	<item value="D3" display="CH - Gen. ind. w'sale" />
+	<item value="D4" display="CH - Spec. tape distr" />
+	<item value="D5" display="CH - Select Partner" />
+	<item value="D6" display="CH - Auth Distributor" />
+	<item value="E1" display="EL - Electrotechnical" />
+	<item value="E2" display="EL - Electronics" />
+	<item value="H1" display="HI - General utility" />
+	<item value="H2" display="HI - Military" />
+	<item value="H3" display="HI - Aerospace" />
+	<item value="H4" display="HI - Ship building" />
+	<item value="H5" display="HI - Metal forming" />
+	<item value="H6" display="HI - Truck &amp; bus" />
+	<item value="H7" display="HI - Trailer/caravan" />
+	<item value="H8" display="HI - Mass transit" />
+	<item value="L1" display="LI - Agriculture" />
+	<item value="L2" display="LI - Safety" />
+	<item value="L3" display="LI - Footwear" />
+	<item value="L4" display="LI - Foam laminates" />
+	<item value="L5" display="LI - Education" />
+	<item value="L6" display="LI - Food and consumer" />
+	<item value="L7" display="LI - Furniture and wood" />
+	<item value="L8" display="LI - Plastic Moulding" />
+	<item value="L9" display="LI - White Goods" />
+	<item value="LA" display="LI - Disposables" />
+	<item value="LB" display="LI - Rubber Industry" />
+	<item value="LC" display="LI - Textiles" />
+	<item value="LD" display="LI - Miscellaneous" />
+	<item value="M0" display="M - Medical" />
+	<item value="M1" display="M - Woundcare/Ostomy" />
+	<item value="M2" display="M - Consumer/Firstaid" />
+	<item value="M3" display="M - Device/Diagnostic" />
+	<item value="M4" display="M - Surgical Drape" />
+	<item value="M5" display="M - Cosmetic Patches" />
+	<item value="M6" display="M - Transdermal" />
+	<item value="P0" display="P - Cable" />
+	<item value="P1" display="P - LV Energy" />
+	<item value="P2" display="P - MV and HV Energy" />
+	<item value="P3" display="P - Copper Comms" />
+	<item value="P4" display="P - Optical" />
+	<item value="P5" display="P - Specialist Cables" />
+	<item value="P6" display="P - Non Cable Apps" />
+	<item value="P7" display="P - Cable Splicing" />
+	<item value="P8" display="P - Cable Distributor" />
+	<item value="R1" display="P and G - Paper  and board" />
+	<item value="R2" display="P and G - Printing" />
+	<item value="R3" display="P and G - Photo-processin" />
+	<item value="R4" display="P and G - Spec. Splicing" />
+	<item value="R5" display="P and G - Security Printg" />
+	<item value="R6" display="P and G - Graphics Arts" />
+	<item value="S1" display="S and E - Sports" />
+	<item value="S2" display="S and E - Entertainment" />
+	<item value="S3" display="S and E - Exhibitions" />
+	<item value="S4" display="S and E - Outdoor pursuit" />
+	<item value="Z6" display="ZZ - Interco Asia" />
+	<item value="Z7" display="ZZ - Interco Eur NSAP" />
+	<item value="Z8" display="ZZ - Interco Europe" />
+	<item value="Z9" display="ZZ:Interco N America" />
+</envelope>";}

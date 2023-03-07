@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8" ?> 
+<envelope>
+	<item display="Carter Mixer" value="Carter Mixer" />
+	<item display="Mixtruder" value="Mixtruder" />
+	<item display="Calender 1" value="Calender 1" />
+	<item display="Calender 2" value="Calender 2" />
+	<item display="Calender 3" value="Calender 3" />
+	<item display="Calender 4" value="Calender 4" />
+	<item display="Laminator 1" value="Laminator 1" />
+	<item display="Laminator 2" value="Laminator 2" />
+	<item display="Core Cutting" value="Core Cutting" />
+	<item display="Slitting" value="Slitting" />
+	<item display="Log Rolling" value="Log Rolling" />
+	<item display="Spooling" value="Spooling" />
+	<item display="Rewinding" value="Rewinding" />
+	<item display="Slicing" value="Slicing" />
+	<item display="Shrinkwrap" value="Shrinkwrap" />
+	<item display="Bandwrap" value="Bandwrap" />
+	<item display="Shipping" value="Shipping" />
+	<item display="Receiving" value="Receiving" />
+	<item display="other" value="other" />
+</envelope>

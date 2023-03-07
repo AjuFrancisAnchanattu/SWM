@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8" ?> 
+<envelope>
+	<item value="personal" />
+	<item value="phone_call" />
+	<item value="video" />
+	<item value="email" />
+</envelope>

@@ -1,0 +1,10 @@
+ID
+Initiator
+Customer
+Des Of App
+Market Manager
+Scapa Customer Potential
+Gross Margin
+Quadrant Rating
+Environmental Awareness
+Total

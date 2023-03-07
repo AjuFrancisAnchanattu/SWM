@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8" ?> 
+<envelope>
+	<item display="Commercial Planners" value="commercialPlanning" />	
+	<item display="Data Administration" value="dataAdministration" />
+	<item display="Finance" value="finance" />
+	<item display="Product Manager" value="productManager" />
+	<item display="Production" value="production" />
+	<item display="Purchasing" value="purchasing" />
+	<item display="Quality" value="quality" />
+</envelope>

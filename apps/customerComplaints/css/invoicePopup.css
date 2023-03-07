@@ -1,0 +1,188 @@
+@CHARSET "ISO-8859-1";
+#content
+{
+	width: 750px;
+	height: 600px;
+	position: relative;
+	top: 0px;
+	left: 0px;
+}
+
+#invoices
+{
+	height: 480px;
+	margin: 5px;
+	padding: 2px;
+	border: 1px #DDDDDD solid;
+}
+
+#tableOverflow
+{
+	height: 475px;
+	overflow-y: auto;
+	overflow-x: hidden;
+	position: absolute;
+	padding: 2px;
+}
+
+#invoiceFooter
+{
+	position: absolute;
+	top: 550px;
+	left: 0px;
+}
+
+#mainInfo
+{
+	padding: 0;
+	margin: 5px;
+}
+
+#title
+{
+	height: 19px;
+	background: #c40204;
+	
+	font-family: "Arial", "Verdana", sans-serif;
+	font-size: 1em;
+	color: #FFFFFF;
+}
+
+#title .titleHeader
+{
+	margin: 2px 10px 2px 10px;
+	font-weight: bold;
+	float: left;
+}
+
+#title .titleMessage
+{
+	margin-top: 2px;
+	font-style: italic;
+	color: #FFFFFF;
+	float: left;
+}
+
+#mainInfo a
+{
+	border: none;
+	
+	margin: 1px;
+	padding: 1px;
+	
+	float: right;
+}
+
+#mainInfo img
+{
+	border: none;
+	margin: 0 0 0 1px;
+	padding: 0px;
+}
+
+#mainInfo table
+{
+	font-family: "Arial", "Verdana", sans-serif;
+	font-size: 1em;
+	color: #888888;
+	
+	border: 1px #DDDDDD solid;
+	border-top: none;
+	width: 740px;
+}
+
+#mainInfo .header
+{
+	font-weight: bold;
+	padding-left: 5px;
+	padding-right: 5px;
+}
+
+#invoicesTable
+{
+	font-family: "Arial", "Verdana", sans-serif;
+}
+
+#invoicesTable tr.highlight
+{
+	background: #DDDDDD;
+}
+
+#invoicesTable td, th
+{
+	padding: 3px;
+}
+
+#invoicesTable th
+{
+	font-size: 1em;
+	color: #555555;
+	border-bottom: 2px #AAAAAA solid;
+}
+
+#invoicesTable th.check
+{
+	margin: 0px;
+	padding: 0px 1px 0px 0px;
+	border-right: 1px #AAAAAA solid;
+}
+
+#invoicesTable td
+{
+	border-bottom: 1px #AAAAAA solid;
+	font-size: 1em;
+}
+
+#invoicesTable td.check
+{
+	margin: 0px;
+	padding: 0px 1px 0px 0px;
+	border-right: 1px #AAAAAA solid;
+}
+
+#invoicesTable td.saved
+{
+	padding-left: 10px;
+	font-size: 1em;
+	color: #70d279;
+}
+
+#invoicesTable td.unsaved
+{
+	padding-left: 10px;
+	font-size: 1em;
+	color: #c40204;
+}
+
+#invoicesTable .checkbox
+{
+	margin: 4px 0 0 0;
+	padding: 0px 1px 0px 0px;
+	border: none;
+}
+
+#invoicesTable .message
+{
+	padding: 1px 3px 1px 3px;
+	font-style: italic;
+	font-size: 0.8em;
+}
+
+#invoicesTable input
+{
+	border: #99BBFF 1px solid;
+	
+	height: 1.1em;
+	margin-right: 1px;
+	padding: 2px;
+}
+
+#invoicesTable .input_invalid
+{
+	border: #FF0000 1px solid;
+	background: #FFCCCC;
+	
+	height: 1.1em;
+	margin-right: 1px;
+	padding: 2px;
+}

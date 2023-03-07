@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<menu>
+	<item title="Home" url="/apps/ijf/" />
+	<item title="Add Healthcare IJF" url="/apps/ijf/add?" />
+	<item title="Add Industrial NSE" url="http://scapaconnect/Apps/NSE" />
+	<item title="Search" url="/apps/ijf/search?" />
+</menu>

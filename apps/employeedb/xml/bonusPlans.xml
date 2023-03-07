@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8" ?> 
+<envelope>
+	<item value="None" />
+	<item value="Sales Incentive" />
+	<item value="European Scheme" />
+	<item value="Site Scheme" />
+	<item value="Local self-financed scheme" />
+	<item value="Modified Scheme (SET)" />
+</envelope>

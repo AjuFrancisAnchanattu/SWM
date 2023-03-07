@@ -1,0 +1,14 @@
+Departments:
+
+Factory Direct
+Sales
+R&D
+Operations
+Maintenance
+Quality
+Purchasing/planning
+Warehouse
+Customer Care
+Finance
+IT
+HR

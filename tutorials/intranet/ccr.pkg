@@ -1,0 +1,133 @@
+<refentry id="{@id}">
+ <refnamediv>
+  <refname>Customer Contact Report</refname>
+ </refnamediv>
+ <refsynopsisdiv>
+  <para>The system is a tool for sales people to record details of visits and management to see what their sales people are up to.</para> 
+ </refsynopsisdiv>
+ {@toc}
+ <refsect1 id="{@id overview}">
+  <title>Overview</title>
+  <para>
+  <itemizedlist>
+     <listitem><para>Project sponsor: Jack Taylor</para></listitem>
+     <listitem><para>Lead Developer: Dan Eltis</para></listitem>
+     <listitem><para>Additional Development: Ben Pearson</para></listitem>
+     <listitem><para>Current status: BETA</para></listitem>
+     <listitem><para>Link: {@link http://scapanet/apps/ccr/}</para></listitem>
+    </itemizedlist>
+   </para>
+ </refsect1>
+ <refsect1 id="{@id database}">
+  <title>Database</title>
+  <para>The data for the system is located on MySQL1 (link) in a database named CCR</para>
+  <para><graphic fileref="/tutorials/intranet/ccr_database_schema.gif" format="GIF"/></para>
+  <refsect2 id="{@id report}">
+   <title>CCR.report</title>
+   <para>The main table.</para>
+   <programlisting role="mysql">
+    <![CDATA[
+DROP TABLE IF EXISTS `CCR`.`report`;
+CREATE TABLE  `CCR`.`report` (
+  `id` int(10) unsigned NOT NULL auto_increment,
+  `owner` varchar(50) default NULL,
+  `reportDate` date default NULL,
+  `typeOfCustomer` varchar(50) default NULL,
+  `contactDate` date default NULL,
+  `contactType` varchar(50) default NULL,
+  `contactPerson` varchar(250) default NULL,
+  `contactSite` varchar(250) default NULL,
+  `existingNewBusiness` varchar(10) default NULL,
+  `currency` varchar(50) default NULL,
+  `status` int(4) default '0',
+  `finalComments` text,
+  `completionDate` date NOT NULL default '0000-00-00',
+  `objective` text,
+  `generalNarative` text,
+  `sapNumber` int(10) default NULL,
+  `name` varchar(255) default NULL,
+  `address` varchar(255) default NULL,
+  `country` varchar(255) default NULL,
+  `group` varchar(255) default NULL,
+  `jointCall` varchar(50) default NULL,
+  `existing` varchar(50) default NULL,
+  PRIMARY KEY  (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+]]>
+   </programlisting>
+  </refsect2>
+  <refsect2 id="{@id material}">
+   <title>CCR.material</title>
+   <para>sdfsd</para>
+   <programlisting role="mysql">
+    <![CDATA[
+DROP TABLE IF EXISTS `CCR`.`material`;
+CREATE TABLE  `CCR`.`material` (
+  `id` int(10) NOT NULL auto_increment,
+  `ccrId` int(10) default NULL,
+  `materialKey` varchar(250) default NULL,
+  `discussionSubject` varchar(250) default NULL,
+  `application` text,
+  `incomeQuantity` decimal(10,2) default NULL,
+  `volume_quantity` decimal(10,2) default NULL,
+  `volume_measurement` varchar(50) default NULL,
+  `competitorName` varchar(250) default NULL,
+  `competitorProductCode` varchar(250) default NULL,
+  `competitorTerms` text,
+  `competitorActivity` text,
+  `successChance` varchar(50) default NULL,
+  `successReport` text,
+  `salesStage` varchar(50) default NULL,
+  `reasonForGainLoss` varchar(50) default NULL,
+  `commentOnGainLoss` text,
+  `isSapProduct` varchar(10) default NULL,
+  `alternativeMaterialKey` varchar(250) default NULL,
+  `productFamily` varchar(250) default NULL,
+  `productHierarchy1` varchar(250) default NULL,
+  `productHierarchy2` varchar(250) default NULL,
+  `productHierarchy3` varchar(250) default NULL,
+  PRIMARY KEY  (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+]]>
+   </programlisting>
+  </refsect2>
+  <refsect2 id="{@id action}">
+   <title>CCR.action</title>
+   <para>The action table does stuff</para>
+   <programlisting role="mysql">
+    <![CDATA[
+DROP TABLE IF EXISTS `CCR`.`action`;
+CREATE TABLE  `CCR`.`action` (
+  `id` int(10) NOT NULL auto_increment,
+  `type` varchar(25) default NULL,
+  `parentId` int(10) default '0',
+  `actionArising` text,
+  `personResponsible` varchar(50) default NULL,
+  `targetCompletion` date default NULL,
+  `actualCompletion` date default NULL,
+  `completionComments` text,
+  `status` char(1) default NULL,
+  PRIMARY KEY  (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+]]>
+   </programlisting>
+  </refsect2>
+  <refsect2 id="{@id action}">
+   <title>CCR.log</title>
+   <para>Log entries</para>
+   <programlisting role="mysql">
+    <![CDATA[
+DROP TABLE IF EXISTS `CCR`.`log`;
+CREATE TABLE  `CCR`.`log` (
+  `id` int(10) unsigned NOT NULL auto_increment,
+  `ccrId` int(10) NOT NULL default '0',
+  `NTLogon` varchar(255) character set latin1 NOT NULL default '',
+  `action` varchar(255) character set latin1 NOT NULL default '',
+  `logDate` datetime default NULL,
+  PRIMARY KEY  (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+]]>
+   </programlisting>
+  </refsect2>
+ </refsect1>
+</refentry>

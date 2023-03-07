@@ -1,0 +1,39 @@
+/* CSS Document */
+
+body {
+	margin-left: 12px;
+	margin-top: 12px;
+	margin-right: 12px;
+	margin-bottom: 12px;
+	background-color: #E5E5CC;
+}
+body,td,th {
+	color: #000000;
+	font-family: Tahoma;
+}
+.head {
+	font-family: Arial;
+	font-size: 24px;
+	font-weight: bold;
+}
+.access_denied {
+	color: #C60000;
+	font-weight: bold;
+	font-size: x-large;
+}
+a:link {
+	color: #000000;
+}
+a:visited {
+	color: #000000;
+}
+a:hover {
+	color: #990000;
+}
+a:active {
+	color: #000000;
+}
+.style4 {
+	font-size: xx-small;
+}
+

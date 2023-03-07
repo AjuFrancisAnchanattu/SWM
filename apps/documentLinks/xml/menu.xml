@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<menu>
+	<item title="{TRANSLATE:home}" url="/apps/documentLinks" />
+	<item title="{TRANSLATE:add_document}" url="/apps/documentLinks/add?" />
+<!--	<item title="{TRANSLATE:ticket_reports}" url="/apps/support/search?" perms="" />
+	<item title="{TRANSLATE:site_reports}" url="/apps/support/siteReports?" perms="support_superAdmin,support_report" />
+	<item title="{TRANSLATE:graphed_reports}" url="/apps/support/graphReports?" perms="support_superAdmin,support_report" />
+--></menu>

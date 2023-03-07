@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8" ?> 
+<envelope>
+	<item display="Cloth Adhesive mixing" value="Cloth Adhesive mixing" />
+	<item display="Cloth Adhesive coating" value="Cloth Adhesive coating" />
+	<item display="Cloth Conversion" value="Cloth Conversion" />
+	<item display="Automotive Conversion" value="Automotive Conversion" />
+	<item display="ICO Conversion" value="ICO Conversion" />
+	<item display="Bitumen Coating" value="Bitumen Coating" />
+	<item display="Bitumen Conversion" value="Bitumen Conversion" />
+	<item display="Cable Components" value="Cable Components" />
+	<item display="Cable Mixing" value="Cable Mixing" />
+	<item display="Cable Coating" value="Cable Coating" />
+	<item display="Cable Conversion" value="Cable Conversion" />
+	<item display="Hot Melt Mixing" value="Hot Melt Mixing" />
+	<item display="Hot Melt Process" value="Hot Melt Process" />
+	<item display="Kalenoid Process" value="Kalenoid Process" />
+	<item display="GP3 Coater" value="GP3 Coater" />
+	<item display="PIB Mixing" value="PIB Mixing" />
+	<item display="PIB Calender Process" value="PIB Calender Process" />
+	<item display="PIB Conversion" value="PIB Conversion" />
+	<item display="Warehouse." value="Warehouse." />
+	<item display="other" value="other" />
+</envelope>

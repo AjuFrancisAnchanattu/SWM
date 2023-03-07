@@ -1,0 +1,125 @@
+<item phrase="SALES_PERSON">Sales person</item>
+
+<!-- Field names used in the reports -->
+
+<item phrase="owner">Complaint owner</item>
+<item phrase="internal_sales_name">Internal sales name</item>
+<item phrase="sap_name">Customer name</item>
+<item phrase="covisint_ref">Automotive covisint ref</item>
+<item phrase="covisint_date">Automotive covisint date</item>
+<item phrase="sample_reception_date">Sample/photo reception date</item>
+<item phrase="sample_transferred">Sample/photo transferred to PO</item>
+<item phrase="action_requested">Actions requested from the customer</item>
+<item phrase="is_po_right">Is process owner correct</item>
+<item phrase="analysis_date">Analysis date</item>
+<item phrase="is_complaint_cat_right">Is complaint category correct</item>
+<item phrase="similar_recall">Any other similar product to be recalled</item>
+<item phrase="stock_verif_made">Scapa stock verif made</item>
+<item phrase="containment_action_author">Containment action author</item>
+<item phrase="containment_action_date">Containment action date</item>
+<item phrase="possible_solutions_author">Possible solutions author</item>
+<item phrase="possible_solutions_date">Possible solutions date</item>
+<item phrase="implemented_actions">Implemented perm corrective actions</item>
+<item phrase="implemented_actions_author">Implemented actions author</item>
+<item phrase="implemented_actions_date">Implemented actions date</item>
+<item phrase="implemented_actions_estimated">Implemented actions estimated date</item>
+<item phrase="implemented_actions_implementation">Implemented actions implementation date</item>
+<item phrase="implemented_actions_effectiveness">Implemented actions validation of effectiveness date</item>
+<item phrase="preventive_actions_author">Preventive actions author</item>
+<item phrase="preventive_actions_date">Preventive actions date</item>
+<item phrase="preventive_actions_estimated">Preventive actions estimated date</item>
+<item phrase="preventive_actions_implementation">Preventive actions implementation date</item>
+<item phrase="preventive_actions_effectiveness">Preventive actions validation of effectiveness date</item>
+<item phrase="management_system_reveiwed">Management system reviewed</item>
+<item phrase="inspection_instructions">Flow chart, control plan, work inspection instructions</item>
+<item phrase="mod_complaint_reason">Complaint category modification reason</item>
+<item phrase="cn_value">Credit note value</item>
+<item phrase="credit_date">Credit date</item>
+<item phrase="credit_name">Credit authoriser</item>
+<item phrase="credit_comments">Credit comments</item>
+<item phrase="closed_date">Complaint closure</item>
+<item phrase="total_closure_date">Total closure</item>
+<item phrase="cn_raised_date">Date credit note raised</item>
+<item phrase="status_customer">Customer complaint status</item>
+<item phrase="status_total">Internal complaint status</item>
+<item phrase="is_registration_performance">Internal sales registration performance</item>
+<item phrase="acknowledgement_performance">Acknowledgement performance</item>
+<item phrase="is_sample_transfer_performance">Internal sales sample transfer performance</item>
+<item phrase="scapa_sample_transfer_performance">Scapa sample transfer performance</item>
+<item phrase="analysis_performance">Analysis performance</item>
+<item phrase="root_causes_performance">Root causes performance</item>
+<item phrase="containment_action_performance">Containment action peformance</item>
+<item phrase="interim_info_performance">Interim info performance</item>
+<item phrase="implemented_corrective_actions">Implemented corrective actions performance</item>
+<item phrase="process_owner_performance">Process owner performance</item>
+<item phrase="is_8d_performance">Internal sales 8D performance</item>
+<item phrase="customer_reply_performance">Customer reply performance</item>
+<item phrase="return_credit_performance">Return credit performance</item>
+<item phrase="customer_turn_over">Customer closure performance</item>
+<item phrase="turn_over">Total closure performance</item>
+<item phrase="external_sales_name">External sales name</item>
+<item phrase="sample_date">Sample/photo transferred to PO date</item>
+<item phrase="date_sample_received">Date sample/photo received by PO date</item>
+<item phrase="date_of_intermediate">Date of intermediate info to IS</item>
+<item phrase="submit_date">Date of information to IS</item>
+<item phrase="edit_g8d_date">8D date</item>
+<item phrase="edit_return_form_date">Return form date</item>
+<item phrase="edit_disposal_note_date">Disposal note date</item>
+<item phrase="authorisation_request_date">Credit authorisation request date</item>
+
+
+
+<!-- New bits -->
+
+<item phrase="NA_CONTACTS_EUROPE">NA complaint contacts in Europe</item>
+<item phrase="NORTHAMERICA_CONTACTS">Contacts in North America</item>
+<item phrase="EXTERNAL_SALES">External sales name</item>
+<item phrase="IS_NAME_HOLIDAY">Submitting on behalf of someone else?</item>
+<item phrase="ROOT_CAUSES">Root causes</item>
+<item phrase="TEAM_LEADER">Team leader</item>
+
+<item phrase="RELATED_DOCUMENTS">Related documents</item>
+<item phrase="DATES">Dates</item>
+<item phrase="FINAL_COMMENTS">Final comments</item>
+<item phrase="BLANK_8D">Blank 8D</item>
+<item phrase="REFERENCE">Reference</item>
+<item phrase="COMPLAINT_HANDLING_MANUAL">Complaint handling manual</item>
+<item phrase="COLUMNS">Columns</item>
+
+<item phrase="OPEN">Open</item>
+<item phrase="CLOSED">Closed</item>
+<item phrase="DATE_BEFORE">Date opened</item>
+
+<item phrase="ANALYSIS_EXISTS">Analysis exists</item>
+<item phrase="ROOT_CAUSE_EXISTS">Root cause exists</item>
+<item phrase="CONTAINMENT_ACTION_EXISTS">Containment action exists</item>
+<item phrase="POSSIBLE_SOLUTIONS_EXISTS">Possible solutions exists</item>
+<item phrase="IMPLEMENTED_ACTIONS_EXISTS">Implemented perm corrective action exists</item>
+<item phrase="PREVENTIVE_ACTIONS_EXISTS">Preventive action exists</item>
+
+
+<item phrase="CREDIT_AUTHORISED_-_FINANCIAL_LEVEL">Credit Authorised - FINANCIAL LEVEL</item>
+<item phrase="CREDIT_AUTHORISED_-_COMMERCIAL_LEVEL">Credit Authorised - COMMERCIAL LEVEL</item>
+
+<item phrase="CREDIT_AUTHORISER_-_FINANCIAL_LEVEL">Credit Authoriser - FINANCIAL LEVEL</item>
+<item phrase="CREDIT_AUTHORISER_-_COMMERCIAL_LEVEL">Credit Authoriser - COMMERCIAL LEVEL</item>
+
+<item phrase="REASON_-_FINANCIAL_LEVEL">Reason - FINANCIAL LEVEL</item>
+<item phrase="REASON_-_COMMERCIAL_LEVEL">Reason - COMMERCIAL LEVEL</item>
+
+<item phrase="CONCLUDE">Conclude</item>
+<item phrase="COMPLAINT_CLOSURE">Complaint Closure</item>
+<item phrase="CREDIT_AUTHORISATION">Credit Authorisation</item>
+<item phrase="CREDIT_DETAILS">Credit Details</item>
+<item phrase="SUPPLIER/CARRIER/INTERCO_CREDIT">Supplier/Carrier/Interco Credit</item>
+
+<item phrase="REQUEST_CREDIT_AUTHORISATION_-_FINANCIAL_LEVEL">Request Credit Authorisation - FINANCIAL LEVEL</item>
+<item phrase="REQUEST_CREDIT_AUTHORISATION_-_COMMERCIAL_LEVEL">Request Credit Authorisation - COMMERCIAL LEVEL</item>
+<item phrase="credit_authorised">Credit Authorised - COMMERCIAL LEVEL</item>
+<item phrase="credit_authoriser">Credit Authoriser - COMMERCIAL LEVEL</item>
+<item phrase="credit_authorised_L2">Credit Authorised - FINANCIAL LEVEL</item>
+<item phrase="credit_authoriser_L2">Credit Authoriser - FINANCIAL LEVEL</item>
+<item phrase="CREDIT_AUTHORISED">Credit Authorised - COMMERCIAL LEVEL</item>
+<item phrase="CREDIT_AUTHORISER">Credit Authoriser - COMMERCIAL LEVEL</item>
+<item phrase="CREDIT_AUTHORISED_L2">Credit Authorised - FINANCIAL LEVEL</item>
+<item phrase="CREDIT_AUTHORISER_L2">Credit Authoriser - FINANCIAL LEVEL</item>

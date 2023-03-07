@@ -1,0 +1,75 @@
+<?php
+
+require 'lib/manipulate.php';
+/**
+ * This is the Complaints Application.
+ *
+ * This page allows the user to add a new Complaint.
+ * 
+ * @package apps	
+ * @subpackage Complaints
+ * @copyright Scapa Ltd.
+ * @author Jason Matthews
+ * @version 22/03/2006
+ */
+class add extends manipulate 
+{
+	function __construct()
+	{
+		parent::__construct();
+		
+		$this->setPrintCss("/css/ccr.css");
+		$this->setActivityLocation('Complaints');
+		
+		$this->setDebug(true);
+		
+		$this->header->setLocation($this->getActivityLocation());
+		$this->header->setMenuXML("./apps/complaints/menu.xml");		
+		
+		$this->add_output("<complaintAdd>");
+		
+		$snapins_left = new snapinGroup('snapin_left');		//creates the snapin group for Complaints
+		//$snapins_left->register('apps/complaints', 'toolBoxComplaints', true, true);		//puts the complaints tool box snapin in the page
+		//$snapins_left->register('apps/complaints', 'bookmarkedComplaints', true, true);		//puts the complaints bookmarked snapin in the page
+		$snapins_left->register('apps/complaints', 'yourComplaints', true, true);		//puts the complaints report snapin in the page
+		$snapins_left->register('apps/complaints', 'refDocuments', true, true);		//puts the complaints ref docs snapin in the page
+		
+		$this->add_output("<snapin_left>" . $snapins_left->getOutput() . "</snapin_left>");
+		
+		if ($_SERVER['REQUEST_METHOD'] == 'GET' && !isset($_REQUEST['offline']))
+		{
+			session::clear();
+			$this->setPageAction("complaint");
+		}
+		
+		
+		//creates the Complaint instance
+		$this->complaint = new complaint();
+		
+		$this->processPost();		//calls process post defined on manipulate
+		
+		$this->validate();
+		
+		$this->add_output($this->doStuffAndShow());		//chooses what should be displayed on the Complaint screen. i.e. what part of the Complaint process
+		
+		$this->add_output($this->buildMenu());			//builds the structure menu
+		
+		if((!isset($_REQUEST['complaint'])) && (!isset($_REQUEST['status'])))
+		{
+			$this->add_output("<complaintNo>N/A</complaintNo>");			
+		}
+		
+		$this->add_output($this->complaint->getID()?"<complaintStatus>true</complaintStatus>\n":"<complaintStatus>false</complaintStatus>");
+		$this->add_output($this->complaint->getEvaluation()?"<evaluationStatus>true</evaluationStatus>\n":"<evaluationStatus>false</evaluationStatus>");
+		$this->add_output($this->complaint->getConclusion()?"<conclusionStatus>true</conclusionStatus>\n":"<conclusionStatus>false</conclusionStatus>");
+		$this->add_output($this->complaint->getID()? "<id>" . $id . "</id>" : "");
+		$this->add_output("<credit_authorised>Incomplete</credit_authorised>");
+		
+				
+		$this->add_output("</complaintAdd>");
+	
+		$this->output('./apps/complaints/xsl/add.xsl');
+	}	
+}
+
+?>

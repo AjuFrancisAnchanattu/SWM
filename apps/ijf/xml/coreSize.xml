@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8" ?> 
+<envelope>
+	<item value="standard" display="Standard" />
+	<item value="76x500mm" display="76 x 500mm" />
+	<item value="153x180mm" display="153 x 180mm"  />
+	<item value="153x250mm" display="153 x 250mm"  />
+	<item value="N/A" display="N/A"  />
+</envelope>

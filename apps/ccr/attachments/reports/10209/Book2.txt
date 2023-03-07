@@ -1,0 +1,77 @@
+english	french	german	italian
+Action Arising			
+Action Options			
+Action Status			
+Actions On			
+Actual Completion Date			
+Analysis Period			
+Business Gained			
+Business Lost			
+Customer Contact Report			
+Customer Contact Report Action			
+Complete Report			
+Complete Selected Action			
+Completion Comments			
+Completion Date			
+Contact Site			
+Customer of a Scapa Distributor			
+Is the purpose of this contact to carry out a customer survey?			
+Date Added			
+Delegate Selected Action			
+Direct Customer Name			
+Edit Action			
+Edit Material			
+Edit Report			
+Email			
+Estimated current Scapa share of the Annual Potential value			
+Existing Direct Customer			
+Existing Scapa Distributor			
+for material			
+for report			
+Group			
+"If the report is to log a customer survery and results, select ""Yes"". For all other contacts select ""No"".  The result of the customer survey can be added as a document later on this page."			
+todo			
+todo			
+todo			
+History			
+In Progress			
+Initial Discussion			
+Invoice Currency			
+Is This Product In SAP?			
+Joint call to customer with the distributor			
+Load Report			
+Material Group			
+Material Group Application			
+Minimal Chance			
+New Customer Contact Report Action			
+Next Action Completion Date			
+No Report Loaded			
+Non SAP Material Key			
+Ongoing Business			
+Performance			
+Person Responsible			
+Personal Visit			
+Telephone Call			
+Price			
+Product			
+Product/Price Approved - Awaiting Decision on Project			
+Product Hierarchy Description			
+Product Hierarchy Key			
+Quality			
+Relationship			
+Report			
+Report Materials			
+Report Options			
+Report Owner			
+Report Status			
+Report Summary			
+Revise Report			
+Some Interest			
+Strong Possibility			
+Subject of Discussion			
+Summary			
+Sure to be Successful			
+Technical Audit - Understand Customer Needs			
+Video Conference			
+Your Actions			
+Your Open Reports			

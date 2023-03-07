@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8" ?> 
+<envelope>
+	<item display="owner" value="owner"/>
+	<item display="report_date" value="reportDate"/>
+	<item display="contact_date" value="contactDate"/>
+	<item display="contact_type" value="contactType"/>
+	<item display="material_key" value="materialKey"/>
+</envelope>

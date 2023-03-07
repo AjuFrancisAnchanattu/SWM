@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8" ?> 
+<envelope>
+	<item display="01 BRN - PREPARATION MADH VERNIS ACCROCHAGE" value="01 BRN - PREPARATION MADH VERNIS ACCROCHAGE" />
+	<item display="02 BRN - ENDUCTION 103 ETUVAGE" value="02 BRN - ENDUCTION 103 ETUVAGE" />
+	<item display="03 BRN - ENDUCTION 102" value="03 BRN - ENDUCTION 102" />
+	<item display="04 BRN - ENDUCTION 105 ETUVAGE" value="04 BRN - ENDUCTION 105 ETUVAGE" />
+	<item display="05 BRN - ENDUCTION RAME" value="05 BRN - ENDUCTION RAME" />
+	<item display="06 BRN - GIE" value="06 BRN - GIE" />
+	<item display="07 PAL - ILOT TOUR JAUNE" value="07 PAL - ILOT TOUR JAUNE" />
+	<item display="08 PAL - ILOT MOYENNES SERIES GUZETTI BERETTI" value="08 PAL - ILOT MOYENNES SERIES GUZETTI BERETTI" />
+	<item display="09 PAL - ILOT PETITES SERIES DEROULEUSES BOBINEUSES" value="09 PAL - ILOT PETITES SERIES DEROULEUSES BOBINEUSES" />
+	<item display="10 PAL - ILOT DEROULEUSES JUMBOS EN LOGS" value="10 PAL - ILOT DEROULEUSES JUMBOS EN LOGS" />
+	<item display="11 PAL - ILOT PETITES SERIES TRONCONNAGE EMBALLAGE" value="11 PAL - ILOT PETITES SERIES TRONCONNAGE EMBALLAGE" />
+	<item display="15 BRN - LOGISTIQUE - RECEPTION EXPEDITION STOCK MANUTENTION" value="15 BRN - LOGISTIQUE - RECEPTION EXPEDITION STOCK MANUTENTION" />
+	<item display="16 PAL - LOGISTIQUE - RECEPTION EXPEDITION STOCK MANUTENTION" value="16 PAL - LOGISTIQUE - RECEPTION EXPEDITION STOCK MANUTENTION" />
+	<item display="17 VAL - LOGISTIQUE - PLANNING" value="17 VAL - LOGISTIQUE - PLANNING" />
+	<item display="18 VAL - LOGISTIQUE - APPROS" value="18 VAL - LOGISTIQUE - APPROS" />
+	<item display="19 VAL - LOGISTIQUE - BASE DE DONNEES" value="19 VAL - LOGISTIQUE - BASE DE DONNEES" />
+	<item display="20 BRN - MAINTENANCE" value="20 BRN - MAINTENANCE" />
+	<item display="21 PAL - MAINTENANCE" value="21 PAL - MAINTENANCE" />
+	<item display="22 - SOUS-TRAITANT" value="22 - SOUS-TRAITANT" />
+	<item display="Process M1 - Management" value="Process M1 - Management" />
+	<item display="Process C1 - Ventes/ Customer care" value="Process C1 - Ventes/ Customer care" />
+	<item display="Process C2 - R&#38; D" value="Process C2 - R&#38; D" />
+	<item display="Process C3 - Supply chain logistique (réception / planning/ stockage / expédition)" value="Process C3 - Supply chain logistique (réception / planning/ stockage / expédition)" />
+	<item display="Process C3 - Supply chain Achats " value="Process C3 - Supply chain Achats " />
+	<item display="Process C3 - Supply chain Fabrication" value="Process C3 - Supply chain Fabrication" />
+	<item display="Process S1 - Support QA &#38; HSE" value="Process S1 - Support QA &#38; HSE" />
+	<item display="Process S2 - Support RH" value="Process S2 - Support RH" />
+	<item display="Process S3 - Support Finances" value="Process S3 - Support Finances" />
+	<item display="Process S4 - Support Tech service" value="Process S4 - Support Tech service" />
+	<item display="Process S5 - Support Maintenance &#38; travaux neufs" value="Process S5 - Support Maintenance &#38; travaux neufs" />
+	<item display="Process S6 - Support Informatique" value="Process S6 - Support Informatique" />
+</envelope>

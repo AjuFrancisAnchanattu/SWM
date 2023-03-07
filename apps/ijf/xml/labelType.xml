@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8" ?> 
+<envelope>
+	<item display="Scapa" value="scapa" />
+	<item display="Plain" value="plain" />
+	<item display="Customer Specific" value="customer_specific" />
+</envelope>

@@ -1,0 +1,125 @@
+Rorschach	Male	Batic	Elvir	01/01/2005	Monatslohn	Permanent	100	2501510	Fertigung I	Direkte Produktion
+Rorschach	Male	Bislimi	Bujar	01/08/1999	Monatslohn	Permanent	100	2501510	Fertigung I	Direkte Produktion
+Rorschach	Male	Bislimi	Xhelal	22/01/1990	Monatslohn	Permanent	100	2501510	Fertigung I	Direkte Produktion
+Rorschach	Male	Branco	José	01/05/2000	Monatslohn	Permanent	100	2501510	Fertigung I	Direkte Produktion
+Rorschach	Male	Buccarello	Donato	04/06/1984	Monatslohn	Permanent	100	2501510	Fertigung I	Direkte Produktion
+Rorschach	Male	Calabrese	Maurizio	01/02/1999	Monatslohn	Permanent	100	2501510	Fertigung I	Direkte Produktion
+Rorschach	Male	Cicero	Antonino	06/08/1968	Monatslohn	Permanent	100	2501510	Fertigung I	Direkte Produktion
+Rorschach	Male	Durak	Aziz	08/04/1991	Monatslohn	Permanent	100	2501510	Fertigung I	Direkte Produktion
+Rorschach	Male	Faccioli	Lorenzo	01/09/1977	Monatslohn	Permanent	100	2501510	Fertigung I	Direkte Produktion
+Rorschach	Male	Iseni	Sabit	01/06/1995	Monatslohn	Permanent	100	2501510	Fertigung I	Direkte Produktion
+Rorschach	Male	Lidjan	Mevlid	01/10/1989	Monatslohn	Permanent	100	2501510	Fertigung I	Direkte Produktion
+Rorschach	Male	Lucas	Blas	28/05/1984	Monatslohn	Permanent	100	2501510	Fertigung I	Direkte Produktion
+Rorschach	Male	Martini	Mario	01/10/1979	Monatslohn	Permanent	100	2501510	Fertigung I	Direkte Produktion
+Rorschach	Male	Miletic	Milan	01/12/2003	Monatslohn	Permanent	100	2501510	Fertigung I	Direkte Produktion
+Rorschach	Male	Nadarajah	Varatharajan 	06/09/1988	Monatslohn	Permanent	100	2501510	Fertigung I	Direkte Produktion
+Rorschach	Male	Obradovic	Dragoslav	17/04/1989	Monatslohn	Permanent	100	2501510	Fertigung I	Direkte Produktion
+Rorschach	Male	Parmaksiz	Riza	01/05/1990	Monatslohn	Permanent	100	2501510	Fertigung I	Direkte Produktion
+Rorschach	Male	Pekic	Mehmed	27/02/1989	Monatslohn	Permanent	100	2501510	Fertigung I	Direkte Produktion
+Rorschach	Male	Pereira	Nelson Jorge	01/09/2002	Monatslohn	Permanent	100	2501510	Fertigung I	Direkte Produktion
+Rorschach	Male	Peric	Boban	18/09/1989	Monatslohn	Permanent	100	2501510	Fertigung I	Direkte Produktion
+Rorschach	Male	Santiago	Enrique	01/03/1986	Monatslohn	Permanent	100	2501510	Fertigung I	Direkte Produktion
+Rorschach	Male	Sarcevic	Anto	01/11/1994	Monatslohn	Permanent	100	2501510	Fertigung I	Direkte Produktion
+Rorschach	Male	Sarcevic	Marko	01/08/2001	Monatslohn	Permanent	100	2501510	Fertigung I	Direkte Produktion
+Rorschach	Male	Savic	Rade	01/04/1992	Monatslohn	Permanent	100	2501510	Fertigung I	Direkte Produktion
+Rorschach	Male	Varol	Ali	03/09/1984	Monatslohn	Permanent	100	2501510	Fertigung I	Direkte Produktion
+Rorschach	Male	Vasic	Miodrag	01/06/2002	Monatslohn	Permanent	100	2501510	Fertigung I	Direkte Produktion
+Rorschach	Male	Yesil	Oender	01/09/1999	Monatslohn	Permanent	100	2501510	Fertigung I	Direkte Produktion
+Rorschach	Male	Mamir	Alijev	11/04/2006	Stundenlohn	Temp	0 - 100	2501510	Fertigung I	Direkte Produktion
+Rorschach	Female	Gschwend-Bertelli	Claudia	21/10/1984	Monatslohn	Permanent	50	2501520	Fertigung II	Direkte Produktion
+Rorschach	Female	Reichen	Sonja	19/09/1994	Monatslohn	Permanent	75	2501520	Fertigung II	Direkte Produktion
+Rorschach	Male	Abdulahi	Agron	24/10/2001	Monatslohn	Permanent	100	2501520	Fertigung II	Indirekte Produktion
+Rorschach	Male	Akgül	Kanican	01/12/1987	Monatslohn	Permanent	100	2501520	Fertigung II	Direkte Produktion
+Rorschach	Male	Alilovic	Nikola	10/11/1997	Monatslohn	Permanent	100	2501520	Fertigung II	Direkte Produktion
+Rorschach	Female	Andjelkovic 	Slavica	01/10/1990	Monatslohn	Permanent	100	2501520	Fertigung II	Direkte Produktion
+Rorschach	Female	Bognanni	Maria	25/10/1983	Monatslohn	Permanent	100	2501520	Fertigung II	Direkte Produktion
+Rorschach	Male	Borkovic	Goran	01/06/2006	Monatslohn	Permanent	100	2501520	Fertigung II	Direkte Produktion
+Rorschach	Male	Ceylan	Osman	01/10/1992	Monatslohn	Permanent	100	2501520	Fertigung II	Direkte Produktion
+Rorschach	Female	Cirigliano	Carmela	01/05/1973	Monatslohn	Permanent	100	2501520	Fertigung II	Direkte Produktion
+Rorschach	Male	Cirigliano	Vincenzo	02/11/1981	Monatslohn	Permanent	100	2501520	Fertigung II	Direkte Produktion
+Rorschach	Male	Djokic	Milo	01/10/1990	Monatslohn	Permanent	100	2501520	Fertigung II	Direkte Produktion
+Rorschach	Male	Faccioli	Stefano	01/04/1999	Monatslohn	Permanent	100	2501520	Fertigung II	Direkte Produktion
+Rorschach	Male	Grob	Fritz	01/10/1993	Monatslohn	Permanent	100	2501520	Fertigung II	Direkte Produktion
+Rorschach	Male	Hascic	Nazif	01/03/2000	Monatslohn	Permanent	100	2501520	Fertigung II	Direkte Produktion
+Rorschach	Male	Ilgün	Necmi	20/09/1995	Monatslohn	Permanent	100	2501520	Fertigung II	Direkte Produktion
+Rorschach	Male	Kalmis 	Mehmet	01/02/2003	Monatslohn	Permanent	100	2501520	Fertigung II	Direkte Produktion
+Rorschach	Female	Kalmis-Akgün	Hanife	01/02/2002	Monatslohn	Permanent	100	2501520	Fertigung II	Direkte Produktion
+Rorschach	Male	Korkmaz	Beytullah	01/05/1991	Monatslohn	Permanent	100	2501520	Fertigung II	Direkte Produktion
+Rorschach	Female	Lucas	Maria	21/03/1987	Monatslohn	Permanent	100	2501520	Fertigung II	Direkte Produktion
+Rorschach	Female	Mandic	Ruzica	01/06/2006	Monatslohn	Permanent	100	2501520	Fertigung II	Indirekte Produktion
+Rorschach	Female	Mijic	Manda	01/10/1989	Monatslohn	Permanent	100	2501520	Fertigung II	Direkte Produktion
+Rorschach	Male	Novakovic	Sasa	13/08/2001	Monatslohn	Permanent	100	2501520	Fertigung II	Direkte Produktion
+Rorschach	Male	Paradzik	Mijo	01/09/2002	Monatslohn	Permanent	100	2501520	Fertigung II	Direkte Produktion
+Rorschach	Male	Paunkovic	Dragan	08/09/1981	Monatslohn	Permanent	100	2501520	Fertigung II	Direkte Produktion
+Rorschach	Female	Paunkovic	Slavica	04/03/1985	Monatslohn	Permanent	100	2501520	Fertigung II	Direkte Produktion
+Rorschach	Male	Peric	Nikola	20/02/1991	Monatslohn	Permanent	100	2501520	Fertigung II	Direkte Produktion
+Rorschach	Male	Sarcevic	Filip	01/04/1989	Monatslohn	Permanent	100	2501520	Fertigung II	Direkte Produktion
+Rorschach	Female	Sarcevic	Ika	06/10/1988	Monatslohn	Permanent	100	2501520	Fertigung II	Direkte Produktion
+Rorschach	Male	Sinnaiah	Sivakumaran	27/08/1990	Monatslohn	Permanent	100	2501520	Fertigung II	Direkte Produktion
+Rorschach	Male	Sisljagic	Branislav	01/12/2005	Monatslohn	Permanent	100	2501520	Fertigung II	Direkte Produktion
+Rorschach	Female	Trajkovic	Milica	01/08/1990	Monatslohn	Permanent	100	2501520	Fertigung II	Direkte Produktion
+Rorschach	Female	Varol	Sevcan	21/03/1987	Monatslohn	Permanent	100	2501520	Fertigung II	Direkte Produktion
+Rorschach	Male	Veerakathy	Sivarajah	06/09/1990	Monatslohn	Permanent	100	2501520	Fertigung II	Direkte Produktion
+Rorschach	Male	Yavuz	Ismail	02/01/1980	Monatslohn	Permanent	100	2501520	Fertigung II	Direkte Produktion
+Rorschach	Female	Buccarello	Sabrina	01/06/2006	Stundenlohn	Permanent	100	2501520	Fertigung II	Direkte Produktion
+Rorschach	Male	Delic	Amel	15/05/2006	Stundenlohn	Temp	0 - 100	2501520	Fertigung II	Direkte Produktion
+Rorschach	Male	Djokic	Lazar	21/09/2005	Stundenlohn	Temp	0 - 100	2501520	Fertigung II	Direkte Produktion
+Rorschach	Male	Iseni	Arsim	20/03/2006	Stundenlohn	Temp	0 - 100	2501520	Fertigung II	Direkte Produktion
+Rorschach	Male	Kololli	Adem	16/05/2006	Stundenlohn	Temp	0 - 100	2501520	Fertigung II	Direkte Produktion
+Rorschach	Female	Sarac	Meryem	20/03/2006	Stundenlohn	Temp	0 - 100	2501520	Fertigung II	Direkte Produktion
+Rorschach	Male	Savci	Ahmed	16/05/2006	Stundenlohn	Temp	0 - 100	2501520	Fertigung II	Direkte Produktion
+Rorschach	Male	Simovic	Milika	20/03/2006	Stundenlohn	Temp	0 - 100	2501520	Fertigung II	Direkte Produktion
+Rorschach	Female	Suvajac-Knezevic	Zorica	07/06/2006	Stundenlohn	Temp	0 - 100	2501520	Fertigung II	Direkte Produktion
+Rorschach	Female	Topsakal	Arzu	27/02/2006	Stundenlohn	Temp	0 - 100	2501520	Fertigung II	Direkte Produktion
+Rorschach	Male	Brunner	Heinz	01/02/2005	Monatslohn	Permanent	100	2501600	Produktionsleitung	Indirekte Produktion
+Rorschach	Male	Koller	Markus	01/08/2005	Monatslohn	Permanent	100	2501600	Produktionsleitung	Indirekte Produktion
+Rorschach	Male	Melbinger	Emanuel	01/06/2006	Monatslohn	Permanent	100	2501600	Produktionsleitung	Indirekte Produktion
+Rorschach	Male	Oertli	Kurt	01/02/1994	Monatslohn	Permanent	100	2501600	Produktionsleitung	Indirekte Produktion
+Rorschach	Male	Fattoruso	Francesco	01/11/2005	Monatslohn	Permanent	100	2501675	Verfahrenstechnik	Indirekte Produktion
+Rorschach	Male	Sägewitz	Eberhard	01/02/2004	Monatslohn	Permanent	100	2501675	Verfahrenstechnik	Direkte Produktion
+Rorschach	Male	Blum 	Helmut	01/06/1990	Monatslohn	Permanent	100	2501677	Mech. Werkstatt	Indirekte Produktion
+Rorschach	Male	Bort	Franco	19/03/1991	Monatslohn	Permanent	100	2501677	Mech. Werkstatt	Indirekte Produktion	
+Rorschach	Male	Tsegaye	Asrat	27/02/1989	Monatslohn	Permanent	100	2501677	Mech. Werkstatt	Indirekte Produktion	
+Rorschach	Male	Öcal	Hüseyin	17/05/2005	Monatslohn	Permanent	100	2501678	Elektro Werkstatt	Indirekte Produktion	
+Rorschach	Female	Bassanello	Nicole	01/04/1994	Monatslohn	Permanent	100	2501680	Qualitätssicherung	Indirekte Produktion	
+Rorschach	Female	Sarac	Sevgi	01/09/2005	Monatslohn	Permanent	100	2501680	Qualitätssicherung	Indirekte Produktion	
+Rorschach	Male	Schneider	Arwed	01/11/2001	Monatslohn	Permanent	100	2501680	Qualitätssicherung	Entwicklung	
+Rorschach	Female	Coulton	Patricia	01/02/2002	Monatslohn	Permanent	92.5	2501682	UMS /QM	Distribution	
+Rorschach	Male	Aldemir	Jan	01/01/1990	Monatslohn	Permanent	100	2501682	UMS /QM	Indirekte Produktion	
+Rorschach	Male	Bernardi 	Armando	14/08/2000	Monatslohn	Permanent	100	2501700	Planung	Indirekte Produktion	
+Rorschach	Female	Obrist-Niederer	Susanne	08/05/2006	Monatslohn	Permanent	100	2501700	Planung	Administration	
+Rorschach	Male	Rauh	Ingo	01/10/2003	Monatslohn	Permanent	100	2501700	Planung	Distribution	Firmenauto
+Rorschach	Male	Ryser	Ernst	01/07/2006	Monatslohn	Permanent	100	2501700	Planung	Indirekte Produktion	
+Rorschach	Male	Weber	François	01/03/2002	Monatslohn	Permanent	100	2501700	Planung	Indirekte Produktion	
+Rorschach	Male	D'Agaro	Roger	01/10/2004	Monatslohn	Permanent	100	2501710	Einkauf	Administration	
+Rorschach	Male	Emini	Gazmend	11/10/1999	Monatslohn	Permanent	100	2501720	Roh-/Verpackmateriallager	Lager	
+Rorschach	Male	Rankic	Slavisa	01/07/2000	Monatslohn	Permanent	100	2501722	Jumbolager	Lager	
+Rorschach	Male	Carlucci	Martino	11/03/1963	Monatslohn	Permanent	100	2501723	Fertigwarenlager	Lager	
+Rorschach	Male	Papageorgiou	Apostolos	01/01/2000	Monatslohn	Permanent	100	2501723	Fertigwarenlager	Lager	
+Rorschach	Male	Prasciolu	Efisio	14/04/1969	Monatslohn	Permanent	100	2501723	Fertigwarenlager	Lager	
+Rorschach	Female	Mallia-Castillo	Monica	06/08/1990	Monatslohn	Permanent	30	2501760	Spedition	Distribution	
+Rorschach	Female	Graf	Marlen	01/11/2000	Monatslohn	Permanent	100	2501760	Spedition	Distribution	
+Rorschach	Male	Vogel	Fritz	01/01/1996	Monatslohn	Permanent	100	2501761	Rüsten Versand	Distribution	
+Rorschach	Male	Widmer	Jérôme	14/08/2000	Monatslohn	Permanent	100	2501761	Rüsten Versand	Distribution	
+Rorschach	Male	Ajdari	Abdulhalim	01/03/2000	Monatslohn	Permanent	100	2501900	Entwicklung	Direkte Produktion	
+Rorschach	Male	Allenspach	Eric	15/11/2004	Monatslohn	Permanent	100	2501900	Entwicklung	Administration	
+Rorschach	Male	Carvalho	Arlindo	01/09/1996	Monatslohn	Permanent	100	2501900	Entwicklung	Entwicklung	
+Rorschach	Male	Grapotte	David	01/04/2006	Monatslohn	Permanent	100	2501900	Entwicklung	Entwicklung	
+Rorschach	Female	Launay	Béatrice	01/06/2004	Monatslohn	Permanent	100	2501900	Entwicklung	Entwicklung	
+Rorschach	Male	Wullschleger	Marcel	26/06/2006	Monatslohn	Permanent	100	2501900	Entwicklung	Entwicklung	
+Rorschach	Female	Armani	Dolores	01/08/2004	Monatslohn	Permanent	100	2501920	Personalwesen	Administration	
+Rorschach	Female	Bollmann-Grasser	Daniela	01/07/2004	Monatslohn	Permanent	100	2501920	Personalwesen	Administration	Firmenauto
+Rorschach	Female	Monaci-Cipriano	Fabiola	01/04/2005	Monatslohn	Permanent	100	2501920	Personalwesen	Administration	
+Rorschach	Female	Fässler	Katja 	11/08/2003	Monatslohn	Permanent	100	2501921	Lehrlinge	Administration	
+Rorschach	Female	Kandiah	Shoruba	15/08/2005	Monatslohn	Permanent	100	2501921	Lehrlinge	Administration	
+Rorschach	Male	Peronespolo	Pasquale	15/08/2005	Monatslohn	Permanent	100	2501921	Lehrlinge	Administration	
+Rorschach	Male	Re	Damiano 	11/08/2003	Monatslohn	Permanent	100	2501921	Lehrlinge	Administration	
+Rorschach	Male	Tassone	Daniele	09/08/2004	Monatslohn	Permanent	100	2501921	Lehrlinge	Administration	
+Rorschach	Female	Volas	Dijana	09/08/2004	Monatslohn	Permanent	100	2501921	Lehrlinge	Administration	
+Rorschach	Female	Caluori	Franziska	09/08/1999	Monatslohn	Permanent	100	2501940	Finanz und Rechnungswesen	Administration	
+Rorschach	Female	Cardili	Licia	01/12/2002	Monatslohn	Permanent	100	2501940	Finanz und Rechnungswesen	Administration	
+Rorschach	Male	Pellegrino	Sandro	01/06/2004	Monatslohn	Permanent	100	2501940	Finanz und Rechnungswesen	Administration	Firmenauto
+Rorschach	Male	Rudi	Javier	21/04/1986	Monatslohn	Permanent	100	2501940	Finanz und Rechnungswesen	Administration	
+Rorschach	Male	Schuster	Peter	06/03/2006	Monatslohn	Permanent	100	2501940	Finanz und Rechnungswesen	Administration	
+Rorschach	Male	Spaeth	Alexander	01/03/1993	Monatslohn	Permanent	100	2542800	Verkauf Aussend. Construction	Verkauf	
+Rorschach	Male	Unterfinger	Marvin	12/08/2005	Monatslohn	Permanent	100	2559820	Customer Service	Administration	

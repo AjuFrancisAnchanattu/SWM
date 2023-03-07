@@ -1,0 +1,33 @@
+<refentry id="{@id}">
+ <refnamediv>
+  <refname>Technology behind the Intranet</refname>
+  <para>ooh</para>
+ </refnamediv>
+  <refsect1 id="{@id linux}">
+   <title>Linux</title>
+  </refsect1>
+  <refsect1 id="{@id php}">
+   <title>PHP</title>
+  </refsect1>
+  <refsect1 id="{@id xslt}">
+   <title>MYSQL</title>
+  </refsect1>
+  <refsect1 id="{@id xslt}">
+   <title>XSLT</title>
+  </refsect1>
+  <refsect1 id="{@id xml}">
+   <title>XML</title>
+  </refsect1>
+  <refsect1 id="{@id framework}">
+   <title>Scapa Intranet Framework</title>
+    <refsect2 id="{@id structure}">
+     <title>Structure</title>
+    </refsect2>
+    <refsect2 id="{@id controls}">
+     <title>Controls</title>
+    </refsect2>
+    <refsect2 id="{@id snapins}">
+     <title>Snapins</title>
+    </refsect2>
+  </refsect1>
+</refentry>

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<menu>
+	<item title="Home" url="/apps/ccr/" />
+	<item title="New Report" url="/apps/ccr/add?" />
+	<item title="Offline Report" url="/apps/ccr/offline?" />
+	<item title="Search" url="/apps/ccr/search?" />
+	<item title="Help" url="/apps/ccr/help?" perms="ccr_admin" />
+</menu>

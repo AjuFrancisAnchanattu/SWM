@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<menu>
+	<item title="home" url="/home/" />
+	<!--<item title="help" url="/apps/help" />-->
+	<!--<item title="Your Details" url="/home/details?" />-->
+</menu>

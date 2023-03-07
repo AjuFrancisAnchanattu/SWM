@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<envelope>
+	<item display="AD - Andorra" value="AD" />
+	<item display="AE - Utd.Arab Emir." value="AE" />
+	<item display="AF - Afghanistan" value="AF" />
+	<item display="AG - Antigua/Barbuda" value="AG" />
+	<item display="AI - Anguilla" value="AI" />
+	<item display="AL - Albania" value="AL" />
+	<item display="AM - Armenia" value="AM" />
+	<item display="AN - Dutch Antilles" value="AN" />
+	<item display="AO - Angola" value="AO" />
+	<item display="AQ - Antarctica" value="AQ" />
+	<item display="AR - Argentina" value="AR" />
+	<item display="AS - Samoa, American" value="AS" />
+	<item display="AT - Austria" value="AT" />
+	<item display="AU - Australia" value="AU" />
+	<item display="AW - Aruba" value="AW" />
+	<item display="AZ - Azerbaijan" value="AZ" />
+	<item display="BA - Bosnia-Herz." value="BA" />
+	<item display="BB - Barbados" value="BB" />
+	<item display="BD - Bangladesh" value="BD" />
+	<item display="BE - Belgium" value="BE" />
+	<item display="BF - Burkina-Faso" value="BF" />
+	<item display="BG - Bulgaria" value="BG" />
+	<item display="BH - Bahrain" value="BH" />
+	<item display="BI - Burundi" value="BI" />
+	<item display="BJ - Benin" value="BJ" />
+	<item display="BM - Bermuda" value="BM" />
+	<item display="BN - Brunei Dar-es-S" value="BN" />
+	<item display="BO - Bolivia" value="BO" />
+	<item display="BR - Brazil" value="BR" />
+	<item display="BS - Bahamas" value="BS" />
+	<item display="BT - Bhutan" value="BT" />
+	<item display="BV - Bouvet Island" value="BV" />
+	<item display="BW - Botswana" value="BW" />
+	<item display="BY - White Russia" value="BY" />
+	<item display="BZ - Belize" value="BZ" />
+	<item display="CA - Canada" value="CA" />
+	<item display="CC - Coconut Islands" value="CC" />
+	<item display="CD - Congo" value="CD" />
+	<item display="CF - Central Afr.Rep" value="CF" />
+	<item display="CG - Congo" value="CG" />
+	<item display="CH - Switzerland" value="CH" />
+	<item display="CI - Ivory Coast" value="CI" />
+	<item display="CK - Cook Islands" value="CK" />
+	<item display="CL - Chile" value="CL" />
+	<item display="CM - Cameroon" value="CM" />
+	<item display="CN - China" value="CN" />
+	<item display="CO - Colombia" value="CO" />
+	<item display="CR - Costa Rica" value="CR" />
+	<item display="CU - Cuba" value="CU" />
+	<item display="CV - Cape Verde" value="CV" />
+	<item display="CX - Christmas Islnd" value="CX" />
+	<item display="CY - Cyprus" value="CY" />
+	<item display="CZ - Czech Republic" value="CZ" />
+	<item display="DE - Germany" value="DE" />
+	<item display="DJ - Djibouti" value="DJ" />
+	<item display="DK - Denmark" value="DK" />
+	<item display="DM - Dominica" value="DM" />
+	<item display="DO - Dominican Rep." value="DO" />
+	<item display="DZ - Algeria" value="DZ" />
+	<item display="EC - Ecuador" value="EC" />
+	<item display="EE - Estonia" value="EE" />
+	<item display="EG - Egypt" value="EG" />
+	<item display="EH - West Sahara" value="EH" />
+	<item display="ER - Eritrea" value="ER" />
+	<item display="ES - Spain" value="ES" />
+	<item display="ET - Ethiopia" value="ET" />
+	<item display="FI - Finland" value="FI" />
+	<item display="FJ - Fiji" value="FJ" />
+	<item display="FK - Falkland Islnds" value="FK" />
+	<item display="FM - Micronesia" value="FM" />
+	<item display="FO - Faroe Islands" value="FO" />
+	<item display="FR - France" value="FR" />
+	<item display="G1 - Guernsey" value="G1" />
+	<item display="GA - Gabon" value="GA" />
+	<item display="GB - United Kingdom" value="GB" />
+	<item display="GD - Grenada" value="GD" />
+	<item display="GE - Georgia" value="GE" />
+	<item display="GF - French Guayana" value="GF" />
+	<item display="GH - Ghana" value="GH" />
+	<item display="GI - Gibraltar" value="GI" />
+	<item display="GL - Greenland" value="GL" />
+	<item display="GM - Gambia" value="GM" />
+	<item display="GN - Guinea" value="GN" />
+	<item display="GP - Guadeloupe" value="GP" />
+	<item display="GQ - Equatorial Gui." value="GQ" />
+	<item display="GR - Greece" value="GR" />
+	<item display="GS - S. Sandwich Ins" value="GS" />
+	<item display="GT - Guatemala" value="GT" />
+	<item display="GU - Guam" value="GU" />
+	<item display="GW - Guinea-Bissau" value="GW" />
+	<item display="GY - Guyana" value="GY" />
+	<item display="HK - Hong Kong" value="HK" />
+	<item display="HM - Heard/McDon.Isl" value="HM" />
+	<item display="HN - Honduras" value="HN" />
+	<item display="HR - Croatia" value="HR" />
+	<item display="HT - Haiti" value="HT" />
+	<item display="HU - Hungary" value="HU" />
+	<item display="IC - Canary Islands" value="IC" />
+	<item display="ID - Indonesia" value="ID" />
+	<item display="IE - Ireland" value="IE" />
+	<item display="IL - Israel" value="IL" />
+	<item display="IN - India" value="IN" />
+	<item display="IO - Brit.Ind.Oc.Ter" value="IO" />
+	<item display="IQ - Iraq" value="IQ" />
+	<item display="IR - Iran" value="IR" />
+	<item display="IS - Iceland" value="IS" />
+	<item display="IT - Italy" value="IT" />
+	<item display="J1 - Jersey" value="J1" />
+	<item display="JM - Jamaica" value="JM" />
+	<item display="JO - Jordan" value="JO" />
+	<item display="JP - Japan" value="JP" />
+	<item display="KE - Kenya" value="KE" />
+	<item display="KG - Kyrgyzstan" value="KG" />
+	<item display="KH - Cambodia" value="KH" />
+	<item display="KI - Kiribati" value="KI" />
+	<item display="KM - Comoros" value="KM" />
+	<item display="KN - St Kitts &amp; Nevis" value="KN" />
+	<item display="KP - North Korea" value="KP" />
+	<item display="KR - South Korea" value="KR" />
+	<item display="KW - Kuwait" value="KW" />
+	<item display="KY - Cayman Islands" value="KY" />
+	<item display="KZ - Kazakhstan" value="KZ" />
+	<item display="LA - Laos" value="LA" />
+	<item display="LB - Lebanon" value="LB" />
+	<item display="LC - St. Lucia" value="LC" />
+	<item display="LI - Liechtenstein" value="LI" />
+	<item display="LK - Sri Lanka" value="LK" />
+	<item display="LR - Liberia" value="LR" />
+	<item display="LS - Lesotho" value="LS" />
+	<item display="LT - Lithuania" value="LT" />
+	<item display="LU - Luxembourg" value="LU" />
+	<item display="LV - Latvia" value="LV" />
+	<item display="LY - Libya" value="LY" />
+	<item display="MA - Morocco" value="MA" />
+	<item display="MC - Monaco" value="MC" />
+	<item display="MD - Moldavia" value="MD" />
+	<item display="MG - Madagascar" value="MG" />
+	<item display="MH - Marshall Islnds" value="MH" />
+	<item display="MK - Macedonia" value="MK" />
+	<item display="ML - Mali" value="ML" />
+	<item display="MM - Myanmar" value="MM" />
+	<item display="MN - Mongolia" value="MN" />
+	<item display="MO - Macau" value="MO" />
+	<item display="MP - N.Mariana Islnd" value="MP" />
+	<item display="MQ - Martinique" value="MQ" />
+	<item display="MR - Mauretania" value="MR" />
+	<item display="MS - Montserrat" value="MS" />
+	<item display="MT - Malta" value="MT" />
+	<item display="MU - Mauritius" value="MU" />
+	<item display="MV - Maldives" value="MV" />
+	<item display="MW - Malawi" value="MW" />
+	<item display="MX - Mexico" value="MX" />
+	<item display="MY - Malaysia" value="MY" />
+	<item display="MZ - Mozambique" value="MZ" />
+	<item display="NA - Namibia" value="NA" />
+	<item display="NC - New Caledonia" value="NC" />
+	<item display="NE - Niger" value="NE" />
+	<item display="NF - Norfolk Island" value="NF" />
+	<item display="NG - Nigeria" value="NG" />
+	<item display="NI - Nicaragua" value="NI" />
+	<item display="NL - Netherlands" value="NL" />
+	<item display="NO - Norway" value="NO" />
+	<item display="NP - Nepal" value="NP" />
+	<item display="NR - Nauru" value="NR" />
+	<item display="NU - Niue Islands" value="NU" />
+	<item display="NZ - New Zealand" value="NZ" />
+	<item display="OM - Oman" value="OM" />
+	<item display="PA - Panama" value="PA" />
+	<item display="PE - Peru" value="PE" />
+	<item display="PF - Frenc.Polynesia" value="PF" />
+	<item display="PG - Papua Nw Guinea" value="PG" />
+	<item display="PH - Philippines" value="PH" />
+	<item display="PK - Pakistan" value="PK" />
+	<item display="PL - Poland" value="PL" />
+	<item display="PM - St.Pier,Miquel." value="PM" />
+	<item display="PN - Pitcairn Islnds" value="PN" />
+	<item display="PR - Puerto Rico" value="PR" />
+	<item display="PS - Palestine" value="PS" />
+	<item display="PT - Portugal" value="PT" />
+	<item display="PW - Palau" value="PW" />
+	<item display="PY - Paraguay" value="PY" />
+	<item display="QA - Qatar" value="QA" />
+	<item display="RE - Reunion" value="RE" />
+	<item display="RO - Rumania" value="RO" />
+	<item display="RU - Russian Fed." value="RU" />
+	<item display="RW - Ruanda" value="RW" />
+	<item display="SA - Saudi Arabia" value="SA" />
+	<item display="SB - Solomon Islands" value="SB" />
+	<item display="SC - Seychelles" value="SC" />
+	<item display="SD - Sudan" value="SD" />
+	<item display="SE - Sweden" value="SE" />
+	<item display="SG - Singapore" value="SG" />
+	<item display="SH - St. Helena" value="SH" />
+	<item display="SI - Slovenia" value="SI" />
+	<item display="SJ - Svalbard" value="SJ" />
+	<item display="SK - Slovakia" value="SK" />
+	<item display="SL - Sierra Leone" value="SL" />
+	<item display="SM - San Marino" value="SM" />
+	<item display="SN - Senegal" value="SN" />
+	<item display="SO - Somalia" value="SO" />
+	<item display="SR - Suriname" value="SR" />
+	<item display="ST - S.Tome,Principe" value="ST" />
+	<item display="SV - El Salvador" value="SV" />
+	<item display="SY - Syria" value="SY" />
+	<item display="SZ - Swaziland" value="SZ" />
+	<item display="TC - Turksh Caicosin" value="TC" />
+	<item display="TD - Chad" value="TD" />
+	<item display="TF - French S.Territ" value="TF" />
+	<item display="TG - Togo" value="TG" />
+	<item display="TH - Thailand" value="TH" />
+	<item display="TJ - Tajikstan" value="TJ" />
+	<item display="TK - Tokelau Islands" value="TK" />
+	<item display="TM - Turkmenistan" value="TM" />
+	<item display="TN - Tunisia" value="TN" />
+	<item display="TO - Tonga" value="TO" />
+	<item display="TP - East Timor" value="TP" />
+	<item display="TR - Turkey" value="TR" />
+	<item display="TT - Trinidad,Tobago" value="TT" />
+	<item display="TV - Tuvalu" value="TV" />
+	<item display="TW - Taiwan" value="TW" />
+	<item display="TZ - Tanzania" value="TZ" />
+	<item display="UA - Ukraine" value="UA" />
+	<item display="UG - Uganda" value="UG" />
+	<item display="UM - Minor Outl.Ins." value="UM" />
+	<item display="US - USA" value="US" />
+	<item display="UY - Uruguay" value="UY" />
+	<item display="UZ - Uzbekistan" value="UZ" />
+	<item display="VA - Vatican City" value="VA" />
+	<item display="VC - St. Vincent" value="VC" />
+	<item display="VE - Venezuela" value="VE" />
+	<item display="VG - Brit.Virgin Is." value="VG" />
+	<item display="VI - Amer.Virgin Is." value="VI" />
+	<item display="VN - Vietnam" value="VN" />
+	<item display="VU - Vanuatu" value="VU" />
+	<item display="WF - Wallis,Futuna" value="WF" />
+	<item display="WS - Western Samoa" value="WS" />
+	<item display="YE - Yemen" value="YE" />
+	<item display="YT - Mayotte" value="YT" />
+	<item display="YU - Yugoslavia" value="YU" />
+	<item display="ZA - South Africa" value="ZA" />
+	<item display="ZM - Zambia" value="ZM" />
+	<item display="ZW - Zimbabwe" value="ZW" />
+
+
+</envelope>

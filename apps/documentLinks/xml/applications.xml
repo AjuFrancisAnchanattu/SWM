@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" ?> 
+<envelope>
+	<item display="Rebates" value="rebates" />
+	<item display="Complaints" value="complaints" />
+	<item display="CCR" value="ccr" />
+	<item display="Slobs" value="slobs" />
+	<item display="Technical" value="technical" />
+	<item display="GNPI" value="npi" />
+	<item display="IJF" value="ijf" />
+	<item display="Pricing" value="pricing" />
+	<item display="Support" value="support" />
+	<item display="Complaints External" value="complaintsExternal" />
+	<item display="Product DB" value="productdb" />
+	<item display="GIS" value="gis" />
+	<item display="Appraisal" value="appraisal" />
+	<item display="Usermanager" value="usermanager" />
+	<item display="Video" value="video" />
+	<item display="Gallery" value="gallery" />
+	<item display="Organisational Chart" value="orgChart" />
+</envelope>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8" ?> 
+<envelope>
+	<item display="Carton" value="carton" />
+	<item display="Crate" value="crate" />
+	<item display="Log Box" value="log_box" />
+	<item display="Stacked and Strapped on Pallets" value="stacked_and_strapped_on_pallets" />
+	<item display="Bulk Pack" value="bulk_pack" />
+	<item display="Skillets" value="skillets" />
+	<item display="Tubes" value="tubes" />
+	<item display="Bags" value="bags" />
+</envelope>

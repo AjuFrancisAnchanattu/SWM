@@ -1,0 +1,100 @@
+@CHARSET "ISO-8859-1";
+.currencyPopupLink
+{
+	float: right;
+}
+
+.currencyPopupLink:hover
+{
+	cursor: hand;
+}
+
+.attachmentFile
+{
+	background-repeat:no-repeat; 
+	background-position:0px 1px; 
+	padding-left: 16px;
+	margin-bottom: 3px;
+	background-image: url('../../../../images/ccr/attachment.png');
+}
+
+.invoiceRow
+{
+	border: #666666 1px solid;
+	background: #efefef;
+	margin-top: 1px;
+}
+
+.toggleDetailsLink
+{
+	padding: 2px;
+	display: block;
+	height:  17px;
+}
+
+.toggleDetailsLink a
+{
+	display: block; 
+	float: left;
+	text-decoration: none;
+	
+}
+
+
+.matToggle {
+	
+
+}
+
+.invoiceRow hr {
+	color: #888;	
+	width: 20%;
+	text-align: center;
+}
+
+
+.invoiceTable td.invoiceData_data, td.invoiceData_title {
+	padding: 3px;
+}
+
+.invoiceTable td.darker {
+	background: #ddd;
+}
+
+table.invoiceTable, table.invoiceTable tr, table.invoiceTable th, table.invoiceTable td
+{
+	margin: 0;
+	padding: 0;
+	border: 0;
+	font-weight: inherit;
+	font-style: inherit;
+	font-size: 8pt;
+	line-height: 1.2;
+	font-family: inherit;
+	text-align: left;
+	vertical-align: baseline;
+}
+
+div.invoiceDiv
+{
+	margin: 5px;
+	text-align: left;
+}
+
+.invoiceTable
+{
+	border-collapse: collapse;
+	border-spacing: 0;
+	background: #EFEFEF;
+	text-align: left;
+	border: 1px solid #aaa;
+	margin: 8px 0 8px 0;
+	width: 100%;
+}
+
+.invoiceTable td
+{
+	background: #EFEFEF;
+	padding: 5px 5px;
+	border: none;
+}

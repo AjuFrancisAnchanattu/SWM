@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<envelope>
+	<item value="AUD" />
+	<item value="CAD" />	
+	<item value="CHF" />
+	<item value="EUR" />
+	<item value="GBP" />
+	<item value="NOK" />
+	<item value="NZD" />
+	<item value="SEK" />
+	<item value="USD" />
+</envelope>

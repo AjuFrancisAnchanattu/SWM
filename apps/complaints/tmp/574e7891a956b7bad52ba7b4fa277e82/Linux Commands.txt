@@ -1,0 +1,8 @@
+Check eth Speed
+
+ethtool ewth0 | grep -i speed
+
+tail -f /var/log/httpd/
+
+RewriteEngine On
+RewriteRule ^([^\.]+)?$ /var/www/vhosts/scapa.com/subdomains/ext/httpdocs/urlhandler.php?$1

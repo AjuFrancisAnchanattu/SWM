@@ -1,0 +1,67 @@
+@CHARSET "ISO-8859-1";
+#authoriseGoodsReturn
+{
+	position: fixed;
+	right: 37px;
+	left: 339px;
+	bottom: 0px;
+	height: 150px;
+	border: 2px red ridge;
+}
+.ie-margin-fix
+{
+	margin: 0px 10px 0px 10px;
+}
+#authoriseGoodsReturn_left
+{
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	font-size: 1.035em;
+	margin: 5px 0px;
+	padding: 5px 0px;
+	width: 50%;
+	height: 130px;
+	border-right: 1px #333333 dotted;
+}
+#authoriseGoodsReturn_left span
+{
+	font-weight: bolder;
+}
+#authoriseGoodsReturn_left li 
+{
+	padding: 0px;
+	margin: 5px 0px;
+}
+#authoriseGoodsReturn_left ul 
+{
+	list-style: square;
+	list-style-position: inside;
+	margin: 5px;
+}
+#authoriseGoodsReturn_right
+{
+	position: absolute;
+	top: 0px;
+	right: 0px;
+	font-size: 1.035em;
+	margin: 5px 0px;
+	padding: 5px 0px;
+	width: 50%;
+	height: 130px;
+}
+#authoriseGoodsReturn_right p
+{
+	margin: 0px;
+	margin-bottom: 5px;
+	padding: 0px;
+	font-weight: bolder;
+}
+#authoriseGoodsReturn_notes
+{
+	width: 75%;
+	height: 50%;
+	margin: 0px;
+	margin-bottom: 5px;
+	padding: 0px;
+}

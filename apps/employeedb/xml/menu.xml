@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<menu>
+	<item title="Home" url="/apps/employeedb/" />
+	<item title="New Employee" url="/apps/employeedb/add?" permission="admin,employeedb_global,employeedb_personal_details" />
+	<item title="New Entry" url="/apps/employeedb/entry?" permission="admin,employeedb_global,employeedb_personal_details" />
+	<item title="Leaver" url="/apps/employeedb/leaver?" permission="admin,employeedb_global,employeedb_personal_details" />
+	<item title="Search" url="/apps/employeedb/search?" />
+</menu>

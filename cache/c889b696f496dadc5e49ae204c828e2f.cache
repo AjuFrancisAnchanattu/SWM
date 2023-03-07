@@ -1,0 +1,11 @@
+a:2:{s:4:"date";i:1654932636;s:4:"data";s:502:"<?xml version="1.0" encoding="utf-8" ?> 
+<envelope>
+	<item display="Automotive" value="automotive" />	
+	<item display="Cable" value="cable" />
+	<item display="Construction" value="construction" />
+	<item display="Industrial Assembly" value="industrial_assembly" />
+	<item display="Interco" value="interco" />
+	<item display="Medical" value="medical" />
+	<item display="Printing and Graphics" value="printing_and_graphics" />
+	<item display="Sports and Leisure" value="sports_and_leisure" />
+</envelope>";}

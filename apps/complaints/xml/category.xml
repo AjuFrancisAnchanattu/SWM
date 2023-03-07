@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8" ?> 
+<envelope>
+	<item display="C1 Missed due date forwarder responsibility" value="C1 Missed due date forwarder responsibility" />
+	<item display="C2 Delivery address error forwarder" value="C2 Delivery address error forwarder" />
+	<item display="C3 Short/Over delivered forwarder" value="C3 Short/Over delivered forwarder" />
+	<item display="C4 Damaged in transit" value="C4 Damaged in transit" />
+	<item display="C5 Lost documents" value="C5 Lost documents" />
+	<item display="C6 Lost in transit" value="C6 Lost in transit" />
+	
+	<item display="D1 Does not meet specification" value="D1 Does not meet specification" />
+	<item display="D2 New product launch failure" value="D2 New product launch failure" />
+	<item display="D3 Incorrect application specification(Scapa)" value="D3 Incorrect application specification(Scapa)" />
+	<item display="D4 Does not meet functional use" value="D4 Does not meet functional use" />
+	<item display="D5 Incorrect application specification distributor" value="D5 Incorrect application specification distributor" />
+	<item display="D6 Poor quality or design of packaging" value="D6 Poor quality or design of packaging" />
+	
+	<item display="M1 Does not meet specification product quality" value="M1 Does not meet specification product quality" />
+	<item display="M2 Incorrect qty or labelling in/on box/carton" value="M2 Incorrect qty or labelling in/on box/carton" />
+	<item display="M3 Contamination" value="M3 Contamination" />
+	<item display="M4 Presentation in box including samples" value="M4 Presentation in box including samples" />
+	<item display="M5 Supplier error" value="M5 Supplier error" />
+	<item display="M6 Missed due date planning process" value="M6 Missed due date planning process" />
+	<item display="M7 Supplier Error (Service)" value="M7 Supplier Error (Service)" />
+	
+	<item display="O1 Date input error" value="O1 Date input error" />
+	<item display="O2 Incorrect item or part number" value="O2 Incorrect item or part number" />
+	<item display="O3 Incorrect quantity" value="O3 Incorrect quantity" />
+	<item display="O4 Incorrect carriage cost" value="O4 Incorrect carriage cost" />
+	<item display="O5 Accounts error" value="O5 Accounts error" />
+	<item display="O6 Delivery address error" value="O6 Delivery address error" />
+	<item display="O7 Incorrect customer code/name" value="O7 Incorrect customer code/name" />
+	<item display="O8 Duplication of order" value="O8 Duplication of order" />
+	
+	<item display="P1 Miscommunication of agreed price by sales" value="P1 Miscommunication of agreed price by sales" />
+	<item display="P2 Pricing data input error" value="P2 Pricing data input error" />
+	<item display="P3 Price discrepency not noticed at order entry level" value="P3 Price discrepency not noticed at order entry level" />
+	<item display="P4 Order not blocked  whilst price query resolved" value="P4 Order not blocked  whilst price query resolved" />
+	<item display="P5 Pricing record up-dated, but new price not up-dated in order" value="P5 ricing record up-dated, but new price not up-dated in order" />
+	<item display="P6 Price communicated by sales but pricing record not up-dated in time" value="P6 Price communicated by sales but pricing record not up-dated in time" />
+	<item display="P7 Quotation details not copiwed through the order" value="P7 Quotation details not copiwed through the order" />
+	<item display="P8 Pricing other (specify reason in CN text)" value="P8 Pricing other (specify reason in CN text)" />
+	<item display="P9 Group pricing issue (Draka, Pirelli)" value="P9 Group pricing issue (Draka, Pirelli)" />
+	
+	<item display="S1 Customer error" value="S1 Customer error" />
+	<item display="S2 Responsible goodwill" value="S2 Responsible goodwill" />
+	<item display="S3 Advanced delivery/date of payment postponed" value="S3 Advanced delivery/date of payment postponed" />
+	<item display="S4 Special transport cost" value="S4 Special transport cost" />
+	<item display="S5 Customer/Agent mistake" value="S5 Customer/Agent mistake" />	
+	
+	<item display="W1 Wrong product despatched" value="W1 Wrong product despatched" />
+	<item display="W2 Damaged goods warehouse error" value="W2 Damaged goods warehouse error" />
+	<item display="W3 Incorrect labelling final product" value="W3 Incorrect labelling final product" />
+	<item display="W4 Wrong qty despatched" value="W4 Wrong qty despatched" />
+	<item display="W5 Packaging poor/wrong" value="W5 Packaging poor/wrong" />	
+	<item display="W6 Documentation errors" value="W6 Documentation errors" />	
+	<item display="W7 Missed due date distribution" value="W7 Missed due date distribution" />
+</envelope>

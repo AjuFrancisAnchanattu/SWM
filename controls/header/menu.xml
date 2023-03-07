@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<envelope>
+  	<item title="HOME" url="http://ukdunapp022">
+	   <child title="Back To Home" url="http://ukdunapp022" showInLocale="" hideInLocale="" perms="" />
+  	</item>
+  
+	<item title="Admin" url="#" showInLocale="" hideInLocale="" perms="admin,translations_admin">
+		<child title="Clear Cache" url="/home/clearCache" showInLocale="" hideInLocale="" perms="admin" />
+		<child title="Clear Session" url="/home/clearSession" showInLocale="" hideInLocale="" perms="admin" />
+		<child title="Document Links" url="/apps/documentLinks/" perms="admin" />
+		<child title="Translations" url="/apps/translations/" showInLocale="" hideInLocale="" perms="admin,translations_admin" />
+	</item>
+
+	<item title="APPLICATIONS" url="#">
+		<child title="TECHNICAL" url="/apps/technical/" />  
+		<child title="BPC" url="http://10.14.199.43/osoft" showInLocale="" hideInLocale="" perms="" />
+		<child title="COMPLAINTS" url="/apps/complaints/" showInLocale="" hideInLocale="" perms="">
+	    	<!--<grandchild title="Complaints System" url="/apps/complaints/" />-->
+	   </child>
+	   <child title="dashboards" url="" showInLocale="" hideInLocale="" perms="">
+	   	<grandchild title="cash_position" url="/apps/dashboard/cashPosition?" perms="dashboard_cashPosition" />
+	   	<grandchild title="CLIP/RLIP" url="/apps/dashboard/dddpDrillDown?" perms="" />
+	   	<grandchild title="Inventory" url="/apps/dashboard/inventoryDrillDown?" perms="" />
+		<grandchild title="zoverduen" url="/apps/dashboard/zoverduenDrillDown?" perms="" />
+		<grandchild title="Order Book" url="http://scapaconnect/Apps/Dashboards/OrderBook/" perms="dashboard_saoBU" />
+		<grandchild title="Sales and Orders" url="http://scapaconnect/Apps/Dashboards/SAO/" perms="dashboard_saoBU" />
+		<grandchild title="This Day in History" url="http://scapaconnect/Apps/Dashboards/ThisDayInHistory/" perms="dashboard_saoBU" />
+	   </child>
+	   <child title="Document Management System" url="http://ukdunapp022/Document%20Management%20System/Forms/AllItems.aspx" showInLocale="" hideInLocale="" perms="" />
+	   
+	   <child title="EHS System" url="http://scapaconnect/Apps/EHS/" perms="">
+			<!--<grandchild title="Integrated Risk Management System" url="/apps/hse/redirect" perms="" />
+			<grandchild title="EHS System (New)" url="http://scapaconnectstaging/Apps/EHS/" perms="" />-->
+		</child>
+	   
+	   <child title="IJF" url="/apps/ijf/">
+			<!--<grandchild title="IJF - New" url="/apps/ijf/" perms="" />
+			<grandchild title="IJF - Old" url="http://intranet/apps/IJF%20System/eng/menu.asp" />-->
+		</child>
+		<child title="Internal Communications" url="/apps/comms/" perms="comm_admin" />
+		
+	   <child title="INTRANET_PRODUCT_DATABASE" url="http://scapaconnect/Apps/ProductDatabase" showInLocale="" hideInLocale="" perms="" />
+		<child title="Service Desk" url="/apps/serviceDesk/" showInLocale="" hideInLocale=" " perms="" />
+	   <child title="GNPI" url="/apps/npi/" showInLocale="" hideInLocale="MALAYSIA " perms="">
+			<!--<grandchild title="GNPI" url="/apps/npi/" showInLocale="" hideInLocale="" perms="" />
+			<grandchild title="OLD_SYSTEM" url="http://myscapa2/apps/npi/default.aspx" showInLocale="" hideInLocale="" perms="" />
+			<grandchild title="Legacy System" url="http://intranet/apps/npi/menu.asp" showInLocale="" hideInLocale="MALAYSIA" perms="" />-->
+		</child>
+		<!--<child title="Quality" url="#">
+  			<grandchild title="european_procedure_index" url="http://intranet/en/procedures/qualityprocedures.asp" />
+  			<grandchild title="european_policy_index" url="http://intranet/en/procedures/european%20policy.asp" />
+  		</child>-->
+  		
+  		<child title="Rebates" url="/apps/rebatesNEW" showInLocale="" hideInLocale="" perms="" />
+		
+		<!--<child title="video" url="/apps/video/" perms="" />-->
+	</item>
+	  
+	
+	
+	
+	
+	
+    
+</envelope>

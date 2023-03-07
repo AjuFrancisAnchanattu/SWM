@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8" ?> 
+
+<!-- SELECT { fn CONCAT({ fn CONCAT(employee.lastName, ', ') }, employee.firstName) } AS name, permissions.NTLogon AS data FROM employee INNER JOIN permissions ON permissions.NTLogon = employee.friendly WHERE (permissions.permission = 'npi_tech') ORDER BY name -->
+
+<envelope>
+	<item code="na" name="next_General" permissions="admin" />
+	<item code="admin" name="Admin" permissions="admin" />
+	<item code="not_scapa" name="Not a Scapa Employee" permissions="admin" />
+	<item code="docman_admin" name="Document management system - Admin" permissions="admin" />
+	<item code="ijf" name="Item Justification Form - Access" permissions="admin" />
+	<item code="translations_admin" name="Translations" permissions="admin"/>
+	
+	
+	<item code="na" name="next_Complaints" permissions="admin,complaints_admin" />
+	<item code="complaints_report" name="Report (just reporting)" permissions="admin,complaints_admin" />
+	<item code="complaints_edit" name="Modify (normal user)" permissions="admin,complaints_admin" />
+	<item code="complaints_add" name="Add (internal sales)" permissions="admin,complaints_admin" />
+	<item code="complaints_admin" name="Admin (re-open, delete, manage users)" permissions="admin,complaints_admin" />
+	<item code="complaints_noaccess" name="No access rights"  permissions="admin,complaints_admin" />
+	
+	<item code="na" name="next_SAP Training Docs" permissions="admin" />
+	<item code="saptd_admin" name="Admin" permissions="admin" />
+		
+	<item code="na" name="next_Global Information System" permissions="admin" />
+	<item code="gis_admin" name="Application - Admin (IT Only)" permissions="admin" />
+	<item code="gis_profile_admin" name="Profile - Admin" permissions="admin,gis_admin" />
+	<item code="gis_profile_update" name="Profie - Update" permissions="admin,gis_admin,gis_profile_admin" />
+	<item code="gis_profile_view" name="Profie - View" permissions="admin,gis_admin,gis_profile_admin" />
+	
+	<item code="na" name="next_Customer Contact Report" permissions="admin,ccr_admin" />	
+	<item code="ccr_admin" name="Admin" permissions="admin,ccr_admin" />	
+	<item code="ccr_access" name="Access" permissions="admin,ccr_admin" />
+	
+	
+	<item code="na" name="next_New Product Initiation System" permissions="admin,npi_admin" />	
+	<item code="npi_admin" name="Admin" permissions="admin,npi_admin" />	
+	<item code="npi_bde" name="BDE" permissions="admin,npi_admin" />
+	<item code="npi_prod" name="Product Manager" permissions="admin,npi_admin" />
+	<item code="npi_tech" name="Technical Manager" permissions="admin,npi_admin" />
+	<item code="npi_comm_mgr" name="Commercial Manager (please update 'comm_mgrs_regions.xml')" permissions="admin,npi_admin" />
+	<item code="npi_viewany" name="Can view any NPI" permissions="admin,npi_admin" />
+	<item code="npi_notadd" name="Can not initiate" permissions="admin,npi_admin" />	
+	<item code="npi_noaccess" name="No access rights" permissions="admin,npi_admin" />
+	
+	<item code="na" name="next_Product Database" permissions="admin,productDB_admin" />
+	<item code="productDB_admin" name="Admin" permissions="admin" />
+	<item code="productDB_view" name="View Database" permissions="admin,productDB_admin" />
+	<!--<item code="productDB_edit" name="Edit Database Rows" permissions="admin,productDB_admin" />
+	<item code="productDB_delete" name="Delete Database Rows" permissions="admin,productDB_admin" />-->
+	
+	<item code="na" name="next_Price Quote System" permissions="admin,pqs_admin" />
+	<item code="pqs_admin" name="Admin" permissions="admin" />
+	<item code="pqs_modifydb" name="Manage Product and Price Lookups" permissions="admin,pqs_admin" />
+	<item code="pqs_notadd" name="Can not initiate new quote" permissions="admin,pqs_admin" />
+	<item code="pqs_noaccess" name="No access rights" permissions="admin,pqs_admin" />
+		
+	<item code="na" name="next_Scapa Exchange Rate Database" permissions="admin,exchangeRateDB_admin" />
+	<item code="exchangeRateDB_admin" name="Admin" permissions="admin" />
+	<item code="exchangeRateDB_view" name="View Database" permissions="admin,exchangeRateDB_admin" />
+	<item code="exchangeRateDB_edit" name="Edit Database Rows" permissions="admin,exchangeRateDB_admin" />
+	<item code="exchangeRateDB_delete" name="Delete Database Rows" permissions="admin,exchangeRateDB_admin" />
+	
+		
+	<item code="na" name="next_Business Titles" permissions="" />
+	<item code="scapa_BDE" name="BDE" permissions="" />
+	<item code="scapa_PM" name="Product Manager" permissions="" />
+	<item code="scapa_TM" name="Technical Manager" permissions="" />
+	<item code="scapa_CM" name="Commercial Manager" permissions="" />
+	<item code="scapa_TSE" name="Technical Services Engineer" permissions="" />
+	<item code="scapa_CS" name="Customer Service" permissions="" />
+	<item code="scapa_SP" name="Sales Person" permissions="" />
+	<!--  The NPD project is currently shelved
+	<item code="na" name="next_New Product Deployment System" permissions="admin,npi_admin" />		
+	<item code="npd_comm_mgr" name="Commercial Manager" permissions="admin,npi_admin" />
+	<item code="npd_prj_leader" name="Project Leader" permissions="admin,npi_admin" />
+	<item code="npd_comm_owner" name="Commercial Owner" permissions="admin,npi_admin" />
+	<item code="npd_tech_owner" name="Technical Owner" permissions="admin,npi_admin" />
+	<item code="npd_prod_mgr" name="Product Manager" permissions="admin,npi_admin" />
+	-->
+	
+	<!--  The Technical Enquiry System project is currently shelved
+	<item code="na" name="next_Technical Enquiry System" permissions="admin,te_admin" />	
+	<item code="te_admin" name="Admin" permissions="admin" />
+	<item code="te_caninit" name="Can initiate" permissions="admin,te_admin" />
+	<item code="te_tech" name="Technical Services Engineer" permissions="admin,te_admin" />
+	<item code="te_custserv" name="Customer Service" permissions="admin,te_admin" />
+	-->
+	
+	<!--  The Translation System project is currently shelved
+	<item code="na" name="next_Translate System" permissions="admin" />
+	<item code="trans_norequest" name="Can not request translation" permissions="admin" />
+	<item code="trans_english" name="Can translate English" permissions="admin" />
+	<item code="trans_french" name="Can translate French" permissions="admin" />
+	<item code="trans_german" name="Can translate German" permissions="admin" />
+	<item code="trans_italian" name="Can translate Italian" permissions="admin" />
+	<item code="trans_spanish" name="Can translate Spanish" permissions="admin" />	
+	-->
+	
+</envelope>

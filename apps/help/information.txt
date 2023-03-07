@@ -1,0 +1,57 @@
+Information for the help application.
+
+(All examples are shown using the Control Panel on the homepage.)
+
+
+The Database contains {some} fields. They are:
+
+	type 	-			Describes the type of item (i.e. snapins, form, enu etc...)
+	app	-			is the tag for that item. (control_panel, address_book, attachments, textbox, and the like...)
+	swfXsize -		the width of the SWF file in pixels
+	swfYsize - 		the height of the SWF file in pixels
+	ENGLISH - 		English Translations for all the text.
+	FRENCH - 		Ditto
+	GERMAN - 		Ditto
+	ITALIAN - 		Ditto. Again.
+	
+
+	
+To make a help page for an application you need:
+
+	The type of application that it is (snapin)
+	The application itself.	(control_panel)
+	You call the application using the url:
+	
+		./apps/help/window/helpWindow?type={type}&amp;app={application}
+	
+	i.e.
+	
+		./apps/help/window/helpWindow?type=snapin&amp;app=control_panel
+	
+	You need at least some text in the ENGLISH field (it defaults to this field if all others are empty)
+
+
+
+If you need a Flash animation:
+
+	Make an SWF file using Wink.exe (and edit it to look pretty) 
+	
+	Render it using no Control Bar, and the SCAPA preloader (use F3 to open the settings)
+	
+	Save it in the help/flash folder as '{application}_{language}.swf'
+	
+	i.e. 'help/flash/control_panel_ENGLISH.swf' for the English version (CAPS the language)
+	
+	You need at least an english version, as it defaults to this is no others are found.
+	
+	Take note of the dimensions of the file (wink: Project>information) and enter them in the table
+	(swfXsize and swfYsize) it use these to size the TD that it sita in, and resize the window on click.
+
+
+
+
+
+
+
+
+Does it all make sense?

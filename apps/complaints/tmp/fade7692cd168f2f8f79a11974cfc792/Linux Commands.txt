@@ -1,0 +1,13 @@
+Check eth Speed
+
+ethtool ewth0 | grep -i speed
+
+tail -f /var/log/httpd/
+
+RewriteEngine On
+RewriteRule ^([^\.]+)?$ /var/www/vhosts/scapa.com/subdomains/ext/httpdocs/urlhandler.php?$1
+
+
+
+Add gateway table for eth0
+/sbin/route add -net 0.0.0.0 gw 10.14.200.1 eth0

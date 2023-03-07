@@ -1,0 +1,216 @@
+From:	Roy Shawdale
+Sent:	27 June 2011 13:20
+To:	'Fredrik Höjefält'
+Subject:	FW: Scapa - rejection due to missing CoA for KS 5169 4,5 mm black - Stokvis 
+reply 110622
+Attachments:	complaint_8D_100531_EN.pdf
+
+Hi Fredrik,
+
+We have now investigated the COA transaction process within our system and have made a number of 
+modifications to the visibility of the text on the relevant documents.
+
+This action, along with internal briefing to both technical & warehouse team members, will improve our 
+response time.
+
+Our 8D is attached for your records.
+
+Apologies for the inconvenience & regards,
+
+Roy
+ 
+
+  
+
+Roy Shawdale 
+Customer Care
+  
+Scapa UK Ltd. 
+Manchester Road
+Ashton-Under-Lyne
+Greater Manchester OL7 0ED - UK
+Tel: +44 (0)161 301 7495 
+Fax: +44 (0)161 301 7445 
+Mobile: -
+E-Mail: roy.shawdale@scapa.com 
+www.scapa.com 
+
+? Please consider the environment before printing this e-mail !
+From: fredrik.hojefalt@stokvistapes.se [mailto:fredrik.hojefalt@stokvistapes.se]  
+Sent: 22 June 2011 12:07 
+To: Roy Shawdale 
+Cc: gun.gunnarsson@stokvistapes.se; Jayne Jamieson 
+Subject: Scapa - rejection due to missing CoA for KS 5169 4,5 mm black - Stokvis reply 110622
+
+Hi Roy,
+ 
+Thanks for your reply. Yes, I know that Scapa have emailed us the requested/missing CoA’s after we 
+contacted you. 
+ 
+But I am after the actual root cause why it happens, and that Scapa takes corrective actions to stop it 
+from happen in the future. As you know, this fault have happened multiple times, and each time it takes 
+extra time both for us and for Scapa.
+ 
+Please let me know when you have the report with requested info. Many thanks!
+ 
+ 
+Best regards / Med vänliga hälsningar
+ 
+Fredrik Höjefält
+Technical Purchaser
+Stokvis Tapes Sverige AB
+Tel. no. +46 11 280422
+ 
+ 
+Från: Roy Shawdale [mailto:Roy.Shawdale@scapa.com]  
+Skickat: den 22 juni 2011 12:35 
+Till: Fredrik Höjefält 
+Kopia: Lager Inleveranser; Gun Gunnarsson; Jayne Jamieson 
+Ämne: FW: Scapa - rejection due to missing CoA for KS 5169 4,5 mm black - correction
+ 
+Hi Fredrik,
+ 
+Thanks for this notification.
+ 
+For information we were emailed requesting a copy of the COA relating to PO 32060 by Gun back on 
+the 9/6/2011.  This was forwarded to Gun & also forwarded to Petra, on the same day, when we 
+received an out of office from Gun. Only yesterday we received a mail  from Gun asking for a copy of 
+the COA relating to the PO 32369.  This has now been prepared and is attached for your records.
+ 
+We also attach a copy of the earlier ( 32060 ) COA if it helps, along with our complaint 
+acknowledgement for the general Quality paperwork issue.
+ 
+Our foam production colleagues will investigate our internal system and we will report back their 
+findings as soon as they are available.
+ 
+Thanks & regards,
+ 
+Roy  
+ 
+
+  
+
+Roy Shawdale 
+Customer Care
+  
+Scapa UK Ltd. 
+Manchester Road
+Ashton-Under-Lyne
+Greater Manchester OL7 0ED - UK
+Tel: +44 (0)161 301 7495 
+Fax: +44 (0)161 301 7445 
+Mobile: -
+E-Mail: roy.shawdale@scapa.com 
+www.scapa.com 
+
+? Please consider the environment before printing this e-mail !
+ 
+ 
+From: fredrik.hojefalt@stokvistapes.se [mailto:fredrik.hojefalt@stokvistapes.se]  
+Sent: 21 June 2011 15:25 
+To: Roy Shawdale 
+Subject: Scapa - rejection due to missing CoA for KS 5169 4,5 mm black - correction
+ 
+Hi Roy,
+ 
+Correction, the correct email adress is inleverans@stokvistapes.se
+ 
+BR
+Fredrik
+ 
+Från: Fredrik Höjefält  
+Skickat: den 21 juni 2011 16:23 
+Till: 'Roy Shawdale' 
+Ämne: Scapa - rejection due to missing CoA for KS 5169 4,5 mm black
+ 
+Hello Roy,
+ 
+We have in short time received shipments from Scapa where the CoA was missing, even that we state on 
+our PO to Scapa that such CoA shall be enclosed the goods. Unfortunately Scapa have missed to attach 
+certificates on quite a number of shipments lately, which cause us delays and extra work for us!
+ 
+This time it was our order 32060 & 32369 where the logrolls of 5169 4.5mm miss CoA for adhesion value. 
+We state on our PO the following text: "Note! Certificate of Analysis (CoA) shall be enclosed the shipment. 
+The CoA shall also be faxed to Stokvis, attn: Warehouse Manager. 
+CoA must specify art.no. , batch no and value of adhesion.
+If CoA or the required information is missing, the shipment will not be accepted".
+ 
+Because the CoA is missing, we must quarantine the material which halt our goods flow. Please 
+investigate the reason why it fails from Scapas side and the CoA is not attached, and what actions will be 
+taken to correct it. Please see attached rejection report FH110621-1 with all details. 
+ 
+Also send me the CoA itself for batch C068 soonest possible to me and to emailadress 
+lagerinleverans@stokvistapes.se
+ 
+ 
+ 
+Best regards / Med vänliga hälsningar
+ 
+Fredrik Höjefält
+Technical Purchaser
+Stokvis Tapes Sverige AB
+Tel. no. +46 11 280422
+ 
+ 
+hhh 
+ 
+Från: Gun Gunnarsson  
+Skickat: den 21 juni 2011 13:52 
+Till: Fredrik Höjefält 
+Ämne: VB: Coa saknas leveransen igen och igen och igen
+ 
+Hej 
+ 
+Du får nog bita i leverantören nu
+ 
+Med vänliga hälsningar/Best regards,
+ 
+Gun Gunnarsson
+ 
+Från: Lager Inleveranser  
+Skickat: den 21 juni 2011 13:36 
+Till: Gun Gunnarsson 
+Ämne: Coa saknas leveransen igen och igen och igen
+ 
+ 
+Hej
+Bestnr 32369 72 m² 4 rlr batch c068
+ 
+Materialet är spärrat 
+ 
+ 
+ 
+Med vänliga hälsningar / Best regards
+ 
+ 
+Robert Rosenlund
+Godsmottagningen/Inleveransavdelningen
+Stokvis Tapes Sverige AB
+Tel: 011-28 04 34
+Fax: 011-28 04 36
+E-mail: inleverans@stokvistapes.se
+Web: www.stokvistapes.se
+ 
+ 
+ 
+ 
+ 
+This e-mail and any files transmitted with it are confidential and intended solely for the use of the 
+individual or entity to whom they are addressed. If you have received this e-mail in error please notify the 
+originator of the message. 
+ 
+This footer also confirms that this e-mail message has been scanned for the presence of computer 
+viruses. 
+ 
+Any views expressed in this message are those of the individual sender, except where the sender 
+specifies and with authority, states them to be the views of Scapa Group plc. Scanning of this message 
+and addition of this footer is performed by Mimecast in conjunction with virus detection software. 
+ 
+*Scapa Group plc is composed of the following companies: Scapa UK Ltd, Groupe Scapa France SA, 
+Scapa Italia SpA, Scapa Iberica SA, Scapa Deutschland GmbH, Scapa (Schweiz) AG, Scapa North 
+America, Scapa Malaysia Sdn Bhd, Scapa Hong-Kong, Scapa Korea Co. Ltd and Scapa (Shanghai) Intl. 
+ 
+Copyright © Scapa Group plc 
+ 
+Company disclaimer - http://www.scapa.com/en/Disclaimer
+ 

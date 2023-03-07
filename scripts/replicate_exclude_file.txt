@@ -1,0 +1,4 @@
+live/apps/stats/images/
+dev/apps/stats/images/
+live/apps/stats/var/
+dev/apps/stats/var/

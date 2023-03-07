@@ -1,0 +1,573 @@
+<html>
+<head>
+<title>Docs For Class action</title>
+<link rel="stylesheet" type="text/css" href="../../media/style.css">
+</head>
+<body>
+
+<table border="0" cellspacing="0" cellpadding="0" height="48" width="100%">
+  <tr>
+    <td class="header_top">apps</td>
+  </tr>
+  <tr><td class="header_line"><img src="../../media/empty.png" width="1" height="1" border="0" alt=""  /></td></tr>
+  <tr>
+    <td class="header_menu">
+  		  [ <a href="../../classtrees_apps.html" class="menu">class tree: apps</a> ]
+		  [ <a href="../../elementindex_apps.html" class="menu">index: apps</a> ]
+		  [ <a href="../../elementindex.html" class="menu">all elements</a> ]
+    </td>
+  </tr>
+  <tr><td class="header_line"><img src="../../media/empty.png" width="1" height="1" border="0" alt=""  /></td></tr>
+</table>
+
+<table width="100%" border="0" cellpadding="0" cellspacing="0">
+  <tr valign="top">
+    <td width="200" class="menu">
+	<div id="todolist">
+			<p><a href="../../todolist.html">Todo List</a></p>
+	</div>
+      <b>Packages:</b><br />
+              <a href="../../li_intranet.html">intranet</a><br />
+              <a href="../../li_apps.html">apps</a><br />
+              <a href="../../li_home.html">home</a><br />
+              <a href="../../li_snapins.html">snapins</a><br />
+            <br /><br />
+                        <b>Files:</b><br />
+      	subpackage <b>ccr</b><br>  <div class="package">
+			<a href="../../apps/ccr/_apps_ccr_lib_action_php.html">		action.php
+		</a><br>
+			<a href="../../apps/ccr/_apps_ccr_add_php.html">		add.php
+		</a><br>
+			<a href="../../apps/ccr/_apps_ccr_delete_php.html">		delete.php
+		</a><br>
+			<a href="../../apps/ccr/_apps_ccr_edit_php.html">		edit.php
+		</a><br>
+	  </div><br />
+	subpackage <b>slobs</b><br>  <div class="package">
+			<a href="../../apps/slobs/_apps_slobs_add_php.html">		add.php
+		</a><br>
+	  </div><br />
+      
+            <b>Classes:</b><br />
+        <div class="package">
+	ccr<br />	    &nbsp;&nbsp;		<a href="../../apps/ccr/action.html">action</a><br />
+	    &nbsp;&nbsp;		<a href="../../apps/ccr/delete.html">delete</a><br />
+	    &nbsp;&nbsp;		<a href="../../apps/ccr/edit.html">edit</a><br />
+	    &nbsp;&nbsp;		<a href="../../apps/ccr/materialaction.html">materialaction</a><br />
+	    &nbsp;&nbsp;		<a href="../../apps/ccr/reportaction.html">reportaction</a><br />
+	  </div>
+  <div class="package">
+	slobs<br />	    &nbsp;&nbsp;		<a href="../../apps/slobs/add.html">add</a><br />
+	  </div>
+                </td>
+    <td>
+      <table cellpadding="10" cellspacing="0" width="100%" border="0"><tr><td valign="top">
+
+<h1>Class: action</h1>
+Source Location: /apps/ccr/lib/action.php<br /><br />
+
+
+<table width="100%" border="0">
+<tr><td valign="top">
+
+<h3><a href="#class_details">Class Overview</a></h3>
+<pre></pre><br />
+<div class="description">This is the CCR (Customer Contact Report) Application. This application allows the sales team to document their contact with customers.</div><br /><br />
+<h4>Author(s):</h4>
+<ul>
+                      <li>Dan Eltis</li>
+              <li>Ben Pearson</li>
+            </ul>
+
+
+
+
+        
+                  
+  
+<h4>Version:</h4>
+<ul>
+  <li>01/02/2006</li>
+</ul>
+
+<h4>Copyright:</h4>
+<ul>
+  <li>Scapa Ltd.</li>
+</ul>
+
+</td>
+
+<td valign="top">
+<h3><a href="#class_vars">Variables</a></h3>
+<ul>
+    <li><a href="../../apps/ccr/action.html#var$databaseId">$databaseId</a></li>
+    <li><a href="../../apps/ccr/action.html#var$form">$form</a></li>
+    <li><a href="../../apps/ccr/action.html#var$loadedFromDatabase">$loadedFromDatabase</a></li>
+  </ul>
+</td>
+
+
+<td valign="top">
+<h3><a href="#class_methods">Methods</a></h3>
+<ul>
+    <li><a href="../../apps/ccr/action.html#method__construct">__construct</a></li>
+    <li><a href="../../apps/ccr/action.html#methodcomplete">complete</a></li>
+    <li><a href="../../apps/ccr/action.html#methoddefineForm">defineForm</a></li>
+    <li><a href="../../apps/ccr/action.html#methoddelegate">delegate</a></li>
+    <li><a href="../../apps/ccr/action.html#methodgetOwner">getOwner</a></li>
+    <li><a href="../../apps/ccr/action.html#methodisComplete">isComplete</a></li>
+    <li><a href="../../apps/ccr/action.html#methodload">load</a></li>
+    <li><a href="../../apps/ccr/action.html#methodsave">save</a></li>
+    <li><a href="../../apps/ccr/action.html#methodshowCompletionBits">showCompletionBits</a></li>
+    <li><a href="../../apps/ccr/action.html#methodvalidate">validate</a></li>
+  </ul>
+</td>
+
+</tr></table>
+<hr />
+
+<table width="100%" border="0"><tr>
+
+
+<td valign="top">
+<h3>Child classes:</h3>
+<div class="tags">
+<dl>
+<dt><a href="../../apps/ccr/reportaction.html">reportaction</a></dt>
+	<dd>This is the CCR (Customer Contact Report) Application. This application allows the sales team to document their contact with customers.</dd>
+</dl>
+<dl>
+<dt><a href="../../apps/ccr/materialaction.html">materialaction</a></dt>
+	<dd>This is the CCR (Customer Contact Report) Application. This application allows the sales team to document their contact with customers.</dd>
+</dl>
+</div>
+</td>
+
+
+
+
+</tr></table>
+<hr />
+
+<a name="class_details"></a>
+<h3>Class Details</h3>
+<div class="tags">
+[line 14]<br />
+This is the CCR (Customer Contact Report) Application. This application allows the sales team to document their contact with customers.<br /><br /><br /><br />
+<h4>Tags:</h4>
+<div class="tags">
+<table border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td><b>todo:</b>&nbsp;&nbsp;</td><td>write description in documentation</td>
+  </tr>
+  <tr>
+    <td><b>version:</b>&nbsp;&nbsp;</td><td>01/02/2006</td>
+  </tr>
+  <tr>
+    <td><b>author:</b>&nbsp;&nbsp;</td><td>Dan Eltis</td>
+  </tr>
+  <tr>
+    <td><b>author:</b>&nbsp;&nbsp;</td><td>Ben Pearson</td>
+  </tr>
+  <tr>
+    <td><b>copyright:</b>&nbsp;&nbsp;</td><td>Scapa Ltd.</td>
+  </tr>
+</table>
+</div>
+</div><br /><br />
+<div class="top">[ <a href="#top">Top</a> ]</div><br />
+
+<hr />
+<a name="class_vars"></a>
+<h3>Class Variables</h3>
+<div class="tags">
+	<a name="var$databaseId"></a>
+	<p></p>
+	<h4>$databaseId = <span class="value">&nbsp;0</span></h4>
+	<p>[line 28]</p>
+  The ID of the action if it is already stored in the database.  Stores the ID from the database if the action is loaded.<br /><br /><br /><br />
+<h4>Tags:</h4>
+<div class="tags">
+<table border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td><b>access:</b>&nbsp;&nbsp;</td><td>protected</td>
+  </tr>
+</table>
+</div>
+
+  <br />
+	<div class="tags">
+  <table border="0" cellspacing="0" cellpadding="0">
+    <tr>
+      <td><b>Type:</b>&nbsp;&nbsp;</td>
+      <td>int</td>
+    </tr>
+      </table>
+	</div><br /><br />
+	<div class="top">[ <a href="#top">Top</a> ]</div><br />
+	<a name="var$form"></a>
+	<p></p>
+	<h4>$form = <span class="value"></span></h4>
+	<p>[line 21]</p>
+  The action form.<br /><br /><br /><br />
+<h4>Tags:</h4>
+<div class="tags">
+<table border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td><b>access:</b>&nbsp;&nbsp;</td><td>public</td>
+  </tr>
+</table>
+</div>
+
+  <br />
+	<div class="tags">
+  <table border="0" cellspacing="0" cellpadding="0">
+    <tr>
+      <td><b>Type:</b>&nbsp;&nbsp;</td>
+      <td>form</td>
+    </tr>
+      </table>
+	</div><br /><br />
+	<div class="top">[ <a href="#top">Top</a> ]</div><br />
+	<a name="var$loadedFromDatabase"></a>
+	<p></p>
+	<h4>$loadedFromDatabase = <span class="value">&nbsp;false</span></h4>
+	<p>[line 35]</p>
+  Stores whether the action is loaded from the database (already exists) or if it is a new action.<br /><br /><br /><br />
+<h4>Tags:</h4>
+<div class="tags">
+<table border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td><b>access:</b>&nbsp;&nbsp;</td><td>protected</td>
+  </tr>
+</table>
+</div>
+
+  <br />
+	<div class="tags">
+  <table border="0" cellspacing="0" cellpadding="0">
+    <tr>
+      <td><b>Type:</b>&nbsp;&nbsp;</td>
+      <td>boolean</td>
+    </tr>
+      </table>
+	</div><br /><br />
+	<div class="top">[ <a href="#top">Top</a> ]</div><br />
+</div><br />
+
+<hr />
+<a name="class_methods"></a>
+<h3>Class Methods</h3>
+<div class="tags">
+  <hr />
+	<a name="method__construct"></a>
+	<h3>constructor __construct <span class="smalllinenumber">[line 43]</span></h3>
+	<div class="function">
+    <table width="90%" border="0" cellspacing="0" cellpadding="1"><tr><td class="code_border">
+    <table width="100%" border="0" cellspacing="0" cellpadding="2"><tr><td class="code">
+		<code>action __construct(
+unknown_type
+&$sessionLocation, unknown_type
+$id)</code>
+    </td></tr></table>
+    </td></tr></table><br />
+	
+		Enter description here...<br /><br /><br /><br />
+
+	<p>Overridden in child classes as:<br />
+		<dl>
+	<dt><a href="../../apps/ccr/reportaction.html#method__construct">reportaction::__construct()</a></dt>
+		<dd></dd>
+	</dl>
+		<dl>
+	<dt><a href="../../apps/ccr/materialaction.html#method__construct">materialaction::__construct()</a></dt>
+		<dd></dd>
+	</dl>
+	</p>
+
+        <h4>Parameters:</h4>
+    <div class="tags">
+    <table border="0" cellspacing="0" cellpadding="0">
+          <tr>
+        <td class="type">unknown_type&nbsp;&nbsp;</td>
+        <td><b>$sessionLocation</b>&nbsp;&nbsp;</td>
+        <td></td>
+      </tr>
+          <tr>
+        <td class="type">unknown_type&nbsp;&nbsp;</td>
+        <td><b>$id</b>&nbsp;&nbsp;</td>
+        <td></td>
+      </tr>
+        </table>
+    </div><br />
+        <div class="top">[ <a href="#top">Top</a> ]</div>
+  </div>
+  <hr />
+	<a name="methodcomplete"></a>
+	<h3>method complete <span class="smalllinenumber">[line 350]</span></h3>
+	<div class="function">
+    <table width="90%" border="0" cellspacing="0" cellpadding="1"><tr><td class="code_border">
+    <table width="100%" border="0" cellspacing="0" cellpadding="2"><tr><td class="code">
+		<code>void complete(
+)</code>
+    </td></tr></table>
+    </td></tr></table><br />
+	
+		<br /><br />
+<h4>Tags:</h4>
+<div class="tags">
+<table border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td><b>access:</b>&nbsp;&nbsp;</td><td>public</td>
+  </tr>
+</table>
+</div>
+<br /><br />
+
+
+        <div class="top">[ <a href="#top">Top</a> ]</div>
+  </div>
+  <hr />
+	<a name="methoddefineForm"></a>
+	<h3>method defineForm <span class="smalllinenumber">[line 69]</span></h3>
+	<div class="function">
+    <table width="90%" border="0" cellspacing="0" cellpadding="1"><tr><td class="code_border">
+    <table width="100%" border="0" cellspacing="0" cellpadding="2"><tr><td class="code">
+		<code>void defineForm(
+)</code>
+    </td></tr></table>
+    </td></tr></table><br />
+	
+		The action form is defined.<br /><br /><br /><br />
+<h4>Tags:</h4>
+<div class="tags">
+<table border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td><b>access:</b>&nbsp;&nbsp;</td><td>protected</td>
+  </tr>
+</table>
+</div>
+<br /><br />
+
+
+        <div class="top">[ <a href="#top">Top</a> ]</div>
+  </div>
+  <hr />
+	<a name="methoddelegate"></a>
+	<h3>method delegate <span class="smalllinenumber">[line 342]</span></h3>
+	<div class="function">
+    <table width="90%" border="0" cellspacing="0" cellpadding="1"><tr><td class="code_border">
+    <table width="100%" border="0" cellspacing="0" cellpadding="2"><tr><td class="code">
+		<code>void delegate(
+mixed
+$newUser, mixed
+$message)</code>
+    </td></tr></table>
+    </td></tr></table><br />
+	
+		Delegates an action to another employee.<br /><br /><br /><br />
+<h4>Tags:</h4>
+<div class="tags">
+<table border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td><b>access:</b>&nbsp;&nbsp;</td><td>public</td>
+  </tr>
+</table>
+</div>
+<br /><br />
+
+
+        <div class="top">[ <a href="#top">Top</a> ]</div>
+  </div>
+  <hr />
+	<a name="methodgetOwner"></a>
+	<h3>method getOwner <span class="smalllinenumber">[line 367]</span></h3>
+	<div class="function">
+    <table width="90%" border="0" cellspacing="0" cellpadding="1"><tr><td class="code_border">
+    <table width="100%" border="0" cellspacing="0" cellpadding="2"><tr><td class="code">
+		<code>string getOwner(
+)</code>
+    </td></tr></table>
+    </td></tr></table><br />
+	
+		Gets the person responsible (the owner) of the action.<br /><br /><br /><br />
+<h4>Tags:</h4>
+<div class="tags">
+<table border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td><b>return:</b>&nbsp;&nbsp;</td><td>the personResponsible</td>
+  </tr>
+  <tr>
+    <td><b>access:</b>&nbsp;&nbsp;</td><td>public</td>
+  </tr>
+</table>
+</div>
+<br /><br />
+
+
+        <div class="top">[ <a href="#top">Top</a> ]</div>
+  </div>
+  <hr />
+	<a name="methodisComplete"></a>
+	<h3>method isComplete <span class="smalllinenumber">[line 377]</span></h3>
+	<div class="function">
+    <table width="90%" border="0" cellspacing="0" cellpadding="1"><tr><td class="code_border">
+    <table width="100%" border="0" cellspacing="0" cellpadding="2"><tr><td class="code">
+		<code>boolean isComplete(
+)</code>
+    </td></tr></table>
+    </td></tr></table><br />
+	
+		Finds if the action is completed or if it is still in progress.<br /><br /><br /><br />
+<h4>Tags:</h4>
+<div class="tags">
+<table border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td><b>return:</b>&nbsp;&nbsp;</td><td>True if the action is completed, otherwise false.</td>
+  </tr>
+  <tr>
+    <td><b>access:</b>&nbsp;&nbsp;</td><td>public</td>
+  </tr>
+</table>
+</div>
+<br /><br />
+
+
+        <div class="top">[ <a href="#top">Top</a> ]</div>
+  </div>
+  <hr />
+	<a name="methodload"></a>
+	<h3>method load <span class="smalllinenumber">[line 215]</span></h3>
+	<div class="function">
+    <table width="90%" border="0" cellspacing="0" cellpadding="1"><tr><td class="code_border">
+    <table width="100%" border="0" cellspacing="0" cellpadding="2"><tr><td class="code">
+		<code>unknown load(
+int
+$id)</code>
+    </td></tr></table>
+    </td></tr></table><br />
+	
+		Enter description here...<br /><br /><br /><br />
+<h4>Tags:</h4>
+<div class="tags">
+<table border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td><b>access:</b>&nbsp;&nbsp;</td><td>public</td>
+  </tr>
+</table>
+</div>
+<br /><br />
+
+
+        <h4>Parameters:</h4>
+    <div class="tags">
+    <table border="0" cellspacing="0" cellpadding="0">
+          <tr>
+        <td class="type">int&nbsp;&nbsp;</td>
+        <td><b>$id</b>&nbsp;&nbsp;</td>
+        <td></td>
+      </tr>
+        </table>
+    </div><br />
+        <div class="top">[ <a href="#top">Top</a> ]</div>
+  </div>
+  <hr />
+	<a name="methodsave"></a>
+	<h3>method save <span class="smalllinenumber">[line 268]</span></h3>
+	<div class="function">
+    <table width="90%" border="0" cellspacing="0" cellpadding="1"><tr><td class="code_border">
+    <table width="100%" border="0" cellspacing="0" cellpadding="2"><tr><td class="code">
+		<code>void save(
+)</code>
+    </td></tr></table>
+    </td></tr></table><br />
+	
+		Enter description here...<br /><br /><br /><br />
+<h4>Tags:</h4>
+<div class="tags">
+<table border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td><b>access:</b>&nbsp;&nbsp;</td><td>public</td>
+  </tr>
+</table>
+</div>
+<br /><br />
+
+
+        <div class="top">[ <a href="#top">Top</a> ]</div>
+  </div>
+  <hr />
+	<a name="methodshowCompletionBits"></a>
+	<h3>method showCompletionBits <span class="smalllinenumber">[line 184]</span></h3>
+	<div class="function">
+    <table width="90%" border="0" cellspacing="0" cellpadding="1"><tr><td class="code_border">
+    <table width="100%" border="0" cellspacing="0" cellpadding="2"><tr><td class="code">
+		<code>void showCompletionBits(
+unknown_type
+$outputType)</code>
+    </td></tr></table>
+    </td></tr></table><br />
+	
+		Enter description here...<br /><br /><br /><br />
+<h4>Tags:</h4>
+<div class="tags">
+<table border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td><b>access:</b>&nbsp;&nbsp;</td><td>public</td>
+  </tr>
+</table>
+</div>
+<br /><br />
+
+
+        <h4>Parameters:</h4>
+    <div class="tags">
+    <table border="0" cellspacing="0" cellpadding="0">
+          <tr>
+        <td class="type">unknown_type&nbsp;&nbsp;</td>
+        <td><b>$outputType</b>&nbsp;&nbsp;</td>
+        <td></td>
+      </tr>
+        </table>
+    </div><br />
+        <div class="top">[ <a href="#top">Top</a> ]</div>
+  </div>
+  <hr />
+	<a name="methodvalidate"></a>
+	<h3>method validate <span class="smalllinenumber">[line 333]</span></h3>
+	<div class="function">
+    <table width="90%" border="0" cellspacing="0" cellpadding="1"><tr><td class="code_border">
+    <table width="100%" border="0" cellspacing="0" cellpadding="2"><tr><td class="code">
+		<code>boolean validate(
+)</code>
+    </td></tr></table>
+    </td></tr></table><br />
+	
+		Validates the form.<br /><br /><br /><br />
+<h4>Tags:</h4>
+<div class="tags">
+<table border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td><b>access:</b>&nbsp;&nbsp;</td><td>public</td>
+  </tr>
+</table>
+</div>
+<br /><br />
+
+
+        <div class="top">[ <a href="#top">Top</a> ]</div>
+  </div>
+</div><br />
+
+
+        <div class="credit">
+		    <hr />
+		    Documentation generated on Tue, 02 May 2006 16:25:39 +0100 by <a href="http://www.phpdoc.org">phpDocumentor 1.3.0RC4</a>
+	      </div>
+      </td></tr></table>
+    </td>
+  </tr>
+</table>
+
+</body>
+</html>

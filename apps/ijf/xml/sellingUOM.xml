@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<envelope>
+	<item value="Roll" />
+	<item value="M2" />	
+	<item value="Metre" />
+	<item value="Yard" />
+	<item value="Carton" />
+	<item value="Jumbo" />
+	<item value="Log" />
+	<item value="Bobbin" />
+	<item value="Pad" />
+	<item value="Gasket" />
+	<item value="Drum" />
+	<item value="Tube" />
+	<item value="Kilo" />
+	<item value="Other(specify)" />
+</envelope>

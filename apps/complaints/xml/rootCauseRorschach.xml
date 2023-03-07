@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" ?> 
+<envelope>
+	<item display="{TRANSLATE:incorrect_setup_of_coating_station}" value="{TRANSLATE:incorrect_setup_of_coating_station}" />
+	<item display="{TRANSLATE:malfunction_of_auxiliary_means}" value="{TRANSLATE:malfunction_of_auxiliary_means}" />
+	<item display="{TRANSLATE:malfunction_of_auxiliary_means}" value="{TRANSLATE:malfunction_of_auxiliary_means}" />
+	<item display="{TRANSLATE:temperatures_off_tolerances}" value="{TRANSLATE:temperatures_off_tolerances}" />
+	<item display="{TRANSLATE:bad_mixture_in_the_store_tank}" value="{TRANSLATE:bad_mixture_in_the_store_tank}" />
+	<item display="{TRANSLATE:temperature_setup_error}" value="{TRANSLATE:temperature_setup_error}" />
+	<item display="{TRANSLATE:parameter_setup_error}" value="{TRANSLATE:parameter_setup_error}" />
+	<item display="{TRANSLATE:motor_drive_or_web_tension_problems}" value="{TRANSLATE:motor_drive_or_web_tension_problems}" />
+	<item display="{TRANSLATE:specification_not_observed}" value="{TRANSLATE:specification_not_observed}" />
+	<item display="{TRANSLATE:no_samples_sent_to_laboratory}" value="{TRANSLATE:no_samples_sent_to_laboratory}" />
+	<item display="{TRANSLATE:speed}" value="{TRANSLATE:speed}" />
+	<item display="{TRANSLATE:test_not_completed}" value="{TRANSLATE:test_not_completed}" />
+	<item display="{TRANSLATE:subcontractor_problem}" value="{TRANSLATE:subcontractor_problem}" />
+	<item display="{TRANSLATE:weighing_error}" value="{TRANSLATE:weighing_error}" />
+	<item display="{TRANSLATE:potlife_exceeded}" value="{TRANSLATE:potlife_exceeded}" />
+	<item display="{TRANSLATE:confusion_of_material}" value="{TRANSLATE:confusion_of_material}" />
+	<item display="{TRANSLATE:parameter_setup_error}" value="{TRANSLATE:parameter_setup_error}" />
+	<item display="{TRANSLATE:raw_material_off_spec}" value="{TRANSLATE:raw_material_off_spec}" />
+	<item display="{TRANSLATE:unknown}" value="{TRANSLATE:unknown}" />
+	<item display="{TRANSLATE:inattentiveness}" value="{TRANSLATE:inattentiveness}" />
+	<item display="{TRANSLATE:instruction_mistake}" value="{TRANSLATE:instruction_mistake}" />
+	<item display="{TRANSLATE:operation_mistake}" value="{TRANSLATE:operation_mistake}" />
+</envelope>

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<menu>
+	<item title="Summary" url="/apps/complaints/" />
+	<!--<item title="Add Complaint" url="/apps/complaints/add?" />-->
+	<!--<item title="Add Supplier Complaint" url="/apps/complaints/add?typeOfComplaint=supplier_complaint" />-->
+	<!--<item title="Offline Reporting" url="/apps/complaints/offlineComplaint?" />-->
+	<item title="Reports" url="/apps/complaints/search?" />
+</menu>

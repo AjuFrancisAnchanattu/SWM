@@ -1,0 +1,171 @@
+install
+
+
+Dell Intranet Server 1
+eth0: 10.1.10.6
+eth1: 10.1.50.1
+
+Dell Intranet Server 2
+eth0: 10.1.10.6  	(unplugged as default)
+eth1: 10.1.50.2
+
+
+
+edit /etc/httpd/conf/httpd.conf
+
+
+# developer stuff, compilers bla bla
+
+
+#yum install flex bison
+yum install httpd-devel ##yes
+yum install libxml2
+#yum install libxml2-devel
+
+yum install mysql-devel
+
+
+
+install php
+
+#./configure --with-apxs2filter --with-gd --with-mysql
+
+
+yum install php
+
+yum install php-mbstring
+
+
+nano -w /etc/php.d/mbstring.ini
+
+
+# Add
+
+mbstring.internal_encoding = UTF-8
+mbstring.encoding_translation = On
+
+
+
+adduser intranet -d /home
+
+
+# setup samba
+
+nano /etc/samba/smb.conf
+
+workgroup = SCAPA-TAPES
+load printers = no
+
+
+[live]
+   comment = Live Databases
+   browseable = no
+   writable = yes
+   path=/var/mysql/mysql
+
+[backups]
+   comment = Backups
+   browseable = no
+   writable = yes
+   path=/var/backups
+   
+Comment out the [printers] section with ;
+
+
+
+## add samba user
+
+smbpasswd -a root
+blessyou
+
+service smb start
+
+# add to startup
+
+/sbin/chkconfig --add mysqld
+/sbin/chkconfig --level 345 mysqld on
+/sbin/chkconfig --add smb
+/sbin/chkconfig --level 345 smb on
+
+
+service mysqld start
+/usr/bin/mysqladmin -u root password 'backweb'
+/usr/bin/mysqladmin -u root -h mysql1 password 'backweb'
+
+
+http://sourceforge.net/projects/modntlm/
+
+
+mysql -u root -p
+
+
+use mysql; [enter]
+DELETE FROM user WHERE User=''; 	[enter]
+DELETE FROM user WHERE Host='mysql1';	[enter]
+UPDATE user SET Host='%';		[enter]
+FLUSH PRIVILEGES;			[enter]
+exit
+
+
+# all stored in
+/var/lib/mysql
+
+
+
+
+[live]
+   comment = Live intranet source
+   browseable = no
+   writable = yes
+   path=/home/live
+
+[dev]
+   comment = Development intranet source
+   browseable = no
+   writable = yes
+   path=/home/dev
+   
+   
+   
+/sbin/chkconfig --level 345 httpd on
+
+
+mkdir /build
+cd /build
+
+wget http://uk.php.net/get/php-5.0.5.tar.gz/from/this/mirror
+
+tar zxvf php-5.0.5.tar.gz
+
+cd php-5.0.5
+
+'./configure' '--build=x86_64-redhat-linux' '--host=x86_64-redhat-linux' '--target=x86_64-redhat-linux-gnu' '--program-prefix=' '--prefix=/usr' '--exec-prefix=/usr' '--bindir=/usr/bin' '--sbindir=/usr/sbin' '--sysconfdir=/etc' '--datadir=/usr/share' '--includedir=/usr/include' '--libdir=/usr/lib64' '--libexecdir=/usr/libexec' '--localstatedir=/var' '--sharedstatedir=/usr/com' '--mandir=/usr/share/man' '--infodir=/usr/share/info' '--with-libdir=lib64' '--with-config-file-path=/etc' '--with-config-file-scan-dir=/etc/php.d' '--disable-debug' '--with-exec-dir=/usr/bin' '--without-sqlite' '--with-apxs2=/usr/sbin/apxs' '--with-mysql' 
+
+'./configure' '--without-sqlite' '--with-apxs2=/usr/sbin/apxs' '--with-mysql' 
+
+
+make
+
+make install
+
+
+
+perl -MCPAN -e shell
+install Apache2::AuthenNTLM
+
+PerlAuthenHandler Apache2::AuthenNTLM
+AuthType ntlm,basic
+AuthName test
+require valid-user
+
+#                    domain             pdc                bdc
+PerlAddVar ntdomain "SCAPA01   stdunbdc002"
+PerlAddVar ntdomain "SCAPA-TAPES    stmadpdc001"
+
+PerlSetVar defaultdomain SCAPA01
+#PerlSetVar splitdomainprefix 1
+PerlSetVar ntlmdebug 1
+
+
+
+service httpd restart

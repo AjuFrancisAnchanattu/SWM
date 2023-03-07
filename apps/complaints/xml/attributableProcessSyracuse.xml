@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8" ?> 
+<envelope>
+	<item display="Extrusion Line" value="Extrusion Line" />
+	<item display="Shipping" value="Shipping" />
+	<item display="Receiving" value="Receiving" />
+	<item display="Warehouse" value="Warehouse" />
+</envelope>

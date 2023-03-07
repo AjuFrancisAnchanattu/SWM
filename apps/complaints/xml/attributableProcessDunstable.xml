@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8" ?> 
+<envelope>
+	<item display="No 1 Mixing" value="No 1 Mixing" />
+	<item display="No1 Coating" value="No1 Coating" />
+	<item display="No 2 Mixing" value="No 2 Mixing" />
+	<item display="No 2 coating" value="No 2 coating" />
+	<item display="No 3 Coating" value="No 3 Coating" />
+	<item display="No 4 Coating" value="No 4 Coating" />
+	<item display="Pad Machines" value="Pad Machines" />
+	<item display="Rotaries" value="Rotaries" />
+	<item display="Rapid Kiss Cutter" value="Rapid Kiss Cutter" />
+	<item display="Belt press" value="Belt press" />
+	<item display="Slitting Dreytops" value="Slitting Dreytops" />
+	<item display="Slitting Herolds" value="Slitting Herolds" />
+	<item display="Slitting Cevinini" value="Slitting Cevinini" />
+	<item display="Rewind Laminator" value="Rewind Laminator" />
+	<item display="Rewind Duffy" value="Rewind Duffy" />
+	<item display="Rewind Eberlin" value="Rewind Eberlin" />
+	<item display="Rewind L 20" value="Rewind L 20" />
+	<item display="Clean Room Rotaries" value="Clean Room Rotaries" />
+	<item display="Clean Room Rotary 320" value="Clean Room Rotary 320" />
+	<item display="Clean Room Mark Andy" value="Clean Room Mark Andy" />
+	<item display="Clean Room Island Dressing" value="Clean Room Island Dressing" />
+	<item display="Specialist Conversion" value="Specialist Conversion" />
+	<item display="Hydrocolloid" value="Hydrocolloid" />
+	<item display="Slitting Luton" value="Slitting Luton" />
+	<item display="Dunstable Warehouse" value="Dunstable Warehouse" />
+	<item display="Luton Warehouse" value="Luton Warehouse" />
+</envelope>

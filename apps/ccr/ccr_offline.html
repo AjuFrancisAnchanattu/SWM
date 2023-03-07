@@ -1,0 +1,2338 @@
+<html>
+
+	<head>
+	
+	<title>Offline Customer Contact Report</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	
+	<style type="text/css">
+		/*charset=ISO-8859-1*/
+		body {			
+			font-family: verdana,arial,sans-serif;
+			font-size: 11px;
+			color: #333333;
+			line-height: 15px;
+		}
+		
+		h1 {
+			font-size: 15px;
+		}
+		
+		
+		td {
+			font-family: verdana,arial,sans-serif;
+			font-size: 11px;
+			color: #333333;
+			line-height: 15px;
+		}
+		
+		th {
+			font-family: verdana,arial,sans-serif;
+			font-size: 11px;
+			font-weight: bold;
+			color: #333333;
+			line-height: 15px;
+		}
+		
+		a:link, a:visited, a:active {
+			color: #222222;
+			text-decoration: underline;
+		}
+		
+		a:hover {
+			color: #EE0000;
+			text-decoration: underline;
+		}
+
+		.valid_row {
+			background: #EFEFEF; 
+			border-top: 1px solid #FFFFFF; 
+			border-bottom: 1px solid #FFFFFF;
+		}
+		
+		.row_name {
+			border-right: 1px solid #CCCCCC;
+			padding-top: 8px;
+		}
+		
+		.measurement {
+		    width: 60px;
+		}
+		
+		.quantity {
+		    width: 178px;
+		}
+		
+		.textboxInvisible {
+		    visibility: hidden;
+		    width: 250px;
+		    /*height: 1px;*/
+		}
+		
+		.textbox, .dropdown {
+			width: 250px;
+		}
+		
+		.textboxOther {
+			width: 250px;
+			display: block;
+			margin-top: 3px;
+		}
+		
+		
+		.optional {
+			background: #dcddf2;
+		}
+		
+		.required {
+			background: #f2d2d2;
+		}
+		
+		textarea {
+			width: 400px;
+			height: 90px;
+		}
+		
+		
+		.indented {
+			border-right: 5px solid #FFFFFF;
+			border-left: 5px solid #FFFFFF;
+		}
+		
+		.box {
+			background: #EFEFEF;
+		}
+		
+		.nav {
+			padding: 4px;
+		}
+		
+	</style>
+	
+	
+	
+	<script language="javascript" type="text/javascript">
+	<!--
+	
+		var version = "1";
+	
+		var report = Array();
+		report["actions"] = Array();
+		
+		var materials = Array();
+		/*materials["actions"] = Array();*/
+		
+		
+		var currentLocation = "startup";
+		
+		var reportactionid = 0;
+		var materialid = 0;
+		var materialactionid = 0;
+		
+		
+		var activeFields = Array();
+
+		var languageId = 0;
+		
+		var globalTranslations = new Array();
+		
+		
+		globalTranslations["25"] = Array("Less than 25%", "< 25%", "< 25%", "< 25%", "< 25%");
+		globalTranslations["25-50"] = Array("25 - 50%", "25 - 50%", "25 - 50%", "25 - 50%", "25 - 50%");
+		globalTranslations["50-75"] = Array("50 - 75%", "50 - 75%", "50 - 75%", "50 - 75%", "50 - 75%");
+		globalTranslations["50/50"] = Array("50/50", "50/50", "50/50", "50/50", "50/50");
+		globalTranslations["75"] = Array(">75%", ">75%", ">75%", ">75%", ">75%");
+		globalTranslations["ACTIONS_ON"] = Array("Actions On", "Des actions dessus", "Tatigkeiten", "Azioni sopra", "Acciones En Marcha");
+		globalTranslations["ACTION_ARISING"] = Array("Action Arising", "Laction surgissant", "Die Tatigkeit, die an", "Lazione che presenta", "Planteamiento de la Accion");
+		globalTranslations["ACTION_OPTIONS"] = Array("Action Options", "Des options daction", "Tatigkeit Wahlen", "Opzioni di azione", "Opciones De la Accion.");
+		globalTranslations["ACTION_STATUS"] = Array("Action Status", "Statut daction", "Tatigkeit Status", "Condizione di azione", "Estado De la Accion.");
+		globalTranslations["ACTUAL_COMPLETION_DATE"] = Array("Actual Completion Date", "Date reelle daccomplissement", "Tatsachliches Beendigung Datum", "Data reale di completamento", "Fecha Real De la Terminacion.");
+		globalTranslations["ADD_AN_ACTION_TO_THIS_MATERIAL"] = Array("Add an Action to this Material Group", "Ajouter une action au  groupe de produits", "Fugen Sie dieser Materialgruppe eine Aktion hinzu.", "Aggiungi un azione a questo gruppo merci", "Agregue una accion a este grupo material.");
+		globalTranslations["ADD_AN_ACTION_TO_THIS_REPORT"] = Array("Add an Action to this Report", "Ajouter une action a ce rapport", "Fugen Sie diesem Bericht eine Aktion hinzu", "Aggiungi unazione a questo report", "Agregue una accion a este informe.");
+		globalTranslations["ADD_A_MATERIAL_GROUP"] = Array("Add a Material Group to this Report", "Ajouter un groupe de matières a ce rapport", "Fugen Sie diesem Bericht eine Materialgruppe hinzu.", "Aggiungi un gruppo merci a questo report", "Agregue a grupo material a este informe.");
+		globalTranslations["ADD_A_TECHNICAL"] = Array("Add a Technical Enquiry", "", "", "", "");
+		globalTranslations["ANALYSIS_PERIOD"] = Array("Analysis Period", "Periode danalyse", "Analyse Periode", "Periodo di analisi", "Período De Análisis.");
+		globalTranslations["ANNUAL_POTENTIAL_IN_INVOICE_CURRENCY"] = Array("Annual Potential in Invoice Currency", "Potentiel annuel en monnaie de facturation", "Jahrliches Potential in Rechnungswahrung", "Potenziale annuo nella valuta di fatturazione", "Potencial anual en moneda de la factura.");
+		globalTranslations["ANNUAL_POTENTIAL_IN_VOLUME"] = Array("Annual Potential in Volume", "Potentiel annuel en volume", "Jahrliches Potential in Volumen", "Quantita potenziale annua", "Potencial anual en volumen.");
+		globalTranslations["APPLICATION"] = Array("Material Group Application", "Application du groupe de matières", "Materialgruppenanwendung", "Applicazione del gruppo merci", "Uso del grupo de material");
+		globalTranslations["BUSINESS_GAINED"] = Array("Business Gained", "Des affaires gagnees", "Das gewonnene Geschaft", "Il commercio guadagnato", "Negocio Ganado.");
+		
+		
+		globalTranslations["BUSINESS_LOST"] = Array("Business Lost", "Des affaires a perdu", "Geschaft Verlor", "Il Commercio Ha perso", "Negocio Perdido.");
+		globalTranslations["CCR"] = Array("Customer Contact Report", "Rapport de contact de client", "Kunde Kontakt Report", "Rapporto del contatto del cliente", "Informe Del Contacto Del Cliente.");
+		globalTranslations["CCR_ACTION"] = Array("Customer Contact Report Action", "Action de rapport de contact de client", "Kunde Kontakt Report Tatigkeit kompletter Report", "Di azione rapporto del contatto del cliente", "Accion Del Informe Del Contacto Del Cliente.");
+		globalTranslations["COMMENTS_ON_BUSINESS_GAIN_OR_LOSS"] = Array("Comments on Business Gain or Loss", "Commentaires sur les gains ou les pertes pour lentreprise", "Anmerkungen zum Geschaftsabschluss bzw. dem Geschaftsverlust:", "Commenti sullacquisizione o la perdita del business", "Comentarios sobre aumento o perdida del negocio.");
+		globalTranslations["COMPETITOR_NAME"] = Array("Competitor Name", "Nom du concurrent", "Name des Mitbewerbers", "Nome del concorrente", "Nombre Del Competidor.");
+		globalTranslations["COMPETITOR_PRODUCT"] = Array("Competitor Product", "Produit De Concurrent", "Konkurrent Produkt", "Prodotto Del Competitore", "Codigo de producto del competidor.");
+		globalTranslations["COMPETITOR_PRODUCT_CODE_AND_DESCRIPTION"] = Array("Competitor Product Code and Description", "Code et description du produit concurrent", "Produktkode und Beschreibung des Mitbewerbers", "Codice e descrizione del prodotto della concorrenza", "Codigo y descripcion de producto del competidor.");
+		globalTranslations["COMPETITOR_PRODUCT_PRICE_ETC"] = Array("Competitor product price, currency, payement and shipping terms", "Prix du produit concurrent, monnaie, paiement et conditions dexpedition", "Produktpreis, Wahrung, Zahlungs- und Versandbedingungen des Mitbewerbers", "Prezzo del prodotto della concorrenza, valuta, condizione di pagamento e di consegna", "Terminos del precio, de la moneda, del modo de pago y del envío del producto del competidor.");
+		globalTranslations["COMPLETE_REPORT"] = Array("Complete Report", "Accomplissez Le Rapport", "Fuhren Sie Report Durch", "Rapporto completo", "Informe Completado.");
+		globalTranslations["COMPLETE_SELECTED_ACTION"] = Array("Complete Selected Action", "Action choisie complète", "Komplette vorgewahlte Tatigkeit", "Azione selezionata completa", "Accion Selecionada Completada");
+		globalTranslations["COMPLETION_COMMENTS"] = Array("Completion Comments", "Des commentaires daccomplissement", "Beendigung Anmerkungen", "Osservazioni di completamento", "Comentarios de la accion completada");
+		globalTranslations["COMPLETION_DATE"] = Array("Completion Date", "Date daccomplissement", "Beendigung Datum", "Data di completamento", "Fecha de la finalizacion de la accion");
+		globalTranslations["CONTACT_DATE"] = Array("Contact Date", "Date du contact", "Kontaktdatum", "Data della visita/del contatto", "Fecha de contacto.");
+		globalTranslations["CONTACT_SITE"] = Array("Contact Location", "Ville du Contact", "Kontaktort", "Localita del contatto", "Sitio del contacto");
+		globalTranslations["CONTACT_TYPE"] = Array("Contact Type", "Type de contact", "Kontaktart", "Tipo di contatto", "Entre en contacto con El Tipo.");
+		globalTranslations["CUSTOMER_COUNTRY"] = Array("Customer Country", "Pays", "Land", "Paese", "País consumidor.");
+		globalTranslations["CUSTOMER_DISTRIBUTOR"] = Array("Customer of a Scapa Distributor", "Client dun distributeur de Scapa", "Kunde eines Scapa Verteilers", "Cliente di un distributore di Scapa", "Cliente de un distribuidor de Scapa.");
+		globalTranslations["CUSTOMER_SURVEY"] = Array("Is the purpose of this contact to carry out a customer survey?", "Est le but de ce contact deffectuer une enquete de client ?", "Ist der Zweck dieses Kontaktes, eine Marktstudie durchzufuhren?", "È lo scopo di questo contatto effettuare unindagine di cliente?", "Es el proposito de este contacto de realizar una encuesta sobre cliente?.");
+		globalTranslations["DATE_ADDED"] = Array("Date Added", "La date sest ajoutee", "Datum fugte", "La data ha aggiunto", "Fecha Agregada.");
+		globalTranslations["DELEGATE_SELECTED_ACTION"] = Array("Delegate Selected Action", "Action choisie par delegue", "Delegierter vorgewahlte Tatigkeit, hinzu, verweist", "Azione selezionata delegato", "Seleccionar accion delegada");
+		globalTranslations["DELETE_SELECTED_ACTION"] = Array("Delete Selected Action", "Supprimer une action selectionnee", "Löschen der gewahlten Aktion", "Cancella lazione selezionata", "Suprima La Accion Seleccionada.");
+		globalTranslations["DELETE_SELECTED_MATERIAL_GROUP"] = Array("Delete Selected Material Group", "Supprimer le groupe de matière selectionne", "Löschen der ausgewahlten Materialgruppe", "Cancella il gruppo merci selezionato", "Suprima A Grupo Material Seleccionado.");
+		globalTranslations["DELETE_SELECTED_TECHNICAL"] = Array("Delete selected Technical Enquiry", "", "", "", "");
+		globalTranslations["DIRECT_CUSTOMER_NAME"] = Array("Direct Customer Name", "Dirige le nom de client", "Kunde Namen", "Dirige il nome del cliente", "Nombre del cliente directo");
+		globalTranslations["EDIT_ACTION"] = Array("Edit Action", "edite laction", "Redigiert Tatigkeit", "Pubblica lazione", "Corrija La Accion.");
+		globalTranslations["EDIT_MATERIAL"] = Array("Edit Material", "edite le materiel", "Redigiert Material", "Pubblica il materiale", "Corrija El Material.");
+		globalTranslations["EDIT_REPORT"] = Array("Edit Report", "edite le rapport", "Redigiert Report", "Pubblica il rapporto", "Corrija El Informe.");
+		globalTranslations["EMAIL"] = Array("Email", "Email", "Email", "Email", "Email.");
+		globalTranslations["ESTIMATED_SHARE"] = Array("Estimated current Scapa share of the Annual Potential value", "A estime la part courante de Scapa de la valeur potentielle annuelle", "Schatzte gegenwartigen Scapa Anteil des jahrlichen möglichen Wertes", "Ha valutato la parte corrente di Scapa del valore potenziale annuale", "Partiticipacion actual estimada de Scapa del valor potencial anual.");
+		globalTranslations["EXISTING_CLIENT"] = Array("Existing Direct Customer", "Client direct existant", "Vorhandener direkter Kunde", "Cliente diretto attuale", "Cliente Directo Existente.");
+		globalTranslations["EXISTING_DISTRIBUTOR"] = Array("Existing Scapa Distributor", "Distributeur existant de Scapa", "Bestehender Scapa Verteiler", "Distributore esistente di Scapa", "Distribuidor Existente De Scapa.");
+		globalTranslations["FOR_MATERIAL"] = Array("for material", "Pour le materiel", "Fur Material", "Per materiale", "para el material.");
+		globalTranslations["FOR_REPORT"] = Array("for report", "Pour le rapport", "Fur Report", "Per il rapporto", "para el informe.");
+		globalTranslations["GENERAL_COMPETITOR_ACTIVITY"] = Array("General Competitor Activity", "Activite du concurrent", "Allgemeine Aktivitat des Mitbewerbers:", "Attivita generale del concorrente", "Actividad general de la competencia");
+		globalTranslations["GENERAL_NARRATIVE"] = Array("General Narrative", "Informations generales", "Allgemeine Angaben", "Informazioni generali", "Narrativa General.");
+		globalTranslations["GROUP"] = Array("Group", "Groupe", "Die Gruppe", "Gruppo", "Grupo.");
+		
+		globalTranslations["HIERARCHY_DERIVED_KEY"] = Array("SAP Material Group Key", "Cle de groupe de matières SAP", "SAP Materialgruppenschlussel", "Gruppo merci SAP", "Llave del grupo de material en SAP");
+		globalTranslations["HISTORY"] = Array("History", "Histoire", "Die Geschichte", "Storia", "Historial.");
+		globalTranslations["INITIAL_DISCUSSION"] = Array("Initial Discussion", "Discussion initiale", "Ausgangsdiskussion", "Discussione iniziale", "Discusion Inicial.");
+		globalTranslations["INVOICE_CURRENCY"] = Array("Invoice Currency", "Devise de facture", "Rechnung Wahrung", "Valuta della fattura", "Moneda de la factura.");
+		globalTranslations["IN_PROGRESS"] = Array("In Progress", "En marche", "In Bewegung", "In progresso", "En marcha.");
+		globalTranslations["IS_SAP_PRODUCT"] = Array("Is This Product In SAP?", "Ce produit est-il dans SAP ?", "Ist dieses Produkt in SAP vorhanden?", "Il prodotto è in SAP?", "Existe este producto en SAP?");
+		globalTranslations["JOINT_CALL"] = Array("Joint call to customer with the distributor", "Lappel commun au client avec le distributeur", "Gemeinsamer Anruf zum Kunden mit dem Verteiler", "La chiamata unita al cliente con il distributore", "Llamada conjunta al cliente con el distribuidor.");
+		globalTranslations["LOAD_REPORT"] = Array("Load Report", "Rapport de charge", "Last Report", "Rapporto del carico", "Cargar Informe");
+		globalTranslations["MATERIAL"] = Array("Material Group", "Groupe materiel", "Materielle Gruppe", "Gruppo materiale", "Grupo Material.");
+		globalTranslations["MATERIAL_GROUP_APPLICATION"] = Array("Material Group Application", "Application du groupe de matières", "Materialgruppenanwendung", "Applicazione del gruppo merci", "Uso Material Del Grupo.");
+		globalTranslations["MATERIAL_GROUP_REPORT_NARRATIVE"] = Array("Material group report narrative (Size, packing, branding, pricing, requirements, specifications etc)", "Informations sur le groupe de matières ( taille, emballage, marque, prix, exigences, specifications, etc…)", "Materialgruppenberichtsschlussel (Größe, Verpackung, Marke, Preis, Anforderungen, Spezifikationen etc):", "Informazioni generali sul gruppo merci (misura, confezionamento, marchio, prezzo, richieste particolari, specifiche, ecc.)", "Narrativa material del informe del grupo (tamaño, embalaje, el calificar, tasacion, requisitos, especificaciones etc).");
+		globalTranslations["MATERIAL_OPTIONS"] = Array("Material Group Options", "Option de groupe matière", "Materialgrupp optionen", "Opzioni groupe materiale", "Opciones Materiales Del Grupo.");
+		globalTranslations["MINIMAL_CHANCE"] = Array("Minimal Chance", "Chance minimale", "Minimale Wahrscheinlichkeit", "Probabilita minima", "Oportunidad Mínima");
+		globalTranslations["NEW_CCR_ACTION"] = Array("New Customer Contact Report Action", "Nouvelle action de rapport de contact de client", "Neue Kunde Kontakt-Report-Tatigkeit", "Nuova azione rapporto del contatto del cliente", "Informe de  nueva accion de contacto con el Cliente.");
+		globalTranslations["NEW_OR_EXISTING_BUSINESS"] = Array("Existing / New Business", "Marche existant/nouveau", "Bestehendes/neues Geschaft", "Business esistente / nuovo business", "Negocio existente/nuevo");
+		globalTranslations["NEXT_ACTION_COMPLETION_DATE"] = Array("Next Action Completion Date", "La date prochaine daccomplissement daction", "Folgendes Tatigkeit Beendigung Datum", "La data prossima di completamento di azione", "Fecha prevista para la ejecucion de la accion");
+		globalTranslations["NON_SAP_MATERIAL_KEY"] = Array("Non SAP Material Key", "Non principal materiel de SAP", "Nicht SAP materielles Schlussel", "Non SAP chiave materiale", "No hay guia del material en SAP.");
+		globalTranslations["NO_REPORT_LOADED"] = Array("No Report Loaded", "Aucun rapport a charge", "Kein Report lud", "Nessun rapporto caricato", "Ningún Informe Cargado.");
+		globalTranslations["OBJECTIVE_OF_CONTACT"] = Array("Objective of Customer Contact", "Objectif du contact avec le client", "Ziel des Kundenkontakts", "Oggetto del contatto", "Objetivo del contacto del cliente.");
+		globalTranslations["ONGOING_BUSINESS"] = Array("Ongoing Business", "Des affaires continues", "Fortwahrendes Geschaft", "Il commercio continuo", "Negocio en curso.");
+		globalTranslations["PERFORMANCE"] = Array("Performance", "Execution", "Leistung", "Prestazioni", "Funcionamiento.");
+		globalTranslations["PERSONAL"] = Array("Personal Visit", "Visite personnelle", "Persönlicher Besuch", "Chiamata personale", "Visita personal.");
+		globalTranslations["PERSON_RESPONSIBLE"] = Array("Person Responsible", "Personne responsable", "Person Verantwortlich", "Persona responsabile", "Persona responsable.");
+		globalTranslations["PHONE_CALL"] = Array("Telephone Call", "Lappel telephonique", "Telefonanruf", "Telefonata", "Llamada telefonica.");
+		globalTranslations["PRICE"] = Array("Price", "Prix", "Preis", "Prezzo", "Precio.");
+		globalTranslations["PROBABILITY_OF_SUCCESS"] = Array("Probability of Success", "Probabilite de reussite", "Erfolgswahrscheinlichkeit", "Probabilita di successo", "Probabilidad del exito.");
+		globalTranslations["PRODUCT"] = Array("Product", "Produit", "Produkt", "Prodotto", "Producto.");
+		globalTranslations["PRODUCT_/_PRICE_APPROVED_-_AWAITING_DECISION_ON_PROJECT"] = Array("Product/Price Approved - Awaiting Decision on Project", "Product/Price approuve - attendant la decision sur le projet", "Product/Price verantwortlich ist, das genehmigt wurde - Entscheidung uber Projekt erwartend", "Product/Price approvato - attendendo la decisione sul progetto", "Product/Precio aprobado - aguardar la decision sobre proyecto.");
+		globalTranslations["PRODUCT_FAMILY"] = Array("Product Family", "Famille de produits", "Produktfamilie", "Famiglia prodotto", "Familia De Producto.");
+		globalTranslations["PRODUCT_HIERARCHY_DESCRIPTION"] = Array("Product Hierarchy Description", "Description de hierarchie de produit", "Produkt-Hierarchie Beschreibung", "Descrizione di gerarchia del prodotto", "Descripcion de la Jerarquía del Producto.");
+		globalTranslations["PRODUCT_HIERARCHY_KEY"] = Array("Product Hierarchy Key", "Clef de hierarchie de produit", "Produkt-Hierarchie Schlussel", "Chiave di gerarchia del prodotto", "Llave De la Jerarquía Del Producto.");
+		globalTranslations["PRODUCT_HIERARCHY_LEVEL_1"] = Array("Product Hierarchy Level 1", "Hierarchie de produit niveau 1", "Produkthierachie Stufe 1", "Gerarchia prodotto, livello 1", "Nivel 1 De la Jerarquía Del Producto.");
+		globalTranslations["PRODUCT_HIERARCHY_LEVEL_2"] = Array("Product Hierarchy Level 2", "Hierarchie de produit niveau 2", "Produkthierachie Stufe 2", "Gerarchia prodotto, livello 2", "Nivel 2 De la Jerarquía Del Producto.");
+		globalTranslations["PRODUCT_HIERARCHY_LEVEL_3"] = Array("Product Hierarchy Level 3", "Hierarchie de produit niveau 3", "Produkthierachie Stufe 3", "Gerarchia prodotto, livello 3", "Nivel 3 De la Jerarquía Del Producto.");
+		globalTranslations["PRODUCT_RANGE"] = Array("Product Range", "Gamme De produits", "Warenangebot", "Gamma Di Prodotti", "Gama De Producto");
+		globalTranslations["QUALITY"] = Array("Quality", "Qualite", "Qualitat", "Qualita", "Calidad.");
+		globalTranslations["REASON_FOR_BUSINESS_GAIN_OR_LOSS"] = Array("Reason for Business Gain or Loss", "Motifs de gains ou de pertes pour lentreprise", "Grunde fur den Geschaftsabschluss bzw. den Verlust des Geschafts:", "Ragioni determinanti per lacquisizione o la perdita del business", "Razon del aumento o de la perdida del negocio.");
+		globalTranslations["RELATIONSHIP"] = Array("Relationship", "Rapport", "Verhaltnis", "Rapporto", "Relacion.");
+		globalTranslations["REPORT"] = Array("Report", "Rapportez", "Berichten Sie", "Segnali", "Informe.");
+		globalTranslations["REPORT_MATERIALS"] = Array("Report Materials", "Des materiaux de rapport", "Report-Materialien", "Materiali di rapporto", "Informe de los materiales");
+		globalTranslations["REPORT_OPTIONS"] = Array("Report Options", "Des options de rapport", "Report-Wahlen", "Opzioni di rapporto", "Informe de las opciones");
+		globalTranslations["REPORT_OWNER"] = Array("Report Owner", "Proprietaire de rapport", "Report-Inhaber", "Proprietario di rapporto", "Informe del Responsable");
+		globalTranslations["REPORT_STATUS"] = Array("Report Status", "Statut de rapport", "Report-Status", "Condizione di rapporto", "Informe de estado");
+		globalTranslations["REPORT_SUMMARY"] = Array("Report Summary", "Sommaire de rapport", "Report-Zusammenfassung", "Sommario di rapporto", "Resumen del informe");
+		globalTranslations["REVISE_REPORT"] = Array("Revise Report", "Rapport depreuve de revision", "Revision Report", "Rapporto della revisione", "Revision del informe");
+		globalTranslations["SALES_EMPLOYEE"] = Array("Sales Employee", "Vendeur", "Verkaufer", "Venditore", "Empleado De las Ventas");
+		globalTranslations["SALES_PROCESS_STAGE"] = Array("Sales Process Stage", "Etapes du processus de vente", "Verkaufsstufe", "Fase del processo di vendita", "Etapa del proceso de ventas.");
+		globalTranslations["SAP_ACCOUNT_NUMBER"] = Array("SAP Account Number", "Numero de compte SAP", "SAP-Kontonummer", "Codice cliente SAP", "Número De Cuenta de la SAP.");
+		globalTranslations["SAP_MATERIAL_GROUP_KEY"] = Array("SAP Material Group Key", "Cle de groupe de matières SAP", "SAP Materialgruppenschlussel", "Gruppo merci SAP", "Llave del grupo de material en SAP");
+		globalTranslations["SAP_MATERIAL_KEY_SELECTOR"] = Array("SAP Material Group Key Selector", "Selecteur de la cle de groupe de matières dans SAP", "SAP Auswahl des Materialgruppenschlussels", "Selettore del gruppo merci SAP", "Selector Material De la Llave Del Grupo de la SAP.");
+		globalTranslations["SOME_INTEREST"] = Array("Some Interest", "Un certain interet", "Etwas Interesse", "Un certo interesse", "Un Cierto Interes.");
+		globalTranslations["STRONG_POSSIBILITY"] = Array("Strong Possibility", "Possibilite forte", "Starke Möglichkeit", "Possibilita forte", "Posibilidad Fuerte.");
+		globalTranslations["SUBJECT_OF_DISCUSSION"] = Array("Subject of Discussion", "Sujet de discussion", "Thema der Diskussion", "Argomento di discussione", "Tema de la discusion.");
+		globalTranslations["SUMMARY"] = Array("Summary", "Sommaire", "Die Zusammenfassung", "Sommario", "Resumen.");
+		globalTranslations["SURE_TO_BE_SUCCESSFUL"] = Array("Sure to be Successful", "Sûr detre reussi", "Sicher, erfolgreich zu sein", "Sicuro riuscire", "Seguro del exito");
+		globalTranslations["TARGET_COMPLETION_DATE"] = Array("Target Completion Date", "Date de finalisation", "Datum, an dem die Aktion abgeschlossen sein sollte", "Scadenza per il completamento dellazione", "Apunte la fecha fde finalizacion de la accion.");
+		globalTranslations["TARGET_SELLING_PRICE"] = Array("Target selling price per unit", "", "", "", "");
+		globalTranslations["TECHNICAL_AUDIT_-_UNDERSTAND_CUSTOMER_NEEDS"] = Array("Technical Audit - Understand Customer Needs", "Audit technique - comprenez les besoins de client", "Technische Bilanz - verstehen Sie Kundenbedurfnisse", "Verifica tecnica - capisca i bisogni di cliente", "Intervencion Tecnica - Entiender las necesidades del Cliente.");
+		globalTranslations["TECHNICAL_OPTIONS"] = Array("Technical Service Options", "", "", "", "");
+		globalTranslations["VIDEO"] = Array("Video Conference", "Videoconference", "Videokonferenz", "Videoconferenza", "Videoconferencia.");
+		globalTranslations["WHAT TYPE OF CUSTOMER HAS BEEN CONTACTED?"] = Array("What type of Customer has been contacted?", "Quel type de client a ete contacte ?", "Welche Art Kunde wurde kontaktiert?", "Che tipo di cliente è stato contattato/visitato?", "¿Que tipo de cliente se ha entrado en contacto con?");
+		globalTranslations["YOUR_ACTIONS"] = Array("Your Actions", "Vos actions", "Ihre Tatigkeiten", "Le vostre azioni", "Sus Acciones.");
+		globalTranslations["YOUR_OPEN_REPORTS"] = Array("Your Open Reports", "Vos rapports ouverts", "Ihre geöffneten Reports", "I vostri rapporti aperti", "Sus Informes Abiertos.");
+		/**/
+
+			
+		function start()
+		{
+		//	if (navigator.appVersion.indexOf("MSIE") > 0)
+			//{
+				getInitialLanguage();
+				
+				
+				buildLanaguageBar();
+				
+				/* first thing we do, must have a report! */
+				defineReport();
+				
+				currentLocation = "report";
+				
+				/* as it says really */
+				buildButtons();
+			/*}
+			else
+			{
+				document.getElementById("content").innerHTML = "<h3>You must use Internet Explorer 6 or greater to use this tool</h3>";
+			}	*/
+			
+			//showDebug();
+		}
+		
+		function getInitialLanguage()
+		{
+			language=(navigator["language"])?navigator["language"]:navigator["userLanguage"];
+
+			if (language == "fr")
+			{
+				languageId = 1;
+			}
+			
+			if (language == "de" || language == "de-ch")
+			{
+				languageId = 2;
+			}
+			
+			if (language == "it")
+			{
+				languageId = 3;
+			}
+			
+			if (language == "es")
+			{
+				languageId = 4;
+			}
+		}
+		
+		
+		function translate(word)
+		{			
+			if (globalTranslations[word])
+			{
+				return globalTranslations[word][languageId];
+			}
+			else
+			{
+				return "not found (" + word + ")";
+			}
+		}
+		
+		
+		function buildLanaguageBar()
+		{
+			document.getElementById("languageBar").innerHTML = "";
+			
+			languageArray = Array();
+			languageArray[0] = "English";
+			languageArray[1] = "French";
+			languageArray[2] = "German";
+			languageArray[3] = "Italian";
+			languageArray[4] = "Spanish";
+			
+			label = document.createTextNode("Language: ");
+			document.getElementById("languageBar").appendChild(label);
+			
+			for (var i=0; i < languageArray.length; i++)
+			{
+				if (i == languageId)
+				{
+					boldness = document.createElement('strong');
+					label = document.createTextNode(languageArray[i]);
+					
+					boldness.appendChild(label);
+					
+					if (i > 0)
+					{
+						splitter = document.createTextNode(" | ");
+						document.getElementById("languageBar").appendChild(splitter);
+					}
+					
+					document.getElementById("languageBar").appendChild(boldness);
+				}
+				else
+				{
+					link = document.createElement('a');
+					link.href = "Javascript:changeLanguage(" + i + ");";
+					label = document.createTextNode(languageArray[i]);
+					
+					link.appendChild(label);
+					
+					if (i > 0)
+					{
+						splitter = document.createTextNode(" | ");
+						document.getElementById("languageBar").appendChild(splitter);
+					}
+					
+					document.getElementById("languageBar").appendChild(link);
+				}
+			}
+		}
+		
+		function changeLanguage(id)
+		{
+			languageId = id;
+			
+			buildLanaguageBar();
+			
+			if (currentLocation == "report")
+			{
+				gotoreport();
+			}
+			
+			if (currentLocation == "reportaction")
+			{
+				gotoreportaction(reportactionid);
+			}
+			
+			if (currentLocation == "material")
+			{
+				gotomaterial(materialid);
+			}
+			
+			if (currentLocation == "materialaction")
+			{
+				gotomaterialaction(materialid, materialactionid);
+			}
+		}
+		
+		
+		function buildButtons()
+		{
+			/* clear it first, clean plate and all that */
+			document.getElementById("buttons").innerHTML = "";
+			
+			/* navigation */
+			navtable = document.createElement('table');
+			navtable.width = "100%";
+			navtable.className = "box";
+			
+			tbody = document.createElement('tbody');
+			tr1 = document.createElement('tr');
+			td1 = document.createElement('td');
+			td1.style.padding = "4px";	
+			
+			
+			
+			link = document.createElement('a');
+			link.href = "Javascript:gotoreport();";
+			label = document.createTextNode("Report");
+			link.appendChild(label);
+			
+			if (currentLocation == 'report')
+			{
+				td1.style.background = "#CCCCCC";		
+				span =  document.createElement('span');
+				span.style.fontWeight = 'bold';		
+				span.appendChild(link);
+				td1.appendChild(span);
+			}
+			else 
+			{
+				td1.appendChild(link);
+			}
+			
+			
+			tr1.appendChild(td1);
+			tbody.appendChild(tr1);
+			
+			for (var i=0; i < report["actions"].length; i++)
+			{
+				tr = document.createElement('tr');
+				td = document.createElement('td');
+				td.style.padding = "4px 4px 4px 15px;";				
+
+				link = document.createElement('a');
+				link.href = "Javascript:gotoreportaction("+i+");";
+				
+				label = document.createTextNode("Action " + (i + 1));
+				link.appendChild(label);
+				
+				if (currentLocation == 'reportaction' && reportactionid == i)
+				{
+					td.style.background = "#CCCCCC";		
+					span =  document.createElement('span');
+					span.style.fontWeight = 'bold';		
+					span.appendChild(link);
+					td.appendChild(span);
+				}
+				else 
+				{
+					td.appendChild(link);
+				}
+				
+				tr.appendChild(td);
+				tbody.appendChild(tr);
+			}
+			
+			
+			for (var i=0; i < materials.length; i++)
+			{
+				tr = document.createElement('tr');
+				td = document.createElement('td');
+				td.style.padding = "4px 4px 4px 15px;";
+					
+				link = document.createElement('a');
+				link.href = "Javascript:gotomaterial("+i+");";
+				
+				label = document.createTextNode("Material " + (i + 1));
+				link.appendChild(label);
+				
+				if (currentLocation == 'material' && materialid == i)
+				{
+					td.style.background = "#CCCCCC";		
+					span =  document.createElement('span');
+					span.style.fontWeight = 'bold';		
+					span.appendChild(link);
+					td.appendChild(span);
+				}
+				else 
+				{
+					td.appendChild(link);
+				}
+				
+				tr.appendChild(td);
+				tbody.appendChild(tr);
+				
+				
+				for (var x=0; x < materials[i]["actions"].length; x++)
+				{
+					tr = document.createElement('tr');
+					td = document.createElement('td');
+					td.style.padding = "4px 4px 4px 30px;";
+					
+					
+					link = document.createElement('a');
+					link.href = "Javascript:gotomaterialaction("+i+", "+x+");";
+					
+					label = document.createTextNode("Action " + (x + 1));
+					link.appendChild(label);
+					
+					if (currentLocation == 'materialaction' && materialid == i && materialactionid == x)
+					{
+						td.style.background = "#CCCCCC";		
+						span =  document.createElement('span');
+						span.style.fontWeight = 'bold';		
+						span.appendChild(link);
+						td.appendChild(span);
+					}
+					else 
+					{
+						td.appendChild(link);
+					}
+					
+					
+					tr.appendChild(td);
+					tbody.appendChild(tr);
+				}
+				
+			}
+			
+			
+			
+			tr2 = document.createElement('tr');
+			td2 = document.createElement('td');
+			td2.align = "center";		
+			
+			
+			submit = document.createElement('input');
+			submit.type = "button";
+			submit.value = "Save Report";
+			submit.onclick = function() {
+				finish();
+			}
+			
+			td2.appendChild(submit);
+		
+			tr2.appendChild(td2);
+			tbody.appendChild(tr2);
+			navtable.appendChild(tbody);
+			
+			document.getElementById("buttons").appendChild(navtable);
+			
+			br = document.createElement('br');
+			document.getElementById("buttons").appendChild(br);
+			
+			
+						
+			
+			/* Show material box */			
+
+			materialtable = document.createElement('table');
+			materialtable.width = "100%";
+			materialtable.className = "box";
+			
+			tbody = document.createElement('tbody');
+			tr = document.createElement('tr');
+			td1 = document.createElement('td');
+			td2 = document.createElement('td');
+			td2.align = "right";
+			
+			label = document.createTextNode("Add a Material to This Report");
+			td1.appendChild(label);
+			
+			addreportaction = document.createElement('input');
+			addreportaction.type = "button";
+			addreportaction.value = "Add";
+			addreportaction.onclick = function() {
+				gotomaterial(-1);
+			}
+			
+			td2.appendChild(addreportaction);
+			
+			tr.appendChild(td1);
+			tr.appendChild(td2);
+			tbody.appendChild(tr);
+			
+			
+			if (currentLocation == "material" || currentLocation == "materialaction")
+			{
+				tr = document.createElement('tr');
+				td1 = document.createElement('td');
+				td2 = document.createElement('td');
+				td2.align = "right";
+	
+				
+				label = document.createTextNode("Delete Selected Material Group");
+				td1.appendChild(label);
+				
+				addmaterialaction = document.createElement('input');
+				addmaterialaction.type = "button";
+				addmaterialaction.value = "Delete";
+				addmaterialaction.onclick = function() {
+					deletematerial(materialid);
+				}
+				
+				td2.appendChild(addmaterialaction);
+				
+				tr.appendChild(td1);
+				tr.appendChild(td2);
+				tbody.appendChild(tr);		
+			}
+			
+			
+			materialtable.appendChild(tbody);
+			
+			document.getElementById("buttons").appendChild(materialtable);
+			
+			br = document.createElement('br');
+			document.getElementById("buttons").appendChild(br);
+			
+			
+			/* Show material action box */
+			if (currentLocation == "material" || currentLocation == "materialaction")
+			{
+				materialtable = document.createElement('table');
+				materialtable.width = "100%";
+				materialtable.className = "box";
+				
+				tbody = document.createElement('tbody');
+	
+				tr = document.createElement('tr');
+				td1 = document.createElement('td');
+				td2 = document.createElement('td');
+				td2.align = "right";
+	
+				
+				label = document.createTextNode("Add an Action to This Material Group");
+				td1.appendChild(label);
+				
+				addmaterialaction = document.createElement('input');
+				addmaterialaction.type = "button";
+				addmaterialaction.value = "Add";
+				addmaterialaction.onclick = function() {
+					gotomaterialaction(materialid, -1);
+				}
+				
+				td2.appendChild(addmaterialaction);
+				
+				tr.appendChild(td1);
+				tr.appendChild(td2);
+				tbody.appendChild(tr);
+				
+				
+				if (currentLocation == "materialaction")
+				{
+					tr = document.createElement('tr');
+					td1 = document.createElement('td');
+					td2 = document.createElement('td');
+					td2.align = "right";
+		
+					
+					label = document.createTextNode("Delete Selected Action");
+					td1.appendChild(label);
+					
+					addmaterialaction = document.createElement('input');
+					addmaterialaction.type = "button";
+					addmaterialaction.value = "Delete";
+					addmaterialaction.onclick = function() {
+						deletematerialaction(materialid, materialactionid);
+					}
+					
+					td2.appendChild(addmaterialaction);
+					
+					tr.appendChild(td1);
+					tr.appendChild(td2);
+					tbody.appendChild(tr);
+				}
+
+				materialtable.appendChild(tbody);
+			
+				document.getElementById("buttons").appendChild(materialtable);
+			}
+			
+			
+			
+			
+			
+			/* Show report action box */			
+			if (currentLocation == "report" || currentLocation == "reportaction")
+			{
+				reportactiontable = document.createElement('table');
+				reportactiontable.width = "100%";
+				reportactiontable.className = "box";
+				
+				tbody = document.createElement('tbody');
+				tr = document.createElement('tr');
+				td1 = document.createElement('td');
+				td2 = document.createElement('td');
+				td2.align = "right";
+				
+				label = document.createTextNode("Add an Action to This Report");
+				td1.appendChild(label);
+				
+				addreportaction = document.createElement('input');
+				addreportaction.type = "button";
+				addreportaction.value = "Add";
+				addreportaction.onclick = function() {
+					gotoreportaction(-1);
+				}
+				
+				td2.appendChild(addreportaction);
+				
+				tr.appendChild(td1);
+				tr.appendChild(td2);
+				tbody.appendChild(tr);
+				
+				
+				if (currentLocation == "reportaction")
+				{
+					tr = document.createElement('tr');
+					td1 = document.createElement('td');
+					td2 = document.createElement('td');
+					td2.align = "right";
+		
+					
+					label = document.createTextNode("Delete Selected Action");
+					td1.appendChild(label);
+					
+					addmaterialaction = document.createElement('input');
+					addmaterialaction.type = "button";
+					addmaterialaction.value = "Delete";
+					addmaterialaction.onclick = function() {
+						deletereportaction(reportactionid);
+					}
+					
+					td2.appendChild(addmaterialaction);
+					
+					tr.appendChild(td1);
+					tr.appendChild(td2);
+					tbody.appendChild(tr);
+				}
+				
+	
+				reportactiontable.appendChild(tbody);
+				
+				document.getElementById("buttons").appendChild(reportactiontable);
+				
+				br = document.createElement('br');
+				document.getElementById("buttons").appendChild(br);
+			}
+		}
+		
+		
+		
+		function getFormValues()
+		{
+			if (currentLocation == "report")
+			{
+				for (keyVar in report)
+				{
+					if (document.getElementById(keyVar))
+					{
+						if (keyVar != "actions")
+						{
+							report[keyVar] = getValue(keyVar);
+						}
+					}
+				}
+			}
+			
+			if (currentLocation == "reportaction")
+			{
+				for (keyVar in report['actions'][reportactionid])
+				{
+					if (document.getElementById(keyVar))
+					{
+						report['actions'][reportactionid][keyVar] = getValue(keyVar);
+					}
+				}
+			}
+			
+			if (currentLocation == "material")
+			{
+				for (keyVar in materials[materialid])
+				{
+					if (document.getElementById(keyVar))
+					{
+						if (document.getElementById(keyVar).multiple)
+						{
+							materials[materialid][keyVar] = "";
+							//position = 0;
+							
+							for (i=0; i < document.getElementById(keyVar).options.length; i++)
+							{
+								var value = document.getElementById(keyVar).options[i].value;
+				
+								if (value == "other" || value == "Other")
+								{
+									value = document.getElementById(keyVar + "_otherOption").value;
+								}
+								
+								
+								if (document.getElementById(keyVar).options[i].selected)
+								{
+									if (materials[materialid][keyVar] == "")
+									{
+										materials[materialid][keyVar] =  value;
+									}
+									else
+									{
+										materials[materialid][keyVar] += "," + value;
+									}
+								}
+							}
+						}
+						else
+						{
+							materials[materialid][keyVar] = getValue(keyVar);	
+						}						
+					}
+				}
+			}
+			
+			if (currentLocation == "materialaction")
+			{
+				for (keyVar in materials[materialid]['actions'][materialactionid])
+				{
+					if (document.getElementById(keyVar))
+					{
+						materials[materialid]['actions'][materialactionid][keyVar] = getValue(keyVar);
+					}
+				}
+			}
+		}
+		
+		function finish()
+		{
+			getFormValues();
+ 			//showDebug();
+
+ 			var output = "";
+				
+			output += 'a:3:{';
+			output += 's:7:"version";s:1:"' + version + '";';
+			
+			var count = 0;
+						
+			for (keyVar in report)
+			{
+				count++;
+			}
+			output += 's:6:"report";a:' + count + ':{';
+			
+			
+			for (keyVar in report)
+			{
+				if (keyVar == "actions")
+				{
+					output += 's:7:"actions";a:' + report['actions'].length + ':{';
+						
+					for (i=0; i < report["actions"].length; i++)
+					{
+						var count = 0;
+						
+						for (ActionVar in report["actions"][i])
+						{
+							count++;
+						}
+						
+						output += 'i:' + i + ';a:' + count + ':{';
+						
+						for (ActionVar in report["actions"][i])
+						{
+							output += encodeForArray(ActionVar, report["actions"][i][ActionVar]);
+						}
+						
+						output += '}';
+					}
+					
+					output += '}';
+				}
+				else
+				{
+					output += encodeForArray(keyVar, report[keyVar]);
+				}
+	
+			}
+			
+			output += '}';
+			
+			var count = 0;
+						
+			for (keyVar in materials)
+			{
+				count++;
+			}
+			
+			output += 's:9:"materials";a:' + materials.length + ':{';
+			
+			for (i=0; i < materials.length; i++)
+			{
+				var count = 0;
+				
+				for (MaterialVar in materials[i])
+				{
+					count++;
+				}
+			
+				output += 'i:' + i + ';a:' + count + ':{';
+				
+				for (MaterialVar in materials[i])
+				{
+					if (MaterialVar == "actions")
+					{
+						output += 's:7:"actions";a:' + materials[i]['actions'].length + ':{';
+																	
+						for (x=0; x < materials[i]["actions"].length; x++)
+						{
+							var count = 0;
+							
+							for (ActionVar in materials[i]["actions"][x])
+							{
+								count++;
+							}
+							
+							output += 'i:' + x + ';a:' + count + ':{';
+							
+							for (ActionVar in materials[i]["actions"][x])
+							{
+								output += encodeForArray(ActionVar, materials[i]["actions"][x][ActionVar]);
+							}
+							
+							output += '}';
+						}
+						
+						output += '}';
+					}
+					else
+					{
+						output += encodeForArray(MaterialVar, materials[i][MaterialVar]);
+					}
+				}
+				
+				output += '}';
+			}
+		
+			output += '}}';
+ 			
+ 			
+ 			SaveFrame.document.open("text/html","replace");
+			SaveFrame.document.write(encode64(output));
+			SaveFrame.document.close();
+			SaveFrame.focus();
+			SaveFrame.document.execCommand('SaveAs', false, '.txt');
+			
+			
+		}
+		
+		function encodeForArray(name, value)
+		{
+			return ('s:' + name.length + ':"' + name + '";s:' + value.length + ':"' + value + '";');
+		}
+		
+		function gotoreport()
+		{
+			getFormValues();
+			
+			currentLocation = "report";
+			
+			defineReport();
+			buildButtons();		
+			//showDebug();
+		}
+		
+		function gotoreportaction(id)
+		{
+			getFormValues();
+			
+			
+			currentLocation = "reportaction";
+			
+			reportactionid = id;
+			
+			if (reportactionid == -1)
+			{
+				report['actions'].push(Array());
+			}
+			
+			defineAction();
+			
+			if (reportactionid == -1)
+			{
+				reportactionid = (report['actions'].length - 1);
+			}
+				
+			
+			buildButtons();
+			//showDebug();
+		}
+		
+		
+		function gotomaterial(id)
+		{
+			getFormValues();
+			
+			
+			currentLocation = "material";
+			
+			materialid = id;
+			
+			if (materialid == -1)
+			{
+				materials.push(Array());
+			}
+			
+			defineMaterial();
+			
+			
+				
+			buildButtons();
+			//showDebug();
+		}
+		
+		
+		
+		function gotomaterialaction(matid, id)
+		{
+			getFormValues();
+					
+			currentLocation = "materialaction";
+			
+			materialid = matid;
+			materialactionid = id;
+			
+			if (materialactionid == -1)
+			{
+				materials[materialid]['actions'].push(Array());
+			}
+			
+			defineAction();
+			
+			if (materialactionid == -1)
+			{
+				materialactionid = (materials[materialid]['actions'].length - 1);
+			}
+		
+			buildButtons();	
+			//showDebug();
+		}
+		
+		
+		
+		function deletematerial(id)
+		{
+			materials.splice(id, 1);
+			
+			currentLocation = "report";
+			
+			defineReport();
+			buildButtons();
+			//showDebug();
+		}
+		
+		
+		function deletereportaction(id)
+		{
+			report['actions'].splice(id, 1);
+			
+			currentLocation = "report";
+			
+			defineReport();
+			buildButtons();
+			//showDebug();
+		}
+		
+		
+		function deletematerialaction(matid, id)
+		{
+			materials[matid]['actions'].splice(id, 1);
+			
+			currentLocation = "material";
+			
+			defineMaterial();
+			buildButtons();
+			//showDebug();
+		}
+		
+		
+		
+		function showDebug()
+		{
+			/* clear it first, clean plate and all that */
+			document.getElementById("debug").innerHTML = "";
+			
+			
+			for (keyVar in report)
+			{
+				if (keyVar == "actions")
+				{
+					if (report["actions"].length == 0)
+					{
+						message = document.createTextNode("DEBUG: Actions = none");
+						br = document.createElement('br');
+					
+						document.getElementById("debug").appendChild(message);
+						document.getElementById("debug").appendChild(br);
+					}
+					for (i=0; i < report["actions"].length; i++)
+					{							
+						for (ActionVar in report["actions"][i])
+						{
+							message = document.createTextNode("DEBUG: Actions[" + i + "][" + ActionVar + "] = " + report["actions"][i][ActionVar]);
+							br = document.createElement('br');
+						
+							document.getElementById("debug").appendChild(message);
+							document.getElementById("debug").appendChild(br);
+						}
+					}
+				}
+				else
+				{
+					message = document.createTextNode("DEBUG: " + keyVar + " = " + report[keyVar]);
+					br = document.createElement('br');
+				
+					document.getElementById("debug").appendChild(message);
+					document.getElementById("debug").appendChild(br);
+				}
+	
+			}
+			
+			if (materials.length == 0)
+			{
+				message = document.createTextNode("DEBUG: Materials = none");
+				br = document.createElement('br');
+			
+				document.getElementById("debug").appendChild(message);
+				document.getElementById("debug").appendChild(br);
+			}
+			for (i=0; i < materials.length; i++)
+			{							
+				for (MaterialVar in materials[i])
+				{
+					if (MaterialVar == "actions")
+					{
+						if (materials[i]["actions"].length == 0)
+						{
+							message = document.createTextNode("DEBUG: materials[" + i + "] Actions = none");
+							br = document.createElement('br');
+						
+							document.getElementById("debug").appendChild(message);
+							document.getElementById("debug").appendChild(br);
+						}
+						for (x=0; x < materials[i]["actions"].length; x++)
+						{							
+							for (ActionVar in materials[i]["actions"][x])
+							{
+								message = document.createTextNode("DEBUG: materials[" + i + "] Actions[" + x + "][" + ActionVar + "] = " + materials[i]["actions"][x][ActionVar]);
+								br = document.createElement('br');
+							
+								document.getElementById("debug").appendChild(message);
+								document.getElementById("debug").appendChild(br);
+							}
+						}
+					}
+					else
+					{
+						message = document.createTextNode("DEBUG: materials[" + i + "][" + MaterialVar + "] = " + materials[i][MaterialVar]);
+						br = document.createElement('br');
+					
+						document.getElementById("debug").appendChild(message);
+						document.getElementById("debug").appendChild(br);
+					}
+					
+				}
+			}
+			
+		}
+		
+		
+		
+		function setValue(name, value)
+		{
+			element = document.getElementById(name);
+			
+			// stop Firefox dieing, as this is an IE only feature.
+			if (element)
+			{
+				// this makes use of an IE "feature" where getElementById returns names 
+				// as well as IDs, this is how we can get to radio buttons
+			
+				if (element.tagName == "INPUT")
+				{
+					if (element.getAttribute('type') == "radio")
+					{
+						document.getElementById(name + value).checked = true;
+					}
+					
+					if (element.getAttribute('type') == "text")
+					{
+						document.getElementById(name).value = value;
+					}
+				}
+				
+				if (element.tagName == "TEXTAREA")
+				{
+					document.getElementById(name).value = value;
+				}
+				
+				if (element.tagName == "SELECT")
+				{
+					if (element.multiple)
+					{
+						var found = false;
+						var values = value.split(",");
+						
+						var indexed = false;
+						
+						for (x=0; x < values.length; x++)
+						{
+							found = false;
+							
+							for (i=0; i < element.options.length; i++)
+							{
+								if (element.options[i].value == values[x])
+								{
+									if (!indexed) {
+										element.selectedIndex = i;
+										indexed = true;	
+									}
+									
+									found = true;
+									//document.getElementById(name + values[x]).selected = true;
+									element.options[i].selected = true;
+									
+									
+									//document.getElementById("debug").innerHTML = "";
+									//element.selectedIndex = i;
+									//alert(name + values[x] + " selected");
+								}
+								
+							}
+							
+							if (!found && values[x] != "")
+							{
+								//alert(name + "_otherOption: " + values[x]);
+								
+								document.getElementById(name + "other").selected = true;
+								document.getElementById(name + "_otherOption").value = values[x];
+								document.getElementById(name + "_otherOption").className = "textboxOther optional";
+							}
+							
+						}
+					}
+					else
+					{
+						if (document.getElementById(name + value))
+						{
+							document.getElementById(name + value).selected = true;
+						}
+						else
+						{
+							document.getElementById(name + "other").selected = true;
+							document.getElementById(name + "_otherOption").value = value;
+							document.getElementById(name + "_otherOption").className = "textboxOther optional";
+						}
+					}					
+				}
+			}
+		}
+		
+		function getValue(name)
+		{
+			element = document.getElementById(name);
+			
+			if (element.tagName == "INPUT")
+			{
+				if (element.getAttribute('type') == "radio")
+				{
+					var list = document.getElementsByTagName('input');
+					
+				    if (!list)
+				    {
+				        return "";
+				    }
+					
+					for (i=0; i < list.length; i++)
+					{
+						if (list[i].name == name && list[i].checked)
+						{
+							return list[i].value;
+						}
+					}
+					
+					return "";
+				}
+				
+				if (element.getAttribute('type') == "text")
+				{
+					return element.value;
+				}
+			}
+			
+			if (element.tagName == "TEXTAREA")
+			{
+				return element.value;
+			}
+			
+			if (element.tagName == "SELECT")
+			{
+				var value = element.options[element.selectedIndex].value;
+				
+				if (value == "other" || value == "Other")
+				{
+					value = document.getElementById(name + "_otherOption").value;
+				}
+				
+				return value;
+			}
+		}
+		
+		
+		
+		
+		
+		
+		function defineReport()
+		{
+			// clear the active fields array
+			activeFields = Array();
+			
+			if (currentLocation != "startup")
+			{
+				currentLocation = "report";
+			}
+			
+			document.getElementById("content").innerHTML = "";
+			
+			table = document.createElement('table');
+			table.width = "100%";
+			table.cellSpacing = "0";
+			table.border = "0";
+			table.cellPadding = "4";
+			table.className = "indented";
+			
+			switchgroup = creategroup("1switch");
+			customergroup = creategroup("1customer");
+			reportgroup = creategroup("1report");
+			newcustomergroup = creategroup("1newcustomer");
+			customerofdistributorgroup = creategroup("1customerOfDistributor");
+			
+			/* Switch group */
+			
+			options = new Array(4);
+			options[0] = "existing_client";
+			options[1] = "existing_distributor";
+			options[2] = "customer_distributor";
+			options[3] = "new_customer";
+			
+			translations = new Array(4);
+			translations[0] = translate("EXISTING_CLIENT");
+			translations[1] = translate("EXISTING_DISTRIBUTOR");
+			translations[2] = translate("CUSTOMER_DISTRIBUTOR");
+			translations[3] = translate("NEW_CUSTOMER");
+
+			switchgroup.appendChild(radio("typeOfCustomer", "TYPE_OF_CUSTOMER", options, translations));
+			
+			/*****************/
+			
+			
+			
+			
+			/* Customer group */
+			
+			customergroup.appendChild(textbox("sapNumber", "SAP_ACCOUNT_NUMBER"));
+						
+			/******************/
+			
+			
+			
+			/* New Customer group */
+			
+			newcustomergroup.appendChild(textbox("newCustomerName", "NAME"));
+			newcustomergroup.appendChild(textarea("newCustomerAddress", "ADDRESS"));
+			newcustomergroup.appendChild(textbox("newCustomerCountry", "COUNTRY"));
+			newcustomergroup.appendChild(textbox("newCustomerGroup", "CUSTOMER_GROUP"));
+			
+			/************************/
+			
+			
+			
+			/* Customer of distributor group */
+			
+			customerofdistributorgroup.appendChild(textbox("customerOfDistributorName", "NAME"));
+			customerofdistributorgroup.appendChild(textbox("customerOfDistributorAddress", "ADDRESS"));
+			customerofdistributorgroup.appendChild(textbox("customerOfDistributorCountry", "COUNTRY"));
+			customerofdistributorgroup.appendChild(textbox("customerOfDistributorGroup", "CUSTOMER_GROUP"));
+			
+			options = new Array(2);
+			options[0] = "yes";
+			options[1] = "no";
+			
+			translations = new Array(2);
+			translations[0] = "Yes";
+			translations[1] = "No";
+			
+			customerofdistributorgroup.appendChild(radio("customerOfDistributorJointCall", "JOINT_CALL", options, translations));
+			
+			
+			
+			options = new Array(2);
+			options[0] = "existing";
+			options[1] = "new";
+			
+			translations = new Array(2);
+			translations[0] = "Existing";
+			translations[1] = "New";
+			
+			customerofdistributorgroup.appendChild(radio("customerOfDistributorExisting", "NEW_OR_EXISTING_CUSTOMER", options, translations));
+			
+			
+		
+			
+			/************************/
+			
+			
+			
+			/* Report group */
+			
+			reportgroup.appendChild(textbox("contactDate", "CONTACT_DATE"));
+			reportgroup.appendChild(textbox("contactPerson", "CONTACT_PERSON"));
+			reportgroup.appendChild(textbox("contactSite", "CONTACT_SITE"));
+			
+			options = new Array(5);
+			options[0] = "personal";
+			options[1] = "phone_call";
+			options[2] = "video";
+			options[3] = "email";
+			options[4] = "other";
+			
+			translations = new Array(5);
+			translations[0] = translate("PERSONAL");
+			translations[1] = translate("PHONE_CALL");
+			translations[2] = translate("VIDEO");
+			translations[3] = translate("EMAIL");
+			translations[4] = "Other";
+			
+			
+			reportgroup.appendChild(dropdownalternative("contactType", "CONTACT_TYPE", options, translations));
+			
+			options = new Array(2);
+			options[0] = "existing";
+			options[1] = "new";
+			
+			translations = new Array(2);
+			translations[0] = translate("EXISTING");
+			translations[1] = translate("NEW");
+			
+			reportgroup.appendChild(radio("existingNewBusiness", "NEW_OR_EXISTING_BUSINESS", options, translations));
+			
+			
+			options = new Array(2);
+			options[0] = "no";
+			options[1] = "yes";
+			
+			translations = new Array(2);
+			translations[0] = translate("NO");
+			translations[1] = translate("YES");
+			
+			reportgroup.appendChild(radio("customerSurvey", "CUSTOMER_SURVEY", options, translations));
+			
+			
+			
+			reportgroup.appendChild(textarea("objective", "OBJECTIVE_OF_CONTACT"));
+			reportgroup.appendChild(textarea("generalNarative", "GENERAL_NARRATIVE"));
+			
+			
+				
+			options = new Array(9);
+			options[0] = "AUD";
+			options[1] = "CAD";
+			options[2] = "CHF";
+			options[3] = "EUR";
+			options[4] = "GBP";
+			options[5] = "NOK";
+			options[6] = "NZD";
+			options[7] = "SEK";
+			options[8] = "USD";
+			
+			translations = options;
+			
+			reportgroup.appendChild(dropdown("currency", "INVOICE_CURRENCY", options, translations));
+			
+			
+			/******************/
+			
+			
+			
+			// put some borders between groups
+			
+			switchgroup.appendChild(createBorder());
+			customergroup.appendChild(createBorder());
+			newcustomergroup.appendChild(createBorder());
+			customerofdistributorgroup.appendChild(createBorder());
+			
+			
+			// dependency time
+			
+			table.appendChild(switchgroup);
+					
+			if (report['typeOfCustomer'] == 'new_customer')
+			{
+				table.appendChild(createRowTop("New Prospective Customer"));
+				table.appendChild(newcustomergroup);
+			}
+			else
+			{
+				if (report['typeOfCustomer'] == 'existing_client')
+				{
+					table.appendChild(createRowTop("Existing Scapa Customer"));
+				}
+				else
+				{
+					table.appendChild(createRowTop("Existing Scapa Distributor"));
+				}
+				table.appendChild(customergroup);
+			}
+			
+			if (report['typeOfCustomer'] == 'customer_distributor')
+			{
+				table.appendChild(createRowTop("Customer of an Existing Scapa Distributor"));
+				table.appendChild(customerofdistributorgroup);
+			}
+			
+			table.appendChild(reportgroup);
+			
+			
+			
+			document.getElementById("content").appendChild(table);
+		
+			
+			// last ditch dependency adding as our little toolset doesn't do it by magic!
+			
+			var list = document.getElementsByTagName('input');
+					
+		    if (list)
+		    {			
+				for (i=0; i < list.length; i++)
+				{
+					if (list[i].name == 'typeOfCustomer')
+					{
+						list[i].onclick = function() {
+							gotoreport();
+						}
+					}
+				}
+		    }
+			
+			
+			
+			// stick the value in the array into the form using the activeFields array
+			
+			for (i=0; i < activeFields.length; i++)
+			{
+				setValue(activeFields[i], report[activeFields[i]]);
+			}
+		}
+		
+		
+		
+		
+		
+		function defineAction()
+		{
+			// clear the active fields array
+			activeFields = Array();
+			
+			document.getElementById("content").innerHTML = "";
+			
+			table = document.createElement('table');
+			table.width = "100%";
+			table.cellSpacing = "0";
+			table.border = "0";
+			table.cellPadding = "4";
+			table.className = "indented";
+			
+			
+			
+			
+			actiongroup = creategroup("action");
+			
+			actiongroup.appendChild(textarea("actionArising", "ACTION_ARISING"));
+			actiongroup.appendChild(textbox("personResponsible", "PERSON_RESPONSIBLE"));
+			actiongroup.appendChild(textbox("targetCompletion", "TARGET_COMPLETION_DATE"));
+			
+			table.appendChild(actiongroup);
+			
+			document.getElementById("content").appendChild(table);
+			
+			
+			for (i=0; i < activeFields.length; i++)
+			{
+				if (currentLocation == "reportaction" && reportactionid != -1)
+				{
+					setValue(activeFields[i], report['actions'][reportactionid][activeFields[i]]);
+				}
+				
+				if (currentLocation == "materialaction" && materialactionid != -1)
+				{
+					setValue(activeFields[i], materials[materialid]['actions'][materialactionid][activeFields[i]]);
+				}
+			}
+		}
+		
+		
+		function defineMaterial()
+		{
+			// clear the active fields array
+			activeFields = Array();
+			
+			document.getElementById("content").innerHTML = "";
+			
+			table = document.createElement('table');
+			table.width = "100%";
+			table.cellSpacing = "0";
+			table.border = "0";
+			table.cellPadding = "4";
+			table.className = "indented";
+			
+
+			sapswitchgroup = creategroup("sapswitch");
+			sapgroup = creategroup("sap");		
+			nonsapgroup = creategroup("nonsap");
+			discussiongroup = creategroup("discussion");
+			competitorgroup = creategroup("competitor");
+			successgroup = creategroup("success");
+			salesgroup = creategroup("sales");
+			
+			
+			
+			/* SAP switch group */
+			
+			options = new Array(2);
+			options[0] = "yes";
+			options[1] = "no";
+			
+			translations = new Array(2);
+			translations[0] = translate("YES");
+			translations[1] = translate("NO");
+			
+			sapswitchgroup.appendChild(radio("isSapProduct", "IS_SAP_PRODUCT", options, translations));
+			
+			/*********************/
+			
+			
+			
+			/* SAP group */
+			
+			sapgroup.appendChild(textbox("materialKey", "MATERIAL_KEY"));
+			
+			/*************/
+			
+			
+			
+			
+			/* NON SAP group */
+			
+			nonsapgroup.appendChild(textbox("alternativeMaterialKey", "NON_SAP_MATERIAL_KEY"));
+			
+			/*****************/
+			
+			
+			
+			/* Discussion group */
+			
+			options = new Array(4);
+			options[0] = "quality";
+			options[1] = "service";
+			options[2] = "product";
+			options[3] = "price";
+			
+			translations = new Array(4);
+			translations[0] = translate("QUALITY");
+			translations[1] = translate("SERVICE");
+			translations[2] = translate("PRODUCT");
+			translations[3] = translate("PRICE");
+			
+			
+			discussiongroup.appendChild(dropdown("discussionSubject", "SUBJECT_OF_DISCUSSION", options, translations));
+			
+			discussiongroup.appendChild(textarea("application", "MATERIAL_GROUP_APPLICATION"));
+			discussiongroup.appendChild(textbox("incomeQuantity", "ANNUAL_POTENTIAL_IN_INVOICE_CURRENCY"));
+			
+			
+			options = new Array(7);
+			options[0] = "m2";
+			options[1] = "kg";
+			options[2] = "m";
+			options[3] = "mm";
+			options[4] = "roll";
+			options[5] = "ea";
+			options[6] = "n/a";
+			
+			translations = options;
+			
+			discussiongroup.appendChild(measurement("volume", "ANNUAL_POTENTIAL_IN_VOLUME", options, translations));
+
+			activeFields.push("volume_measurement");
+			activeFields.push("volume_quantity");
+			
+			if (materialid == -1)
+			{
+				id = materials.length - 1;
+				materials[id]["volume_measurement"] = "";
+				materials[id]["volume_quantity"] = "";
+			}
+			
+			/********************/
+			
+			
+			
+			/* Competitor group */
+			
+			options = new Array(40);
+			options[0] = "No Competitors";
+			options[1] = "3M";
+			options[2] = "Advance Tapes";
+			options[3] = "AlphaGary";
+			options[4] = "Avery";
+			options[5] = "Asia Chemicals";
+			options[6] = "Beiersdorf";
+			options[7] = "Biesse";
+			options[8] = "Certoplast";
+			options[9] = "Chase";
+			options[10] = "Condor";
+			options[11] = "Coroplast";
+			options[12] = "Four Pillars";
+			options[13] = "Freudenberg";
+			options[14] = "Geca";
+			options[15] = "Hodgson Sealants";
+			options[16] = "Italian Compounders";
+			options[17] = "Lantor";
+			options[18] = "Lohmann";
+			options[19] = "Mactac";
+			options[20] = "Nitto";
+			options[21] = "Norton/St Gobain";
+			options[22] = "Orafol";
+			options[23] = "Plasto";
+			options[24] = "Plymouth Bishop";
+			options[25] = "PolyOne";
+			options[26] = "PPI";
+			options[27] = "Shurtape";
+			options[28] = "Tesa";
+			options[29] = "Tianrong";
+			options[30] = "Tyco";
+			options[31] = "Venture";
+			options[32] = "Advanced Medical Solutions";
+			options[33] = "Automotive";
+			options[34] = "Cable";
+			options[35] = "Medical";
+			options[36] = "Industrial - Construction";
+			options[37] = "Industrial - Printing and Graphics";
+			options[38] = "Industrial - General Industry";
+			options[39] = "other";
+			
+			translations = options;
+			translations[39] = "Other";
+
+			
+			competitorgroup.appendChild(dropdownalternative("competitorName", "COMPETITOR_NAME", options, translations));
+			
+			competitorgroup.appendChild(textbox("competitorProductCode", "COMPETITOR_PRODUCT_CODE_AND_DESCRIPTION"));
+			competitorgroup.appendChild(textarea("competitorTerms", "COMPETITOR_PRODUCT_PRICE_ETC"));
+			competitorgroup.appendChild(textarea("competitorActivity", "GENERAL_COMPETITOR_ACTIVITY"));
+			
+			/********************/
+			
+			
+			
+			/* Success group */
+			
+			options = new Array(6);
+			options[0] = "ongoing_business";
+			options[1] = "minimal_chance";
+			options[2] = "some_interest";
+			options[3] = "50/50";
+			options[4] = "strong_possibility";
+			options[5] = "sure_to_be_successful";
+			
+			translations = new Array(6);
+			translations[0] = translate("ONGOING_BUSINESS");
+			translations[1] = translate("MINIMAL_CHANCE");
+			translations[2] = translate("SOME_INTEREST");
+			translations[3] = "50/50";
+			translations[4] = translate("STRONG_POSSIBILITY");
+			translations[5] = translate("SURE_TO_BE_SUCCESSFUL");
+			
+			successgroup.appendChild(dropdown("successChance", "PROBABILITY_OF_SUCCESS", options, translations));
+			successgroup.appendChild(textarea("successReport", "MATERIAL_GROUP_REPORT_NARRATIVE"));
+			
+			/*****************/
+			
+			
+			
+			/* Sales group */
+			
+			options = new Array(7);
+			options[0] = "initial_discussion";
+			options[1] = "technical_audit_-_understand_customer_needs";
+			options[2] = "sample_request_and_trial";
+			options[3] = "quotation_requested";
+			options[4] = "business_gained";
+			options[5] = "business_lost";
+			options[6] = "product_/_price_approved_-_awaiting_decision_on_project";
+			
+			translations = new Array(7);
+			translations[0] = translate("INITIAL_DISCUSSION");
+			translations[1] = translate("TECHNICAL_AUDIT_-_UNDERSTAND_CUSTOMER_NEEDS");
+			translations[2] = translate("SAMPLE_REQUEST_AND_TRIAL");
+			translations[3] = translate("QUOTATION_REQUESTED");
+			translations[4] = translate("BUSINESS_GAINED");
+			translations[5] = translate("BUSINESS_LOST");
+			translations[6] = translate("PRODUCT_/_PRICE_APPROVED_-_AWAITING_DECISION_ON_PROJECT");
+			
+			
+			salesgroup.appendChild(dropdown("salesStage", "SALES_PROCESS_STAGE", options, translations));
+			
+			
+			options = new Array(5);
+			options[0] = "price";
+			options[1] = "quality";
+			options[2] = "service";
+			options[3] = "performance";
+			options[4] = "relationship";
+			
+			
+			translations = new Array(5);
+			translations[0] = translate("PRICE");
+			translations[1] = translate("QUALITY");
+			translations[2] = translate("SERVICE");
+			translations[3] = translate("PERFORMANCE");
+			translations[4] = translate("RELATIONSHIP");
+			
+			salesgroup.appendChild(dropdown("reasonForGainLoss", "REASON_FOR_BUSINESS_GAIN_OR_LOSS", options, translations));
+			
+			
+			salesgroup.appendChild(textarea("commentOnGainLoss", "COMMENTS_ON_BUSINESS_GAIN_OR_LOSS"));
+			
+			/***************/
+			
+			
+			if (materialid == -1)
+			{
+				materialid = (materials.length - 1);
+				materials[materialid]["actions"] = Array();
+			}
+			
+			
+			sapswitchgroup.appendChild(createBorder());
+			sapgroup.appendChild(createBorder());	
+			nonsapgroup.appendChild(createBorder());
+			discussiongroup.appendChild(createBorder());
+			competitorgroup.appendChild(createBorder());
+			successgroup.appendChild(createBorder());
+			
+			
+
+			table.appendChild(sapswitchgroup);
+			
+			if (materials[materialid]['isSapProduct'] == 'no')
+			{
+				table.appendChild(nonsapgroup);
+			}
+			else
+			{
+				table.appendChild(sapgroup);
+			}
+			table.appendChild(discussiongroup);
+			table.appendChild(competitorgroup);
+			table.appendChild(successgroup);
+			table.appendChild(salesgroup);
+			
+			document.getElementById("content").appendChild(table);
+			
+			
+			
+			// last ditch dependency adding as our little toolset doesn't do it by magic!
+			
+			var list = document.getElementsByTagName('input');
+					
+		    if (list)
+		    {			
+				for (i=0; i < list.length; i++)
+				{
+					if (list[i].name == 'isSapProduct')
+					{
+						list[i].onclick = function() {
+							gotomaterial(materialid);
+						}
+					}
+				}
+		    }
+			
+		
+			
+			for (i=0; i < activeFields.length; i++)
+			{
+				setValue(activeFields[i], materials[materialid][activeFields[i]]);
+			}
+		}
+		
+		
+		
+		function creategroup(name)
+		{
+			group = document.createElement('tbody');
+			/*group.id = name + "Group";*/
+						
+			return group;
+		}
+		
+		function createBorder()
+		{
+			tr = document.createElement('tr');
+			td = document.createElement('td');
+			td.colSpan = "2";
+			td.style.background = "#FFFFFF";
+			td.style.borderBottom = "10px solid #FFFFFF";
+			tr.appendChild(td);
+			
+			return tr;
+		}
+		
+		function createRowTop(title)
+		{
+			tbody = document.createElement('tbody');
+			tr = document.createElement('tr');
+			td = document.createElement('td');
+			td.colSpan = "2";
+			td.style.background = "#CCCCCC";
+			
+			strong = document.createElement('strong');
+			
+			label = document.createTextNode(title);
+			
+			strong.appendChild(label);
+			td.appendChild(strong);			
+			tr.appendChild(td);
+			tbody.appendChild(tr);
+			
+			return tbody;
+		}
+		
+
+		function createrow(name, label, input)
+		{
+			activeFields.push(name);
+			
+			if (currentLocation == "startup") 
+			{
+				report[name] = "";
+			}
+			
+			
+			if (currentLocation == "reportaction")
+			{
+				if (reportactionid == -1)
+				{
+					id = report["actions"].length - 1;
+					report["actions"][id][name] = "";
+				}
+			}
+			
+			if (currentLocation == "material")
+			{
+				if (materialid == -1)
+				{
+					id = materials.length - 1;
+					materials[id][name] = "";
+				}
+			}
+			
+			if (currentLocation == "materialaction")
+			{
+				if (materialactionid == -1)
+				{
+					id = materials[materialid]["actions"].length - 1;
+					materials[materialid]["actions"][id][name] = "";
+				}
+			}
+						
+			
+			row = document.createElement('tr');
+			row.id = name + 'row';
+			
+			column1 = document.createElement('td');
+			column1.className = "row_name valid_row";
+			column1.width = "28%";
+			column1.valign = "top";
+			
+			text = document.createTextNode(translate(label) + ":");
+			
+			column1.appendChild(text);
+			
+			column2 = document.createElement('td');
+			column2.className = "valid_row";
+			
+			column2.appendChild(input);
+			
+			row.appendChild(column1);
+			row.appendChild(column2);
+						
+			return row;
+		}
+		
+		function ienamebodge(element, name)
+		{
+			var input;
+			
+			try {
+			    input = document.createElement('<' + element + ' name="' + name + '"/>');
+			} catch (e) { }
+			
+			if (!input || !input.name)
+			{
+				input = document.createElement(element);
+				input.name = name;
+			}
+			
+			return input;
+		}
+		
+		
+		function textbox(name, label)
+		{			
+			input = ienamebodge('input', name);
+			input.type = "text";
+			input.className = "textbox optional";
+			input.id = name;
+			
+			return createrow(name, label, input);
+		}
+		
+		
+		function textarea(name, label)
+		{			
+			input = ienamebodge('textarea', name);
+			input.className = "textarea optional";
+			input.id = name;
+			
+			return createrow(name, label, input);
+		}
+		
+		
+		function radio(name, label, options, translations)
+		{
+			container = document.createElement('div');
+
+			for (var i=0; i < options.length; i++)
+			{
+				input = ienamebodge('input', name);
+				input.type = "radio";
+				input.value = options[i];
+				input.id = name + input.value;
+				
+				
+				inputlabel = document.createElement('label');
+				text = document.createTextNode(translations[i]);
+				inputlabel.appendChild(text);
+								
+				br = document.createElement('br');
+				
+				container.appendChild(input);
+				container.appendChild(inputlabel);
+				container.appendChild(br);
+			}
+			
+			return createrow(name, label, container);
+		}
+		
+		
+		function dropdown(name, label, options, translations)
+		{
+			input = ienamebodge('select', name);
+			input.className = "dropdown optional";
+			input.id = name;
+
+			for (var i=0; i < options.length; i++)
+			{
+				option = document.createElement('option');
+				option.value = options[i];
+				option.id = name + option.value;
+				
+				text = document.createTextNode(translations[i]);
+				option.appendChild(text);
+				
+				input.appendChild(option);
+			}
+			
+			return createrow(name, label, input);
+		}
+		
+		function dropdownalternative(name, label, options, translations)
+		{
+			container = document.createElement('div');
+			
+			input = ienamebodge('select', name);
+			input.className = "dropdown optional";
+			input.onchange = function() {		
+				checkForOtherDropdown(name, name + "_otherOption");
+			};
+			
+			input.id = name;
+
+			for (var i=0; i < options.length; i++)
+			{
+				option = document.createElement('option');
+				option.value = options[i];
+				option.id = name + option.value;
+				
+				text = document.createTextNode(translations[i]);
+				option.appendChild(text);
+				
+				input.appendChild(option);
+			}
+			
+			other = ienamebodge('input', name + "_otherOption");
+			other.type = "text";
+			other.className = "textboxInvisible";
+			other.id = name + "_otherOption";
+						
+			container.appendChild(input);
+			container.appendChild(other);
+			
+			return createrow(name, label, container);
+		}
+		
+		function combo(name, label, options, translations)
+		{
+			input = ienamebodge('select', name);
+			input.className = "dropdown optional";
+			input.multiple = "multiple";
+			input.size = "4";
+			input.id = name;
+
+			for (var i=0; i < options.length; i++)
+			{
+				option = document.createElement('option');
+				option.value = options[i];
+				option.id = name + option.value;
+				option.selected = false;
+				
+				text = document.createTextNode(translations[i]);
+				option.appendChild(text);
+				
+				input.appendChild(option);
+			}
+			
+			
+			
+			return createrow(name, label, input);
+		}
+		
+		
+		function comboalternative(name, label, options, translations)
+		{
+			container = document.createElement('div');
+			
+			input = ienamebodge('select', name);
+			input.className = "dropdown optional";
+			input.multiple = "multiple";
+			input.size = "4";
+			input.id = name;
+			input.onchange = function() {		
+				checkForOtherDropdown(name, name + "_otherOption");
+			};
+
+			for (var i=0; i < options.length; i++)
+			{
+				option = document.createElement('option');
+				option.value = options[i];
+				option.id = name + option.value;
+				option.selected = false;
+				
+				text = document.createTextNode(translations[i]);
+				option.appendChild(text);
+				
+				input.appendChild(option);
+			}
+			
+			other = ienamebodge('input', name + "_otherOption");
+			other.type = "text";
+			other.className = "textboxInvisible";
+			other.id = name + "_otherOption";
+						
+			container.appendChild(input);
+			container.appendChild(other);
+			
+			
+			return createrow(name, label, container);
+		}
+		
+		
+		function measurement(name, label, options, translations)
+		{
+			container = document.createElement('div');
+			
+			_textbox = ienamebodge('input', name + "_quantity");
+			_textbox.type = "text";
+			_textbox.className = "quantity optional";
+			_textbox.id = name + "_quantity";
+			
+			input = ienamebodge('select', name + "_measurement");
+			input.className = "measurement optional";
+			input.style.margin = "0 0 0 5px";
+			input.id = name + "_measurement";
+
+			for (var i=0; i < options.length; i++)
+			{
+				option = document.createElement('option');
+				option.value = options[i];
+				option.id = name + "_measurement" + option.value;
+				
+				text = document.createTextNode(translations[i]);
+				option.appendChild(text);
+				
+				input.appendChild(option);
+			}
+			
+			container.appendChild(_textbox);
+			container.appendChild(input);
+			
+			return createrow(name, label, container);
+		}
+		
+		
+		
+		function checkForOtherDropdown(field, otherField)
+		{
+			var i=0;
+			var max = document.getElementById(field).options.length;
+			var found = false;
+
+			for (i = 0; i < max; i++)
+			{
+				if (document.getElementById(field).options[i].text == 'Other' && document.getElementById(field).options[i].selected == true)
+				{
+					found = true;
+				}
+			}
+			
+			if (found == true)
+			{
+				document.getElementById(otherField).className = 'textboxOther optional';
+			}
+			else
+			{
+				document.getElementById(otherField).className = 'textboxInvisible';
+			}
+		}
+		
+		
+		
+		var keyStr = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
+
+		function encode64(input) {
+		   var output = "";
+		   var chr1, chr2, chr3;
+		   var enc1, enc2, enc3, enc4;
+		   var i = 0;
+		
+		   do {
+		      chr1 = input.charCodeAt(i++);
+		      chr2 = input.charCodeAt(i++);
+		      chr3 = input.charCodeAt(i++);
+		
+		      enc1 = chr1 >> 2;
+		      enc2 = ((chr1 & 3) << 4) | (chr2 >> 4);
+		      enc3 = ((chr2 & 15) << 2) | (chr3 >> 6);
+		      enc4 = chr3 & 63;
+		
+		      if (isNaN(chr2)) {
+		         enc3 = enc4 = 64;
+		      } else if (isNaN(chr3)) {
+		         enc4 = 64;
+		      }
+		
+		      output = output + keyStr.charAt(enc1) + keyStr.charAt(enc2) + 
+		         keyStr.charAt(enc3) + keyStr.charAt(enc4);
+		   } while (i < input.length);
+		   
+		   return output;
+		}
+	//-->
+	</script>
+	
+	</head>
+	
+	<body onLoad="start()">
+	
+		<form id="form">
+		
+		<h1>Offline Customer Contact Report (Version 3)</h1>
+		
+		<p id="languageBar">Language: <strong>English</strong> | <a href="Javascript:changelanguage('french');">French</a> | German | Italian | Spanish</p>
+		
+		<div style="background: #ffffe1; border: 1px solid #000000; padding: 5px; margin-bottom: 10px;">
+	    	<p style="margin: 0; line-height: 15px;">Complete the report as you would online. When complete, press the "Save Report" button and give the report a useful name. Ensure that you select "Save as type: Text File (*.txt)" and "Language: Unicode"</p>
+	    </div>
+	    
+		<table width="100%" cellspacing="0" cellpadding="10">
+			<tbody>
+			<tr>
+				<td id="buttons" style="border-right: 1px solid #999999; width: 300px;" valign="top">
+				
+				</td>
+				<td valign="top" id="content">
+					
+					
+				
+				</td>
+			</tr>
+			</tbody>
+		</table>	
+		
+		<div id="debug"></div>
+		
+		</form>
+		
+		<iframe id="SaveFrame" style="display: none"></iframe> 
+		
+	</body>
+</html>

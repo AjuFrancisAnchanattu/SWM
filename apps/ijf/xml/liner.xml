@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8" ?> 
+<envelope>
+	<item display="Amber Paper" value="amber_paper" />
+	<item display="Black Scapa Logo" value="black_scapa_logo" />
+	<item display="Blue HDPE" value="blue_hdpe" />
+	<item display="Blue Paper" value="blue_paper" />
+	<item display="Green LDPE" value="green_ldpe" />
+	<item display="Polyester" value="polyester" />
+	<item display="White" value="white" />
+	<item display="Other..." value="other" />
+</envelope>

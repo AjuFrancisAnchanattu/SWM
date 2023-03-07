@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8" ?> 
+<envelope>	
+	<item display="General Intranet" value="intranet" />
+	<item display="CCR" value="ccr" />
+	<item display="IJF" value="ijf" />
+	<item display="SLOBS" value="slobs" />
+	<item display="SAP" value="sap" />
+</envelope>

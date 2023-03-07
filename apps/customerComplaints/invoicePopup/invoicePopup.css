@@ -1,0 +1,155 @@
+@CHARSET "ISO-8859-1";
+body
+{
+	font-family: "Arial", "Verdana", sans-serif;
+	text-align: center;
+	padding: 5px 0 0 0;
+	margin: 0;
+}
+
+#content
+{
+	width: 750px;
+	height: 500px;
+}
+
+#title
+{
+	text-align: left;
+	padding: 2px 0 2px 10px;
+	font-size: 0.775em;
+	background: #c40204;
+	color: #FFFFFF;
+	font-variant: small-caps;
+}
+
+#top_info table
+{
+	width: 100%;
+	font-size: 0.775em;
+	text-align: left;
+	padding: 5px 5px 5px 9px;
+	border-left: #bbbbbb 1px solid;
+	border-right: #bbbbbb 1px solid;
+	border-bottom: #bbbbbb 1px solid;
+}
+
+#headerTable .header
+{
+	font-weight: bold;
+	padding-left: 5px;
+	padding-right: 5px;
+}
+
+#tableContainer
+{
+	position: relative;
+	height: 380px;
+	width: 100%;
+	border: #bbbbbb 1px solid;
+	margin-top: 5px;
+}
+
+#tableOverflow
+{
+	height: 370;
+	width: 740;
+	overflow-y: auto;
+	overflow-x: hidden;
+	position: absolute;
+	left: 5;
+	top: 5;
+}
+
+#invoicesTable
+{
+	font-size: 0.775em;
+}
+
+#invoicesTable tr.highlight
+{
+	background: #DDDDDD;
+}
+
+#invoicesTable td, th
+{
+	padding: 3px;
+}
+
+#invoicesTable th
+{
+	color: #555555;
+	border-bottom: 2px #AAAAAA solid;
+}
+
+#invoicesTable th.check
+{
+	margin: 0px;
+	padding: 0px 1px 0px 0px;
+	border-right: 1px #AAAAAA solid;
+}
+
+#invoicesTable td
+{
+	border-bottom: 1px #AAAAAA solid;
+}
+
+#invoicesTable td.check
+{
+	margin: 0px;
+	padding: 0px 1px 0px 0px;
+	border-right: 1px #AAAAAA solid;
+}
+
+#invoicesTable td.saved
+{
+	padding-left: 10px;
+	color: #70d279;
+}
+
+#invoicesTable td.unsaved
+{
+	padding-left: 10px;
+	color: #c40204;
+}
+
+#invoicesTable .checkbox
+{
+	margin: 4px 0 0 0;
+	padding: 0px 1px 0px 0px;
+	border: none;
+}
+
+#invoicesTable .message
+{
+	padding: 1px 3px 1px 3px;
+	font-style: italic;
+	font-size: 0.8em;
+}
+
+#invoicesTable input
+{
+	border: #99BBFF 1px solid;
+	
+	height: 1.5em;
+	margin-right: 1px;
+	padding: 2px;
+}
+
+#invoicesTable .input_invalid
+{
+	border: #FF0000 1px solid;
+	background: #FFCCCC;
+	
+	height: 1.5em;
+	margin-right: 1px;
+	padding: 2px;
+}
+
+#invoiceFooter
+{
+	position: relative;
+	top: 0;
+	left: 0;
+	height: 50px;
+}

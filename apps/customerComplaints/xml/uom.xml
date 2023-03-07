@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<envelope>
+	<item display="BAG" value="BAG" />	
+	<item display="CAN" value="CAN" />
+	<item display="CAR" value="CAR" />
+	<item display="CS" value="CS" />
+	<item display="EA" value="EA" />
+	<item display="FT" value="FT" />
+	<item display="FT2" value="FT2" />
+	<item display="GAL" value="GAL" />
+	<item display="HR" value="HR" />
+	<item display="KG" value="KG" />
+	<item display="KM" value="KM" />
+</envelope>

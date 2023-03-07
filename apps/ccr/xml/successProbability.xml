@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8" ?> 
+<envelope>
+	<item value="ongoing_business" />
+	<item value="minimal_chance" />
+	<item value="some_interest" />
+	<item value="50/50" />
+	<item value="strong_possibility" />
+	<item value="sure_to_be_successful" />
+</envelope>

@@ -1,0 +1,12 @@
+a:2:{s:4:"date";i:1657288347;s:4:"data";s:388:"<?xml version="1.0" encoding="utf-8" ?> 
+<envelope>
+	<item display="AUD" value="AUD" />	
+	<item display="CAD" value="CAD" />
+	<item display="CHF" value="CHF" />
+	<item display="EUR" value="EUR" />
+	<item display="GBP" value="GBP" />
+	<item display="NOK" value="NOK" />
+	<item display="NZD" value="NZD" />
+	<item display="SEK" value="SEK" />
+	<item display="USD" value="USD" />
+</envelope>";}

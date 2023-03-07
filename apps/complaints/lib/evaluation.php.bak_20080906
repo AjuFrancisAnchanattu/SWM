@@ -1,0 +1,4231 @@
+<?php
+
+/**
+ * This is the Complaint Application.
+ *
+ * This is the evaluation class.  This class is used to conduct the Evaluation part of the Complaint process.
+ * 
+ * @package apps	
+ * @subpackage Complaints
+ * @copyright Scapa Ltd.
+ * @author Jason Matthews
+ * @version 11/05/2006
+ */
+class evaluation extends complaintsProcess
+{
+	/**
+	 * The constructor, which the Complaints is passed to.
+	 *
+	 * @param complaints $complaints
+	 */
+
+	public $attachments;
+
+	function __construct($complaint)
+	{
+		parent::__construct($complaint);
+
+		if(isset($_GET['typeOfComplaint']))
+		{
+			if($_GET['typeOfComplaint'] == "supplier_complaint")
+			{
+				$this->defineSupplierForm();
+			}
+			else
+			{
+				$this->defineForm();
+			}
+		}
+		else
+		{
+			if(isset($_REQUEST['id']))
+			{
+				$complaintTypeID = $_REQUEST['id'];
+			}
+			else
+			{
+				if(isset($_REQUEST['complaint']))
+				{
+					$complaintTypeID = $_REQUEST['complaint'];
+				}
+				else
+				{
+					$complaintTypeID = $this->complaint->getId();
+				}
+			}
+
+			// bodge for saved form
+			if(isset($_REQUEST["sfID"]))
+			{
+				$savedData = mysql::getInstance()->selectDatabase("complaints")->Execute("SELECT sfTypeOfComplaint FROM savedForms WHERE sfID = '".$_REQUEST["sfID"]."'");
+				$dataRow = mysql_fetch_assoc($savedData);
+
+				$complaintTypeID = $dataRow['sfTypeOfComplaint'];
+
+				if($complaintTypeID == "supplier_complaint")
+				{
+					$this->defineSupplierForm();
+					$this->complaintType = "supplier_complaint";
+				}
+				elseif($complaintTypeID == "quality_complaint")
+				{
+					$this->defineQualityForm();
+					$this->complaintType = "quality_complaint";
+				}
+				else
+				{
+					$this->defineForm();
+				}
+			}
+			else
+			{
+				if($this->complaint->getComplaintType($complaintTypeID) == "supplier_complaint")
+				{
+					$this->defineSupplierForm();
+					$this->complaintType = "supplier_complaint";
+				}
+				elseif($this->complaint->getComplaintType($complaintTypeID) == "quality_complaint")
+				{
+					$this->defineQualityForm();
+					$this->complaintType = "quality_complaint";
+				}
+				else
+				{
+					$this->defineForm();
+				}
+			}
+		}
+
+		$this->form->get('complaintId')->setValue($this->complaint->getId());
+
+		$this->form->setStoreInSession(true);
+
+		$this->form->loadSessionData();
+
+		if (isset($_SESSION['apps'][$GLOBALS['app']]['evaluation']['loadedFromDatabase']))
+		{
+			page::addDebug("Checking loadedFromDatabase is being set!!",__FILE__,__LINE__);
+			$this->loadedFromDatabase = true;		//checks if the Complaint is loaded from the database
+		}
+		$this->form->processDependencies();
+	}
+
+	public function lockComplaint($id, $status)
+	{
+		$nowTimeStamp = strtotime(date('Y-m-d H:i:s', time()));
+		mysql::getInstance()->selectDatabase("complaints")->Execute("UPDATE complaint SET locked = '" . $status . "' WHERE id = " . $id . "");
+		mysql::getInstance()->selectDatabase("complaints")->Execute("UPDATE complaint SET lockedTime = '" . $nowTimeStamp . "' WHERE id = " . $id . "");
+	}
+	
+	public function getCategory()
+	{
+		return $this->complaint->form->get("category")->getValue();
+	}
+
+	public function load($id)
+	{
+		if (!is_numeric($id))
+		{
+			return false;
+		}
+
+		$this->id = $id;
+		$this->form->setStoreInSession(true);
+
+		if(!isset($_REQUEST["sfID"])){//fudge to get round the loading of the form vars
+			$dataset = mysql::getInstance()->selectDatabase("complaints")->Execute("SELECT * FROM evaluation LEFT JOIN complaint ON evaluation.complaintId=complaint.id WHERE complaintId = "  . $id);
+		}else{
+			$dataset = mysql::getInstance()->selectDatabase("complaints")->Execute("SELECT * FROM evaluation LEFT JOIN complaint ON evaluation.complaintId=complaint.id WHERE complaintId = 'UNIX_TIMESTAMP(NOW())'");
+		}
+
+		if (mysql_num_rows($dataset) == 1)
+		{
+
+			$this->loadedFromDatabase = true;
+			$_SESSION['apps'][$GLOBALS['app']]['evaluation']['loadedFromDatabase'] = true;
+
+			$fields = mysql_fetch_array($dataset);
+
+			if(isset($_REQUEST["sfID"])){
+
+				$this->sfID = $_REQUEST["sfID"];
+				$dataset = mysql::getInstance()->selectDatabase("complaints")->Execute("SELECT sfValue FROM savedForms WHERE `sfOwner` = '" . currentuser::getInstance()->getNTLogon() . "' AND sfID = '".$_REQUEST["sfID"]."' LIMIT 1");
+
+				while ($fields2 = mysql_fetch_array($dataset)){
+					$savedFields = unserialize($fields2["sfValue"]);
+				}
+
+				if($savedFields){
+					foreach ($savedFields as $key => $value)
+					{
+						if($value)$fields[$key] = $value;
+					}
+				}
+			}
+
+			$this->form->populate($fields);
+
+			if(!$this->form->get("complaintJustified")->getValue())
+			{
+				$this->form->get("complaintJustified")->setValue("na");
+				$this->form->get("returnGoods")->setValue("na");
+				$this->form->get("disposeGoods")->setValue("na");
+				$this->form->get("sp_materialCredited")->setValue("na");
+				$this->form->get("sp_materialReplaced")->setValue("na");
+				//$this->form->get("sp_useGoods")->setValue("na");
+			}
+
+			if($this->complaint->getComplaintType($this->id) == "supplier_complaint")
+			{
+				$fields["defectQuantity3"] = array($fields['defectQuantity3_quantity'], $fields['defectQuantity3_measurement']);
+				$fields["defectQuantity2"] = array($fields['defectQuantity2_quantity'], $fields['defectQuantity2_measurement']);
+				$fields["defectQuantity"] = array($fields['defectQuantity_quantity'], $fields['defectQuantity_measurement']);
+			}
+			else
+			{
+				$this->form->get("attachment")->load("/apps/complaints/attachments/eval/" . $this->id . "/");
+				$fields['analysisDate'] == "0000-00-00" ?	$this->form->get('analysisDate')->setValue("") : $this->form->get('analysisDate')->setValue(page::transformDateForPHP($fields['analysisDate']));
+				$fields['rootCausesDate'] == "0000-00-00" ?  $this->form->get('rootCausesDate')->setValue("") : $this->form->get('rootCausesDate')->setValue(page::transformDateForPHP($fields['rootCausesDate']));
+				$this->form->get("updateInitiator")->setValue("No");
+				
+				$fields['implementedActionsDate'] == "0000-00-00" ?  $this->form->get('implementedActionsDate')->setValue("") : $this->form->get('implementedActionsDate')->setValue(page::transformDateForPHP($fields['implementedActionsDate']));
+			}
+
+			page::addDebug("THE G8D ID IS " . $fields['g8d'], __FILE__, __LINE__);
+
+
+
+			//$this->form->get('analysisDate')->setValue(page::transformDateForPHP($this->form->get('analysisDate')->getValue()));
+			//			$this->form->get('rootCausesDate')->setValue(page::transformDateForPHP($this->form->get('rootCausesDate')->getValue()));
+			//			$this->form->get('implementedActionsDate')->setValue(page::transformDateForPHP($this->form->get('implementedActionsDate')->getValue()));
+			//			$this->form->get('implementedActionsEstimated')->setValue(page::transformDateForPHP($this->form->get('implementedActionsEstimated')->getValue()));
+			//			$this->form->get('implementedActionsImplementation')->setValue(page::transformDateForPHP($this->form->get('implementedActionsImplementation')->getValue()));
+			//			$this->form->get('implementedActionsEffectiveness')->setValue(page::transformDateForPHP($this->form->get('implementedActionsEffectiveness')->getValue()));
+			//			$this->form->get('managementSystemReviewedDate')->setValue(page::transformDateForPHP($this->form->get('managementSystemReviewedDate')->getValue()));
+			//			$this->form->get('fmeaDate')->setValue(page::transformDateForPHP($this->form->get('fmeaDate')->getValue()));
+			//			$this->form->get('customerSpecificationDate')->setValue(page::transformDateForPHP($this->form->get('customerSpecificationDate')->getValue()));
+			//			$this->form->get('dateSampleReceived')->setValue(page::transformDateForPHP($this->form->get('dateSampleReceived')->getValue()));
+
+			//Use these instead of the above because they check to see if a value has been entered
+
+
+			//$this->form->get('analysisDate')->getValue() == "0000-00-00" ?  $this->form->get('analysisDate')->setValue($today) : $this->form->get('analysisDate')->setValue(page::transformDateForPHP($this->form->get('analysisDate')->getValue()));
+			
+			$fields['implementedActionsEstimated'] == "0000-00-00" ?  $this->form->get('implementedActionsEstimated')->setValue("") : $this->form->get('implementedActionsEstimated')->setValue(page::transformDateForPHP($fields['implementedActionsEstimated']));
+			$fields['implementedActionsImplementation'] == "0000-00-00" ?  $this->form->get('implementedActionsImplementation')->setValue("") : $this->form->get('implementedActionsImplementation')->setValue(page::transformDateForPHP($fields['implementedActionsImplementation']));
+			$fields['implementedActionsEffectiveness'] == "0000-00-00" ?  $this->form->get('implementedActionsEffectiveness')->setValue("") : $this->form->get('implementedActionsEffectiveness')->setValue(page::transformDateForPHP($fields['implementedActionsEffectiveness']));
+			$this->form->get("emailText")->setValue("");
+
+			$datasetCategoryM = mysql::getInstance()->selectDatabase("complaints")->Execute("SELECT category, id FROM complaint WHERE category LIKE 'M%' AND id = " . $this->getComplaint()->form->get("id")->getValue() . "");
+			$rowCategoryM = mysql_fetch_array($datasetCategoryM);
+
+			$datasetCategoryD = mysql::getInstance()->selectDatabase("complaints")->Execute("SELECT category, id FROM complaint WHERE category LIKE 'D%' AND id = " . $this->getComplaint()->form->get("id")->getValue() . "");
+			$rowCategoryD = mysql_fetch_array($datasetCategoryD);
+
+			$dataset8D = mysql::getInstance()->selectDatabase("complaints")->Execute("SELECT g8d FROM complaint WHERE id = '" . $this->getComplaint()->form->get("id")->getValue() . "'");
+			$fields8D = mysql_fetch_array($dataset8D);
+
+			//die("this forms id is: " . $this->getComplaint()->form->get("id")->getValue() . ".");
+
+			if(/*$this->form->get("complaintJustified")->getValue() == "YES" && $rowCategoryM > 0 || $rowCategoryD > 0*/ $fields8D['g8d'] == "yes")
+			{
+				//				$this->form->get('possibleSolutionsDate')->setValue(page::transformDateForPHP($this->form->get('possibleSolutionsDate')->getValue()));
+				//				$this->form->get('preventiveActionsDate')->setValue(page::transformDateForPHP($this->form->get('preventiveActionsDate')->getValue()));
+				//				$this->form->get('preventiveActionsValidationDate')->setValue(page::transformDateForPHP($this->form->get('preventiveActionsValidationDate')->getValue()));
+				//				$this->form->get('preventiveActionsImplementedDate')->setValue(page::transformDateForPHP($this->form->get('preventiveActionsImplementedDate')->getValue()));
+				//				$this->form->get('preventiveActionsEstimatedDate')->setValue(page::transformDateForPHP($this->form->get('preventiveActionsEstimatedDate')->getValue()));
+				//				$this->form->get('containmentActionDate')->setValue(page::transformDateForPHP($this->form->get('containmentActionDate')->getValue()));
+
+				///////use these instead of above because they check to see if a value has been entered
+
+				if($this->complaint->getComplaintType($this->id) == "supplier_complaint")
+				{
+					// do nothing
+				}
+				else
+				{
+					$fields['possibleSolutionsDate'] == "0000-00-00" ?  $this->form->get('possibleSolutionsDate')->setValue("") : $this->form->get('possibleSolutionsDate')->setValue(page::transformDateForPHP($fields['possibleSolutionsDate']));
+					$fields['preventiveActionsDate'] == "0000-00-00" ?  $this->form->get('preventiveActionsDate')->setValue("") : $this->form->get('preventiveActionsDate')->setValue(page::transformDateForPHP($fields['preventiveActionsDate']));
+					$fields['preventiveActionsValidationDate'] == "0000-00-00" ?  $this->form->get('preventiveActionsValidationDate')->setValue("") : $this->form->get('preventiveActionsValidationDate')->setValue(page::transformDateForPHP($fields['preventiveActionsValidationDate']));
+					$fields['preventiveActionsImplementedDate'] == "0000-00-00" ?  $this->form->get('preventiveActionsImplementedDate')->setValue("") : $this->form->get('preventiveActionsImplementedDate')->setValue(page::transformDateForPHP($fields['preventiveActionsImplementedDate']));
+					$fields['preventiveActionsEstimatedDate'] == "0000-00-00" ?  $this->form->get('preventiveActionsEstimatedDate')->setValue("") : $this->form->get('preventiveActionsEstimatedDate')->setValue(page::transformDateForPHP($fields['preventiveActionsEstimatedDate']));
+					$fields['managementSystemReviewedDate'] == "0000-00-00" ?  $this->form->get('managementSystemReviewedDate')->setValue("") : $this->form->get('managementSystemReviewedDate')->setValue(page::transformDateForPHP($fields['managementSystemReviewedDate']));
+					$fields['fmeaDate'] == "0000-00-00" ?  $this->form->get('fmeaDate')->setValue("") : $this->form->get('fmeaDate')->setValue(page::transformDateForPHP($fields['fmeaDate']));
+					$fields['customerSpecificationDate'] == "0000-00-00" ?  $this->form->get('customerSpecificationDate')->setValue("") : $this->form->get('customerSpecificationDate')->setValue(page::transformDateForPHP($fields['customerSpecificationDate']));
+					$fields['dateSampleReceived'] == "0000-00-00" ?  $this->form->get('dateSampleReceived')->setValue("") : $this->form->get('dateSampleReceived')->setValue(page::transformDateForPHP($fields['dateSampleReceived']));
+					$fields['flowChartDate'] == "0000-00-00" ?  $this->form->get('flowChartDate')->setValue("") : $this->form->get('flowChartDate')->setValue(page::transformDateForPHP($fields['flowChartDate']));
+					$fields['containmentActionDate'] == "0000-00-00" ?  $this->form->get('containmentActionDate')->setValue("") : $this->form->get('containmentActionDate')->setValue(page::transformDateForPHP($fields['containmentActionDate']));
+				}
+
+			}
+			
+			$cat = $this->getCategory();
+			if(usercache::getInstance()->get(currentuser::getInstance()->getNTlogon())->getLocale() == "USA" && ($cat[0] == "M" || $cat[0] == "D" || $cat[0] == "S"))
+			{
+				// Return the goods
+				$this->form->get("returnGoodsReadOnly")->setValue($fields['returnGoods']);
+				$this->form->get("returnRequestValueReadOnly")->setValue($fields['returnRequestValue_quantity'] . " " . $fields['returnRequestValue_measurement']);
+				$this->form->get("returnRequestCommentReadOnly")->setValue($fields['returnRequestComment']);
+				$this->form->get("returnRequestNameReadOnly")->setValue(usercache::getInstance()->get($fields['returnRequestName'])->getName());
+				
+				$this->form->get("returnApprovalRequestReadOnly")->setValue($fields['returnApprovalRequest']);
+				$this->form->get("returnApprovalRequestCommentReadOnly")->setValue($fields['returnApprovalRequestComment']);
+				$this->form->get("returnApprovalRequestNameReadOnly")->setValue(usercache::getInstance()->get($fields['returnApprovalRequestName'])->getName());
+				
+				// Dipose the goods				
+				$this->form->get("disposeGoodsReadOnly")->setValue($fields['disposeGoods']);
+				$this->form->get("returnApprovalDisposalValueReadOnly")->setValue($fields['returnApprovalDisposalValue_quantity'] . " " . $fields['returnApprovalDisposalValue_measurement']);
+				$this->form->get("returnApprovalDisposalCommentReadOnly")->setValue($fields['returnApprovalDisposalComment']);
+				$this->form->get("returnApprovalDisposalNameReadOnly")->setValue(usercache::getInstance()->get($fields['returnApprovalDisposalName'])->getName());
+				
+				$this->form->get("returnApprovalDisposalRequestReadOnly")->setValue($fields['returnApprovalDisposalRequest']);
+				$this->form->get("returnDisposalRequestCommentReadOnly")->setValue($fields['returnDisposalRequestComment']);
+				$this->form->get("returnDisposalRequestNameReadOnly")->setValue(usercache::getInstance()->get($fields['returnDisposalRequestName'])->getName());
+			}
+		
+			
+			
+			$this->form->get("processOwner")->setValue($this->form->get("owner")->getValue());
+
+			$this->form->putValuesInSession();
+
+			$this->form->processDependencies();
+
+			return true;
+		}
+		else
+		{
+			unset($_SESSION['apps'][$GLOBALS['app']]['evaluation']);
+			return false;
+		}
+
+	}
+
+	public function save()
+	{
+	
+		page::addDebug("Saving Evaluation process: ".$process,__FILE__,__LINE__);
+		
+		$this->determineStatus();
+
+		//die();
+		
+		$originalOwner = $this->form->get("owner")->getValue();
+
+		if ($this->loadedFromDatabase)
+		{
+			//$this->getComplaint()->form->get("updatedDate")->setValue(common::nowDateForMysql());
+
+			//$this->getComplaint()->form->get("initialSubmissionDate")->setIgnore(true);
+
+			//$this->form->get("owner")->setValue($this->form->get("evaluation_owner")->getValue());
+
+			$this->form->get("complaintId")->setIgnore(true);
+
+			if($this->complaint->getComplaintType($this->getcomplaintId()) == "supplier_complaint")
+			{
+				// do nothing.
+			}
+			else
+			{
+				if($this->form->get("isComplaintCatRight")->getValue() == "Yes")
+				{
+					$this->form->get("category")->setIgnore(true);
+				}
+
+				if($this->form->get("isSampleReceived")->getValue() == "NO")
+				{
+					$this->form->get("dateSampleReceived")->setValue("");
+				}
+
+				$this->form->get("analysis")->getValue() == "" ? $this->form->get("analysisyn")->setValue("No") : $this->form->get("analysisyn")->setValue("Yes");
+
+				$this->form->get("rootCauses")->getValue() == "" ? $this->form->get("rootCausesyn")->setValue("No") : $this->form->get("rootCausesyn")->setValue("Yes");
+				$this->form->get("implementedActions")->getValue() == "" ? $this->form->get("implementedActionsyn")->setValue("No") : $this->form->get("implementedActionsyn")->setValue("Yes");
+
+				//enter Yes - No if data in textareas, to help with searches
+				$dataset8D = mysql::getInstance()->selectDatabase("complaints")->Execute("SELECT g8d FROM complaint WHERE id = '" . $this->getComplaintId() . "'");
+				$fields8D = mysql_fetch_array($dataset8D);
+
+				if($fields8D['g8d'] == "yes")
+				{
+					$this->form->get("containmentAction")->getValue() == "" ? $this->form->get("containmentActionyn")->setValue("No") : $this->form->get("containmentActionyn")->setValue("Yes");
+					$this->form->get("possibleSolutions")->getValue() == "" ? $this->form->get("possibleSolutionsyn")->setValue("No") : $this->form->get("possibleSolutionsyn")->setValue("Yes");
+					$this->form->get("preventiveActions")->getValue() == "" ? $this->form->get("preventiveActionsyn")->setValue("No") : $this->form->get("preventiveActionsyn")->setValue("Yes");
+				}
+
+				//if complaint not justified clear all previously entered data in the following fields
+				if($this->form->get("complaintJustified")->getValue() == "NO")
+				{
+					$this->form->get("teamLeader")->setValue("");
+					$this->form->get("teamMember")->setValue("");
+					$this->form->get("rootCauses")->setValue("");
+					$this->form->get("failureCode")->setValue("");
+					$this->form->get("rootCauseCode")->setValue("");
+					$this->form->get("attributableProcess")->setValue("");
+					$this->form->get("rootCausesAuthor")->setValue("");
+					$this->form->get("rootCausesDate")->setValue("0");
+					$this->form->get("returnGoods")->setValue("NO");
+					$this->form->get("disposeGoods")->setValue("NO");
+					$this->form->get("updateInitiator")->setValue("No");
+
+					if($fields8D['g8d'] == "yes")
+					{
+						$this->form->get("containmentAction")->setValue("");
+						$this->form->get("containmentActionAuthor")->setValue("");
+						$this->form->get("containmentActionDate")->setValue("0");
+						$this->form->get("possibleSolutions")->setValue("");
+						$this->form->get("possibleSolutionsAuthor")->setValue("");
+						$this->form->get("possibleSolutionsDate")->setValue("");
+						$this->form->get("preventiveActions")->setValue("");
+						$this->form->get("preventiveActionsAuthor")->setValue("");
+						$this->form->get("preventiveActionsDate")->setValue("0");
+						$this->form->get("preventiveActionsEstimatedDate")->setValue("0");
+						$this->form->get("preventiveActionsImplementedDate")->setValue("0");
+						$this->form->get("preventiveActionsValidationDate")->setValue("0");
+					}
+
+					$this->form->get("implementedActions")->setValue("");
+					$this->form->get("implementedActionsAuthor")->setValue("");
+					$this->form->get("implementedActionsDate")->setValue("0");
+					$this->form->get("implementedActionsEstimated")->setValue("0");
+					$this->form->get("implementedActionsImplementation")->setValue("0");
+					$this->form->get("implementedActionsEffectiveness")->setValue("0");
+				}
+
+				// set Complaint owner
+				if($this->form->get("transferOwnership2")->getValue() == "NO")
+				{
+					$datasetComplaint = mysql::getInstance()->selectDatabase("complaints")->Execute("SELECT owner FROM complaint WHERE id = " . $this->getComplaintId() . "");
+					$fieldsComplaint = mysql_fetch_array($datasetComplaint);
+					$this->form->get("owner")->setValue($fieldsComplaint['owner']);
+				}
+				else
+				{
+					 echo 'trace 1 '.$this->form->get("owner")->getValue().'<br />';
+					 echo 'trace 1 '.$this->form->get("processOwner")->getValue().'<br />';
+					 echo 'trace 1 '.$this->form->get("transferOwnership")->getValue().'<br />';
+					 $this->form->get("owner")->setValue($this->form->get("processOwner")->getValue());
+					 
+				}
+
+				if($this->form->get("isPORight")->getValue() == "NO")
+				{
+					mysql::getInstance()->selectDatabase("complaints")->Execute("UPDATE complaint SET owner = '" . $this->form->get("transferOwnership")->getValue() . "' WHERE id = " . $this->getcomplaintId() . "");
+					$this->complaint->getEmailNotification($this->getowner(), usercache::getInstance()->get(currentuser::getInstance()->getNTlogon())->getEmail(), $this->getcomplaintId(), "newEvaluation", utf8_encode($this->form->get("reasonForRejection")->getValue()), $this->form->get("complaintJustified")->getValue());
+				}
+				else
+				{
+					mysql::getInstance()->selectDatabase("complaints")->Execute("UPDATE complaint " . $this->form->generateUpdateQuery("complaint") . "WHERE id= '" . $this->getcomplaintId() . "'");
+				}
+
+				$this->emailInitiator();
+
+				if($this->form->get("isComplaintCatRight")->getValue() == "Yes")
+				{
+					$this->form->get("category")->setIgnore(true);
+				}
+				else
+				{
+					$cat = $this->getCategory();
+					$type = $cat[0];
+					if($type == "M" || $type == "D")
+					{
+						mysql::getInstance()->selectDatabase("complaints")->Execute("UPDATE complaint SET g8d = 'yes', category = '" . $this->form->get("category")->getValue() . "' WHERE id = '" . $this->getComplaintId() . "'");
+					}
+					else
+					{
+						mysql::getInstance()->selectDatabase("complaints")->Execute("UPDATE complaint " . $this->form->generateUpdateQuery("complaint") . " WHERE id='" . $this->getcomplaintId() . "'");
+					}
+				}
+
+				///just added for the adding of attachments
+				$this->form->get("attachment")->setFinalFileLocation("/apps/complaints/attachments/eval/" . $this->getcomplaintId() . "/");
+				$this->form->get("attachment")->moveTempFileToFinal();
+
+				if ($this->form->get("transferOwnership2")->getValue() == "YES")
+				{
+					$this->getEmailNotification(usercache::getInstance()->get($this->form->get("owner")->getValue())->getEmail(), usercache::getInstance()->get(currentuser::getInstance()->getNTlogon())->getEmail(), $this->getcomplaintId(), "newEvaluation", utf8_encode($this->form->get("emailText")->getValue()), $this->form->get("complaintJustified")->getValue());
+					//$this->getEmailNotification(usercache::getInstance()->get($this->form->get("copyTo")->getValue())->getEmail(), usercache::getInstance()->get(currentuser::getInstance()->getNTlogon())->getEmail(), $this->getcomplaintId(), "newEvaluation", utf8_encode($this->form->get("emailText")->getValue()), $this->form->get("complaintJustified")->getValue());
+				}
+				
+				// Set the Evaluation Owner Request for NA Complaints Only
+				$cat = $this->getCategory();
+				if(usercache::getInstance()->get(currentuser::getInstance()->getNTlogon())->getLocale() == "USA" && ($cat[0] == "M" || $cat[0] == "D" || $cat[0] == "S"))
+				{
+					if($this->form->get("returnGoods")->getValue() == "YES" && $this->form->get("returnApprovalRequest")->getValue() != "YES")
+					{
+						$this->form->get("owner")->setValue($this->form->get("returnRequestName")->getValue());	
+					}
+					
+					if($this->form->get("returnApprovalRequest")->getValue() == "YES")
+					{
+						$this->form->get("owner")->setValue($this->form->get("returnApprovalRequestName")->getValue());
+						$this->form->get("returnApprovalRequestStatus")->setValue("1");
+					}
+					
+					if($this->form->get("disposeGoods")->getValue() == "YES" && $this->form->get("returnApprovalDisposalRequest")->getValue() != "YES")
+					{
+						$this->form->get("owner")->setValue($this->form->get("returnApprovalDisposalName")->getValue());
+					}
+					
+					if($this->form->get("returnApprovalDisposalRequest")->getValue() == "YES")
+					{
+						$this->form->get("owner")->setValue($this->form->get("returnDisposalRequestName")->getValue());
+						$this->form->get("returnApprovalDisposalRequestStatus")->setValue("1");
+					}
+					
+					if($this->form->get("returnApprovalDisposalRequestStatus")->getValue() == 1 && $this->form->get("returnApprovalDisposalRequestStatus")->getValue() == 1)
+					{
+						$this->form->get("owner")->setValue($this->form->get("processOwner")->getValue());
+						echo 'trace 2';
+					}
+				}
+				else 
+				{
+					echo 'trace 3 '.$this->form->get("owner")->getValue().'<br />';
+					echo 'trace 3 '.$this->form->get("processOwner")->getValue().'<br />';
+					
+					$this->form->get("owner")->setValue($this->form->get("processOwner")->getValue());
+					
+				}
+				
+			}
+
+			// update
+			mysql::getInstance()->selectDatabase("complaints")->Execute("UPDATE evaluation " . $this->form->generateUpdateQuery("evaluation") . " WHERE complaintId= " . $this->getcomplaintId() . "");
+			
+			mysql::getInstance()->selectDatabase("complaints")->Execute("UPDATE complaint " . $this->form->generateUpdateQuery("complaint") . " WHERE id='" . $this->getcomplaintId() . "'");
+			
+			$this->addLog(translate::getInstance()->translate("evaluation_updated_send_to") . " - " . usercache::getInstance()->get($this->form->get("owner")->getValue())->getName(), $this->form->get("emailText")->getValue());
+
+			if($this->complaint->getComplaintType($this->getcomplaintId()) == "supplier_complaint")
+			{
+				//$this->saveExternal("update", $this->getComplaintId());
+				$this->getEmailNotification(usercache::getInstance()->get($this->form->get("owner")->getValue())->getEmail(), usercache::getInstance()->get(currentuser::getInstance()->getNTlogon())->getEmail(), $this->getcomplaintId(), "newEvaluation", utf8_encode($this->form->get("emailText")->getValue()), "");
+			}
+
+		}
+		else
+		{
+			//			$this->form->get('analysisDate')->setIgnore(false);
+			//			$this->form->get('rootCausesDate')->setValue(page::transformDateForPHP($this->form->get('rootCausesDate')->getValue()));
+			//			$this->form->get('implementedActionsDate')->setValue(page::transformDateForPHP($this->form->get('implementedActionsDate')->getValue()));
+			//			$this->form->get('implementedActionsEstimated')->setValue(page::transformDateForPHP($this->form->get('implementedActionsEstimated')->getValue()));
+			//			$this->form->get('implementedActionsImplementation')->setValue(page::transformDateForPHP($this->form->get('implementedActionsImplementation')->getValue()));
+			//			$this->form->get('implementedActionsEffectiveness')->setValue(page::transformDateForPHP($this->form->get('implementedActionsEffectiveness')->getValue()));
+			//			$this->form->get('managementSystemReviewedDate')->setValue(page::transformDateForPHP($this->form->get('managementSystemReviewedDate')->getValue()));
+			//			$this->form->get('fmeaDate')->setValue(page::transformDateForPHP($this->form->get('fmeaDate')->getValue()));
+			//			$this->form->get('customerSpecificationDate')->setValue(page::transformDateForPHP($this->form->get('customerSpecificationDate')->getValue()));
+			//			$this->form->get('dateSampleReceived')->setValue(page::transformDateForPHP($this->form->get('dateSampleReceived')->getValue()));
+
+
+			//$this->form->get("owner")->setValue($this->form->get("evaluation_owner")->getValue());
+
+			// set report date
+			//$this->form->get("updatedDate")->setValue(common::nowDateForMysql());
+
+			// set Complaint owner
+			//$this->form->get("owner")->setValue($this->form->get("processOwner")->getValue());
+
+			//Determine Complaint Type
+			if($this->complaint->getComplaintType($this->getcomplaintId()) == "supplier_complaint")
+			{
+				$this->form->get("scapaStatus")->setValue("0");
+				$this->form->get("extStatus")->setValue("0");
+				$this->form->get("added")->setValue("1");
+			}
+			else
+			{
+				//enter Yes - No if data in textareas, to help with searches
+				$dataset8D = mysql::getInstance()->selectDatabase("complaints")->Execute("SELECT g8d FROM complaint WHERE id = '" . $this->getComplaintId() . "'");
+				$fields8D = mysql_fetch_array($dataset8D);
+
+				if($this->form->get("isSampleReceived")->getValue() == "NO")
+				{
+					$this->form->get("dateSampleReceived")->setValue("");
+				}
+
+				$this->form->get("analysis")->getValue() == "" ? $this->form->get("analysisyn")->setValue("No") : $this->form->get("analysisyn")->setValue("Yes");
+				$this->form->get("rootCauses")->getValue() == "" ? $this->form->get("rootCausesyn")->setValue("No") : $this->form->get("rootCausesyn")->setValue("Yes");
+				$this->form->get("implementedActions")->getValue() == "" ? $this->form->get("implementedActionsyn")->setValue("No") : $this->form->get("implementedActionsyn")->setValue("Yes");
+
+				if($fields8D['g8d'] == "yes")
+				{
+					$this->form->get("containmentAction")->getValue() == "" ? $this->form->get("containmentActionyn")->setValue("No") : $this->form->get("containmentActionyn")->setValue("Yes");
+					$this->form->get("possibleSolutions")->getValue() == "" ? $this->form->get("possibleSolutionsyn")->setValue("No") : $this->form->get("possibleSolutionsyn")->setValue("Yes");
+					$this->form->get("preventiveActions")->getValue() == "" ? $this->form->get("preventiveActionsyn")->setValue("No") : $this->form->get("preventiveActionsyn")->setValue("Yes");
+				}
+
+				//if complaint not justified clear all previously entered data in the following fields
+				if($this->form->get("complaintJustified")->getValue() == "NO")
+				{
+					$this->form->get("teamLeader")->setValue("");
+					$this->form->get("teamMember")->setValue("");
+					$this->form->get("rootCauses")->setValue("");
+					$this->form->get("failureCode")->setValue("");
+					$this->form->get("rootCauseCode")->setValue("");
+					$this->form->get("attributableProcess")->setValue("");
+					$this->form->get("rootCausesAuthor")->setValue("");
+					$this->form->get("rootCausesDate")->setValue("0");
+					$this->form->get("returnGoods")->setValue("NO");
+					$this->form->get("disposeGoods")->setValue("NO");
+					$this->form->get("updateInitiator")->setValue("No");
+
+					if($fields8D['g8d'] == "yes")
+					{
+						$this->form->get("containmentAction")->setValue("");
+						$this->form->get("containmentActionAuthor")->setValue("");
+						$this->form->get("containmentActionDate")->setValue("0");
+						$this->form->get("possibleSolutions")->setValue("");
+						$this->form->get("possibleSolutionsAuthor")->setValue("");
+						$this->form->get("possibleSolutionsDate")->setValue("");
+						$this->form->get("preventiveActions")->setValue("");
+						$this->form->get("preventiveActionsAuthor")->setValue("");
+						$this->form->get("preventiveActionsDate")->setValue("0");
+						$this->form->get("preventiveActionsEstimatedDate")->setValue("0");
+						$this->form->get("preventiveActionsImplementedDate")->setValue("0");
+						$this->form->get("preventiveActionsValidationDate")->setValue("0");
+					}
+
+					$this->form->get("implementedActions")->setValue("");
+					$this->form->get("implementedActionsAuthor")->setValue("");
+					$this->form->get("implementedActionsDate")->setValue("0");
+					$this->form->get("implementedActionsEstimated")->setValue("0");
+					$this->form->get("implementedActionsImplementation")->setValue("0");
+					$this->form->get("implementedActionsEffectiveness")->setValue("0");
+				}
+				
+				// set Complaint owner
+				if($this->form->get("transferOwnership2")->getValue() == "NO")
+				{
+					$datasetComplaint = mysql::getInstance()->selectDatabase("complaints")->Execute("SELECT owner FROM complaint WHERE id = " . $this->getComplaintId() . "");
+					$fieldsComplaint = mysql_fetch_array($datasetComplaint);
+					$this->form->get("owner")->setValue(utf8_encode($fieldsComplaint['owner']));
+				}
+				else
+				{
+					// Set the Evaluation Owner Request for NA Complaints Only
+					$cat = $this->getCategory();
+					if(usercache::getInstance()->get(currentuser::getInstance()->getNTlogon())->getLocale() == "USA" && ($cat[0] == "M" || $cat[0] == "D" || $cat[0] == "S"))
+					{
+						if($this->form->get("returnGoods")->getValue() == "YES" && $this->form->get("returnApprovalRequest")->getValue() != "YES")
+						{
+							$this->form->get("owner")->setValue($this->form->get("returnRequestName")->getValue());	
+						}
+						
+						if($this->form->get("returnApprovalRequest")->getValue() == "YES")
+						{
+							$this->form->get("owner")->setValue($this->form->get("returnApprovalRequestName")->getValue());	
+						}
+						
+						if($this->form->get("disposeGoods")->getValue() == "YES" && $this->form->get("returnApprovalDisposalRequest")->getValue() != "YES")
+						{
+							$this->form->get("owner")->setValue($this->form->get("returnApprovalDisposalName")->getValue());	
+						}
+						
+						if($this->form->get("returnApprovalDisposalRequest")->getValue() == "YES")
+						{
+							$this->form->get("owner")->setValue($this->form->get("returnDisposalRequestName")->getValue());
+						}
+					}
+					else 
+					{
+						$this->form->get("owner")->setValue($this->form->get("processOwner")->getValue());
+						echo 'trace 4' ;
+					}
+				}
+
+				// begin transaction
+				mysql::getInstance()->selectDatabase("complaints")->Execute("BEGIN");
+
+				if($this->form->get("isPORight")->getValue() == "NO")
+				{
+					mysql::getInstance()->selectDatabase("complaints")->Execute("UPDATE complaint SET owner = '" . $this->form->get("transferOwnership")->getValue() . "' WHERE id = " . $this->getcomplaintId() . "");
+					$this->complaint->getEmailNotification($this->getowner(), usercache::getInstance()->get(currentuser::getInstance()->getNTlogon())->getEmail(), $this->getcomplaintId(), "newEvaluation", utf8_encode($this->form->get("reasonForRejection")->getValue()), $this->form->get("complaintJustified")->getValue());
+					$this->form->get("owner")->setValue($this->form->get("transferOwnership")->getValue());
+				}
+				else
+				{
+					mysql::getInstance()->selectDatabase("complaints")->Execute("UPDATE complaint " . $this->form->generateUpdateQuery("complaint") . "WHERE id = " . $this->getcomplaintId() . "");
+				}
+
+				$this->emailInitiator();
+
+				// Send Email
+				$datasetEmail = mysql::getInstance()->selectDatabase("complaints")->Execute("SELECT id FROM complaint ORDER BY id DESC LIMIT 1");
+				$fields = mysql_fetch_array($datasetEmail);
+				if ($this->form->get("transferOwnership2")->getValue() == "YES")
+				{
+					$this->getEmailNotification(usercache::getInstance()->get($this->form->get("owner")->getValue())->getEmail(), usercache::getInstance()->get(currentuser::getInstance()->getNTlogon())->getEmail(), $this->getcomplaintId(), "newEvaluation", utf8_encode($this->form->get("emailText")->getValue()), $this->form->get("complaintJustified")->getValue());
+					//$this->getEmailNotification(usercache::getInstance()->get($this->form->get("copyTo")->getValue())->getEmail(), usercache::getInstance()->get(currentuser::getInstance()->getNTlogon())->getEmail(), $this->getcomplaintId(), "newEvaluation", utf8_encode($this->form->get("emailText")->getValue()), $this->form->get("complaintJustified")->getValue());
+				}
+
+				if($this->form->get("isComplaintCatRight")->getValue() == "Yes")
+				{
+					$this->form->get("category")->setIgnore(true);
+				}
+				else
+				{
+					$cat = $this->getCategory();
+					$type = $cat[0];
+					if($type == "M" || $type == "D")
+					{
+						mysql::getInstance()->selectDatabase("complaints")->Execute("UPDATE complaint SET g8d = 'yes', category = '" . $this->form->get("category")->getValue() . "' WHERE id = '" . $this->getComplaintId() . "'");
+					}
+					else
+					{
+						mysql::getInstance()->selectDatabase("complaints")->Execute("UPDATE complaint " . $this->form->generateUpdateQuery("complaint") . " WHERE id='" . $this->getcomplaintId() . "'");
+					}
+				}
+
+				/// added to save attachment
+				$this->form->get("attachment")->setFinalFileLocation("/apps/complaints/attachments/eval/" . $this->getcomplaintId() . "/");
+				$this->form->get("attachment")->moveTempFileToFinal();
+
+				// For multiple fields - CC Complaint Group
+				mysql::getInstance()->selectDatabase("complaints")->Execute("DELETE FROM ccGroup WHERE complaintId = " . $this->getcomplaintId());
+
+				for ($i=0; $i < $this->form->getGroup("transferOwnership2GroupYes2")->getRowCount(); $i++)
+				{
+					$this->form->getGroup("transferOwnership2GroupYes2")->setForeignKeyValue($this->getcomplaintId());
+					mysql::getInstance()->selectDatabase("complaints")->Execute("INSERT INTO ccGroup " . $this->form->getGroup("transferOwnership2GroupYes2")->generateInsertQuery($i));
+				}
+
+			}
+
+			if($this->complaint->getComplaintType($this->getcomplaintId()) == "supplier_complaint")
+			{
+				// not needed anymore but will keep just incase, as I know how these things go ...
+
+				//if($this->form->get("sp_submitToExtSupplier")->getValue() == "Yes")
+				//{
+				//$this->saveExternal("insert", $this->getComplaintId());
+				//}
+
+				$this->getEmailNotification(usercache::getInstance()->get($this->form->get("owner")->getValue())->getEmail(), usercache::getInstance()->get(currentuser::getInstance()->getNTlogon())->getEmail(), $this->getcomplaintId(), "newEvaluation", utf8_encode($this->form->get("emailText")->getValue()), "");
+			}
+
+			// insert
+
+			mysql::getInstance()->selectDatabase("complaints")->Execute("COMMIT");
+
+			/* WC EDIT */
+			$doUpdate = mysql::getInstance()->selectDatabase("complaints")->Execute("SELECT count(complaintId) as doUpdate FROM evaluation WHERE complaintId = '" . $this->getcomplaintId() . "'");
+			$doUpdateFields = mysql_fetch_array($doUpdate);
+			if($doUpdateFields["doUpdate"]>0){
+				mysql::getInstance()->selectDatabase("complaints")->Execute("UPDATE evaluation " . $this->form->generateUpdateQuery("evaluation")." WHERE complaintId = '".$this->getcomplaintId()."'");
+			}else{
+				mysql::getInstance()->selectDatabase("complaints")->Execute("INSERT INTO evaluation " . $this->form->generateInsertQuery("evaluation"));
+			}
+			/* WC END */
+
+
+			if ($this->status == 'complete')
+			{
+				$this->addLog(translate::getInstance()->translate("evaluation_completed_disposed"));
+			}
+			else
+			{
+				$this->addLog(translate::getInstance()->translate("evaluation_added_send_to") . " - " . usercache::getInstance()->get($this->form->get("owner")->getValue())->getName(), $this->form->get("emailText")->getValue());
+			}
+		}
+
+		//$this->getEmailNotification(usercache::getInstance()->get($this->form->get("owner")->getValue())->getEmail(), usercache::getInstance()->get(currentuser::getInstance()->getNTlogon())->getEmail(), $this->getcomplaintId(), "newComplaint", utf8_encode($this->form->get("emailText")->getValue()));
+
+		$this->lockComplaint($this->getcomplaintId(), "unlocked");
+		exit('exiting');
+		page::redirect("/apps/complaints/");
+	}
+
+	public function getSupplierEmail($supplierNumber)
+	{
+		$dataset = mysql::getInstance()->selectDatabase("SAP")->Execute("SELECT `emailAddress` FROM `supplier` WHERE `id` = '" . $supplierNumber ."'");
+		$fields = mysql_fetch_array($dataset);
+
+		$emailAddress = $fields['emailAddress'];
+
+		return $emailAddress;
+	}
+
+	public function saveExternal($option, $id)
+	{
+		switch ($option)
+		{
+			case 'insert':
+
+				// Add to action log
+				//mysql::getInstance()->selectDatabase("complaints")->Execute(sprintf("INSERT INTO actionLog (complaintId, NTLogon, actionDescription, actionDate, description) VALUES (%u, '%s', '%s', '%s', '%s')",
+
+				mysqlExt::getInstance()->selectDatabase("complaintsExternal")->Execute("UPDATE complaintExternal " . $this->form->generateUpdateQueryExt("evaluationExt") . " WHERE id = " . $id . "");
+
+				//				mysqlExt::getInstance()->selectDatabase("complaintsExternal")->Execute(sprintf("INSERT INTO complaintExternal (id, complaintOpenDate, scapaStatus, extStatus, sapCustomerNumber, owner, added, problemDescription, colour) VALUES (%u, '%s', '0', '0', '%s', '%s', '1', '%s', '%s')",
+				//					$complaintId,
+				//					$this->form->get("openDate")->getValue(),
+				//					$this->form->get("sp_sapSupplierNumber")->getValue(),
+				//					currentuser::getInstance()->getNTlogon(),
+				//					$this->form->get("problemDescription")->getValue(),
+				//					$this->form->get("colour")->getValue()
+				//				));
+
+				//$this->getEmailNotification(usercache::getInstance()->get("jason.matthews@scapa.com", usercache::getInstance()->get(currentuser::getInstance()->getNTlogon())->getEmail(), $this->id, "newComplaint"));
+
+				// Email Notification
+				//$this->getEmailNotification(usercache::getInstance()->get(currentuser::getInstance()->getNTlogon())->getEmail(), $this->getSupplierEmail($this->form->get("sp_sapSupplierNumber")->getValue()), $this->id, "newExternal");
+
+				break;
+
+			case 'update':
+
+				mysqlExt::getInstance()->selectDatabase("complaintsExternal")->Execute("UPDATE complaintExternal " . $this->form->generateUpdateQueryExt("evaluationExt") . " WHERE id = " . $id . "");
+
+				//mysqlExt::getInstance()->selectDatabase("complaintsExternal")->Execute("UPDATE complaintExternal SET (id, complaintOpenDate, scapaStatus, extStatus, sapCustomerNumber, owner) VALUES (" . $this->id . ", '" . $this->form->get("openDate")->getValue() . "', '0', '0', '" . $this->form->get("sp_sapSupplierNumber")->getValue() . "', '" . $this->form->get("internalSalesName")->getValue() . "')");
+
+				//$this->getEmailNotification(usercache::getInstance()->get("jason.matthews@scapa.com", usercache::getInstance()->get(currentuser::getInstance()->getNTlogon())->getEmail(), $this->id, "newComplaint"));
+
+				break;
+
+			default:
+
+				// do nothing ...
+
+				break;
+		}
+	}
+
+
+
+	public function addLog($action, $comment="")
+	{
+		mysql::getInstance()->selectDatabase("complaints")->Execute(sprintf("INSERT INTO actionLog (complaintId, NTLogon, actionDescription, actionDate, description) VALUES (%u, '%s', '%s', '%s', '%s')",
+		$this->getComplaint()->form->get("id")->getValue(),
+		currentuser::getInstance()->getNTLogon(),
+		utf8_encode(addslashes($action)),
+		common::nowDateTimeForMysql(),
+		$comment
+		));
+	}
+
+
+
+	public function getOwner()
+	{
+		return $_SESSION['apps'][$GLOBALS['app']]['owner'];
+	}
+
+	public function getId()
+	{
+		return $this->id;
+	}
+
+
+	public function validate()
+	{
+		$valid = true;
+
+		if (!$this->form->validate())
+		{
+			$valid = false;
+		}
+
+		return $valid;
+	}
+
+	public function isComplete()
+	{
+		return $_SESSION['apps'][$GLOBALS['app']]['complete'];
+	}
+
+	public function showCompletionBits($outputType)
+	{
+		if ($outputType == "readOnly")
+		{
+			//$this->form->get('status')->setVisible(true);
+			//$this->form->get('completionDate')->setVisible(true);
+
+			if (currentuser::getInstance()->getNTLogon() == $this->getOwner() || $this->isComplete())
+			{
+				//$this->form->get('finalComments')->setVisible(true);
+			}
+		}
+
+		if ($outputType == "normal")
+		{
+			if (currentuser::getInstance()->getNTLogon() == $this->getOwner() && !$this->isComplete())
+			{
+				//$this->form->get('finalComments')->setVisible(true);
+			}
+		}
+	}
+
+	public function determineStatus()
+	{
+		//if ($_REQUEST['location_owner'])
+		//{
+		//$location = $_REQUEST['location_owner'];
+		//$this->status = $location;
+		//$this->form->get('status')->setValue($location);
+		//}
+
+	}
+
+	public function getComplaintCategory()
+	{
+		$datasetCategoryM = mysql::getInstance()->selectDatabase("complaints")->Execute("SELECT category, id FROM complaint WHERE category LIKE 'M%' AND id = " . $this->getComplaint()->form->get("id")->getValue() . "");
+		$rowCategoryM = mysql_fetch_array($datasetCategoryM);
+		$datasetCategoryD = mysql::getInstance()->selectDatabase("complaints")->Execute("SELECT category, id FROM complaint WHERE category LIKE 'D%' AND id = " . $this->getComplaint()->form->get("id")->getValue() . "");
+		$rowCategoryD = mysql_fetch_array($datasetCategoryD);
+	}
+
+	public function defineForm()
+	{
+		/* WC AE - 28/01/08 */
+		$savedFields = array();
+		if(isset($_REQUEST["sfID"])){
+			$this->sfID = $_REQUEST["sfID"];
+			$dataset = mysql::getInstance()->selectDatabase("complaints")->Execute("SELECT sfValue FROM savedForms WHERE `sfOwner` = '" . currentuser::getInstance()->getNTLogon() . "' AND sfID = '".$this->sfID."' LIMIT 1");
+			while ($fields = mysql_fetch_array($dataset)){
+				$savedFields = unserialize($fields["sfValue"]);
+			}
+		}else{
+			$retArray = array();
+
+			$dataset = mysql::getInstance()->selectDatabase("complaints")->Execute("SELECT * FROM evaluation LEFT JOIN complaint ON evaluation.complaintId=complaint.id WHERE complaintId = '"  . $this->complaint->getId()."'");
+
+			$fields2 = mysql_fetch_array($dataset);
+			if($fields2){
+				foreach ($fields2 as $key => $value)
+				{
+					if($value){
+						if(!strtotime($value) && $value != "0000-00-00"){
+							$savedFields[$key] = $value;
+						}else if(strtotime($value) && $value != "0000-00-00"){//if it is a date field then chenge the layout
+							$savedFields[$key] = page::transformDateForPHP($value);
+						}
+
+					}
+				}
+			}
+		}
+
+
+		/* WC END*/
+		$today = date("d/m/Y",time());
+
+		// define the actual form
+		$this->form = new form("evaluation");
+		$this->form->setStoreInSession(true);
+		$this->form->showLegend(true);
+
+		$initiation = new group("initiation");
+		$initiation->setBorder(false);
+		$isPORightNo = new group("isPORightNo");
+		//$transferOwnership2Group = new group("transferOwnership2Group");
+		$sampleReceivedGroup = new group("sampleReceivedGroup");
+		$sampleReceivedGroup->setBorder(false);
+		$isSampleReceivedYes = new group("isSampleReceivedYes");
+		$sampleReceivedGroupAfter = new group("sampleReceivedGroupAfter");
+		$sampleReceivedGroupAfter->setBorder(false);
+		$isComplaintCatRightNo = new group("isComplaintCatRightNo");
+		$complaintJustifiedGroup = new group("complaintJustifiedGroup");
+		$complaintJustifiedGroup->setBorder(false);
+		$complaintJustifiedYes = new group("complaintJustifiedYes");
+		$complaintJustifiedYes->setBorder(false);
+		$returnGoodsYes =  new group("returnGoodsYes");
+		$returnGoodsYes->setBorder(false);
+		$returnGoodsApprovalGroup =  new group("returnGoodsApprovalGroup");
+		$returnGoodsApprovalGroup->setBorder(false);
+		$returnGoodsApprovalGroupYes =  new group("returnGoodsApprovalGroupYes");
+		$returnGoodsApprovalGroupYes->setBorder(false);
+		$complaintJustifiedYes2 =  new group("complaintJustifiedYes2");		
+		$complaintJustifiedYes2->setBorder(false);
+		$disposeGoodsYes = new group("disposeGoodsYes");
+		$disposeGoodsYes->setBorder(false);
+		$disposeGoodsApprovalGroup = new group("disposeGoodsApprovalGroup");
+		$disposeGoodsApprovalGroup->setBorder(false);
+		$disposeGoodsApprovalGroupYes = new group("disposeGoodsApprovalGroupYes");
+		$disposeGoodsApprovalGroupYes->setBorder(false);
+		$complaintJustifiedYes3 = new group("complaintJustifiedYes3");		
+		$complaintJustifiedYes3->setBorder(false);
+		$managementSystemGroup = new group("managementSystemGroup");
+		$managementSystemRefYes = new group("managementSystemRefYes");
+		$fmeaGroup = new group("fmeaGroup");
+		$fmeaDepGroup = new group("fmeaDepGroup");
+		$customerSpecificationGroup = new group("customerSpecificationGroup");
+		$customerSpecificationGroupYes = new group("customerSpecificationGroupYes");
+		$flowChartGroup = new group("flowChartGroup");
+		$flowChartGroupYes = new group("flowChartGroupYes");
+		$commentsGroup = new group("commentsGroup");
+		$transferOwnership2Group = new group("transferOwnership2Group");
+		$transferOwnership2Group->setborder(false);
+		$transferOwnership2GroupYes = new group("transferOwnership2GroupYes");
+		$transferOwnership2GroupYes->setborder(false);
+
+		$transferOwnership2GroupYes2 = new multiplegroup("transferOwnership2GroupYes2");
+		$transferOwnership2GroupYes2->setTitle("Select someone to CC the below message to");
+		$transferOwnership2GroupYes2->setNextAction("evaluation");
+		$transferOwnership2GroupYes2->setAnchorRef("copy_to");
+		$transferOwnership2GroupYes2->setTable("ccGroup");
+		$transferOwnership2GroupYes2->setForeignKey("complaintId");
+		$transferOwnership2GroupYes2->setBorder(false);
+
+		$transferOwnership2GroupYes3 = new group("transferOwnership2GroupYes3");
+		$transferOwnership2GroupYes3->setborder(false);
+
+		$submitGroup = new group("submitGroup");
+
+		$complaintId = new invisibletext("complaintId");
+		$complaintId->setTable("evaluation");
+		$complaintId->setVisible(false);
+		$complaintId->setGroup("initiation");
+		$complaintId->setDataType("number");
+		$complaintId->setValue(0);
+		$initiation->add($complaintId);
+
+		$status = new textbox("status");
+		if(isset($savedFields["status"]))
+		$status->setValue($savedFields["status"]);
+		else $status->setValue("conclusion");
+		$status->setTable("evaluation");
+		$status->setVisible(false);
+		$initiation->add($status);
+
+		$owner = new textbox("owner");
+		if(isset($savedFields["owner"]))
+		$owner->setValue($savedFields["owner"]);
+		$owner->setTable("complaint");
+		$owner->setVisible(false);
+		$owner->setIgnore(false);
+		$owner->setDataType("string");
+		$initiation->add($owner);
+
+
+		$isPORight = new radio("isPORight");
+		$isPORight->setGroup("initiation");
+		$isPORight->setDataType("string");
+		$isPORight->setLength(5);
+		$isPORight->setArraySource(array(
+		array('value' => 'YES', 'display' => 'Yes'),
+		array('value' => 'NO', 'display' => 'No')
+		));
+		$isPORight->setRowTitle("is_process_owner_right");
+		$isPORight->setLabel("Evaluation Details");
+		$isPORight->setRequired(true);
+		if(isset($savedFields["isPORight"]))
+		$isPORight->setValue($savedFields["isPORight"]);
+		else $isPORight->setValue("YES");
+		$isPORight->setTable("evaluation");
+		$isPORight->setHelpId(9000);
+
+		if(isset($_GET["print"]) && !isset($_REQUEST["printAll"])){//this means we are coming from the print function defined on homepage
+			//echo "<pre>";
+			//print_r($fields2);
+			//echo "</pre>";
+			//exit;
+			$showID = new textbox("complaintID");
+			$showID->setValue($this->complaint->getId());
+			$showID->setRowTitle("complaint_id");
+			$showID->setGroup("initiation");
+			$showID->setDataType("string");
+			$showID->setLength(30);
+			$showID->setRequired(false);
+			$showID->setTable("evaluation");
+			$initiation->add($showID);
+
+			$showSAP = new textbox("sapCustomerNumberCustom");
+			$showSAP->setValue($fields2["sapCustomerNumber"]);
+			$showSAP->setRowTitle("SAP_customer_number");
+			$showSAP->setGroup("initiation");
+			$showSAP->setDataType("string");
+			$showSAP->setLength(50);
+			$showSAP->setRequired(false);
+			$showSAP->setTable("evaluation");
+			$initiation->add($showSAP);
+
+			$showSAPName = new textbox("sapCustomerNameCustom");
+			$showSAPName->setValue($fields2["sapName"]);
+			$showSAPName->setRowTitle("SAP_customer_name");
+			$showSAPName->setGroup("initiation");
+			$showSAPName->setDataType("string");
+			$showSAPName->setLength(50);
+			$showSAPName->setRequired(false);
+			$showSAPName->setTable("evaluation");
+			$initiation->add($showSAPName);
+
+			$showOpenDate = new textbox("openDateCustom");
+			if($fields2["openDate"] != "0000-00-00")
+			$showOpenDate->setValue(page::transformDateForPHP($fields2["openDate"]));
+			$showOpenDate->setRowTitle("open_date");
+			$showOpenDate->setGroup("initiation");
+			$showOpenDate->setDataType("string");
+			$showOpenDate->setLength(50);
+			$showOpenDate->setRequired(false);
+			$showOpenDate->setTable("evaluation");
+			$initiation->add($showOpenDate);
+		}
+
+		// Dependency
+		$isPORight_dependency = new dependency();
+		$isPORight_dependency->addRule(new rule('initiation', 'isPORight', 'NO'));
+		$isPORight_dependency->setGroup('isPORightNo');
+		$isPORight_dependency->setShow(true);
+
+		$isPORight->addControllingDependency($isPORight_dependency);
+		$initiation->add($isPORight);
+
+		$reasonForRejection = new textarea("reasonForRejection");
+		if(isset($savedFields["reasonForRejection"]))
+		$reasonForRejection->setValue($savedFields["reasonForRejection"]);
+		$reasonForRejection->setGroup("isPORightNo");
+		$reasonForRejection->setDataType("text");
+		$reasonForRejection->setRowTitle("reason_for_rejection");
+		$reasonForRejection->setRequired(false);
+		$reasonForRejection->setTable("evaluation");
+		$reasonForRejection->setHelpId(9001);
+		$isPORightNo->add($reasonForRejection);
+
+
+		$transferOwnership = new dropdown("transferOwnership");
+		if(isset($savedFields["transferOwnership"]))
+		$transferOwnership->setValue($savedFields["transferOwnership"]);
+		$transferOwnership->setGroup("actionsGroup");
+		$transferOwnership->setDataType("string");
+		$transferOwnership->setRowTitle("send_to");
+		$transferOwnership->setRequired(false);
+		$transferOwnership->setSQLSource("membership","SELECT DISTINCT CONCAT(firstName, ' ',lastName) AS name, employee.NTLogon AS value FROM `permissions` INNER JOIN `employee` ON employee.ntlogon=permissions.ntlogon ORDER BY employee.NTLogon");
+		$transferOwnership->setTable("evaluation");
+		$transferOwnership->clearData();
+		$transferOwnership->setHelpId(9002);
+		$isPORightNo->add($transferOwnership);
+
+		$submit = new submit("submit");
+		$submit->setGroup("isPORightNo");
+		$submit->setVisible(true);
+		$isPORightNo->add($submit);
+
+		/*This transfer ownership affects what is seen at the bottom of the page,
+		so the actual dependant fields are at the bottom of the form*/
+		$transferOwnership2 = new radio("transferOwnership2");
+		$transferOwnership2->setGroup("complaintJustifiedYes");
+		$transferOwnership2->setDataType("string");
+		$transferOwnership2->setLength(5);
+		$transferOwnership2->setArraySource(array(
+		array('value' => 'YES', 'display' => 'Yes'),
+		array('value' => 'NO', 'display' => 'No')
+		));
+		$transferOwnership2->setRowTitle("transfer_ownership");
+		$transferOwnership2->setRequired(false);
+		if(isset($savedFields["transferOwnership2"]))
+		$transferOwnership2->setValue($savedFields["transferOwnership2"]);
+		else $transferOwnership2->setValue("YES");
+		$transferOwnership2->setTable("evaluation");
+		$transferOwnership2->setHelpId(9019);
+		//$commentsGroup->add($transferOwnership2);
+
+		//dependancy
+		$transferOwnership2_dependency = new dependency();
+		$transferOwnership2_dependency->addRule(new rule('transferOwnership2Group', 'transferOwnership2', 'YES'));
+		$transferOwnership2_dependency->setGroup('transferOwnership2GroupYes');
+		$transferOwnership2_dependency->setShow(true);
+
+		$transferOwnership2->addControllingDependency($transferOwnership2_dependency);
+		$transferOwnership2Group->add($transferOwnership2);
+		//dependants to be found at the bottom of the form
+
+		$isSampleReceived = new radio("isSampleReceived");
+		$isSampleReceived->setGroup("sampleReceivedGroup");
+		$isSampleReceived->setDataType("string");
+		$isSampleReceived->setLength(5);
+		$isSampleReceived->setArraySource(array(
+		array('value' => 'YES', 'display' => 'Yes'),
+		array('value' => 'NO', 'display' => 'No')
+		));
+		$isSampleReceived->setRowTitle("is_sample_received");
+		$isSampleReceived->setRequired(true);
+		if(isset($savedFields["isSampleReceived"]))
+		$isSampleReceived->setValue($savedFields["isSampleReceived"]);
+		else $isSampleReceived->setValue("NO");
+		$isSampleReceived->setTable("evaluation");
+		$isSampleReceived->setHelpId(9003);
+
+
+		// Dependency
+		$isSampleReceived_dependency = new dependency();
+		$isSampleReceived_dependency->addRule(new rule('sampleReceivedGroup', 'isSampleReceived', 'YES'));
+		$isSampleReceived_dependency->setGroup('isSampleReceivedYes');
+		$isSampleReceived_dependency->setShow(true);
+
+		$isSampleReceived->addControllingDependency($isSampleReceived_dependency);
+		$sampleReceivedGroup->add($isSampleReceived);
+
+		$dateSampleReceived = new textbox("dateSampleReceived");
+		if(isset($savedFields["dateSampleReceived"]))
+		$dateSampleReceived->setValue($savedFields["dateSampleReceived"]);
+		$dateSampleReceived->setGroup("isSampleReceivedYes");
+		$dateSampleReceived->setDataType("date");
+		$dateSampleReceived->setLength(30);
+		$dateSampleReceived->setRowTitle("date_sample_received");
+		$dateSampleReceived->setRequired(false);
+		$dateSampleReceived->setTable("evaluation");
+		$dateSampleReceived->setHelpId(9004);
+		$isSampleReceivedYes->add($dateSampleReceived);
+
+		//		$g8d = new radio("g8d");
+		//		$g8d->setGroup("sampleReceivedGroupAfter");
+		//		$g8d->setDataType("string");
+		//		$g8d->setLength(5);
+		//		$g8d->setArraySource(array(
+		//			array('value' => 'yes', 'display' => 'Yes'),
+		//			array('value' => 'no', 'display' => 'No')
+		//		));
+		//		$g8d->setRowTitle("full_8d_required");
+		//		$g8d->setRequired(true);
+		//		$g8d->setValue("no");
+		//		$g8d->setTable("evaluation");
+		//		$g8d->setHelpId(8006);
+		//		$sampleReceivedGroupAfter->add($g8d);
+
+
+		$analysis = new textarea("analysis");
+		if(isset($savedFields["analysis"]))
+		$analysis->setValue($savedFields["analysis"]);
+		//else
+		//$analysis->setValue("ALLY");
+		$analysis->setGroup("sampleReceivedGroupAfter");
+		$analysis->setDataType("text");
+		$analysis->setRowTitle("analysis");
+		$analysis->setRequired(false);
+		$analysis->setTable("evaluation");
+		$analysis->setHelpId(9005);
+		$sampleReceivedGroupAfter->add($analysis);
+
+		$analysisyn = new radio("analysisyn");
+		$analysisyn->setGroup("sampleReceivedGroupAfter");
+		$analysisyn->setDataType("string");
+		$analysisyn->setLength(3);
+		$analysisyn->setArraySource(array(
+		array('value' => 'Yes', 'display' => 'Yes'),
+		array('value' => 'No', 'display' => 'No')
+		));
+		$analysisyn->setRowTitle("analysis_entered");
+		$analysisyn->setRequired(false);
+		$analysisyn->setVisible(false);
+		if(isset($savedFields["analysis_entered"]))
+		$analysisyn->setValue($savedFields["analysis_entered"]);
+		else $analysisyn->setValue("No");
+		$analysisyn->setTable("complaint");
+		$sampleReceivedGroupAfter->add($analysisyn);
+
+		$author = new textbox("author");
+		if(isset($savedFields["author"]))
+		$author->setValue($savedFields["author"]);
+		$author->setGroup("sampleReceivedGroupAfter");
+		$author->setDataType("string");
+		$author->setLength(255);
+		$author->setRowTitle("author");
+		$author->setRequired(false);
+		$author->setTable("evaluation");
+		$author->setHelpId(9006);
+		$sampleReceivedGroupAfter->add($author);
+
+		$analysisDate = new textbox("analysisDate");
+		if(isset($savedFields["analysisDate"]))
+		$analysisDate->setValue($savedFields["analysisDate"]);
+		$analysisDate->setGroup("sampleReceivedGroupAfter");
+		$analysisDate->setDataType("date");
+		$analysisDate->setLength(30);
+		$analysisDate->setRowTitle("analysis_date");
+		$analysisDate->setRequired(false);
+		$analysisDate->setTable("evaluation");//was complaintEval???
+		$analysisDate->setHelpId(9007);
+		$sampleReceivedGroupAfter->add($analysisDate);
+
+		$attachment = new attachment("attachment");
+		$attachment->setTempFileLocation("/apps/complaints/tmp");
+		$attachment->setFinalFileLocation("/apps/complaints/attachments/eval");
+		$attachment->setRowTitle("attach_document");
+		$attachment->setHelpId(9008);
+		$attachment->setNextAction("evaluation");
+		$sampleReceivedGroupAfter->add($attachment);
+
+		$isComplaintCatRight = new radio("isComplaintCatRight");
+		$isComplaintCatRight->setGroup("sampleReceivedGroupAfter");
+		$isComplaintCatRight->setDataType("string");
+		$isComplaintCatRight->setLength(5);
+		$isComplaintCatRight->setArraySource(array(
+		array('value' => 'Yes', 'display' => 'Yes'),
+		array('value' => 'No', 'display' => 'No')
+		));
+		$isComplaintCatRight->setRowTitle("is_complaint_cat_right");
+		$isComplaintCatRight->setRequired(true);
+		if(isset($savedFields["isComplaintCatRight"]))
+		$isComplaintCatRight->setValue($savedFields["isComplaintCatRight"]);
+		else $isComplaintCatRight->setValue("Yes");
+		$isComplaintCatRight->setTable("evaluation");
+		$isComplaintCatRight->setHelpId(9009);
+
+
+		// Dependency
+		$isComplaintCatRight_dependency = new dependency();
+		$isComplaintCatRight_dependency->addRule(new rule('sampleReceivedGroupAfter', 'isComplaintCatRight', 'No'));
+		$isComplaintCatRight_dependency->setGroup('isComplaintCatRightNo');
+		$isComplaintCatRight_dependency->setShow(true);
+
+		$isComplaintCatRight->addControllingDependency($isComplaintCatRight_dependency);
+		$sampleReceivedGroupAfter->add($isComplaintCatRight);
+
+		$datasetCat = mysql::getInstance()->selectDatabase("complaints")->Execute("SELECT category FROM complaint WHERE id = '" . $this->getComplaint()->form->get("id")->getValue() . "'");
+		$fieldsCat = mysql_fetch_array($datasetCat);
+
+		$category = new dropdown("category");
+		$category->setGroup("isComplaintCatRightNo");
+		$category->setDataType("string");
+		$category->setLength(50);
+		$category->setRowTitle("correct_category");
+		$category->setRequired(false);
+		if(isset($savedFields["category"]))
+		$category->setValue($savedFields["category"]);
+		else $category->setValue($fieldsCat['category']);
+		//$category->setXMLSource("./apps/complaints/xml/category.xml");
+		$category->setSQLSource("complaints","SELECT `details` AS name, `details` AS value FROM `dropdownsData` WHERE site = 'customer' AND field = 'category' ORDER BY `details` ASC");
+		$category->setTranslate(true);
+		$category->setTable("complaint");
+		$category->setHelpId(9010);
+		$isComplaintCatRightNo->add($category);
+
+
+
+		$complaintJustified = new radio("complaintJustified");
+		$complaintJustified->setGroup("complaintJustifiedGroup");
+		$complaintJustified->setDataType("string");
+		$complaintJustified->setLength(5);
+		$complaintJustified->setArraySource(array(
+		array('value' => 'YES', 'display' => 'Yes'),
+		array('value' => 'NO', 'display' => 'No'),
+		array('value' => 'undecided', 'display' => 'Undecided')
+		));
+		$complaintJustified->setRowTitle("complaint_justified");
+		$complaintJustified->setRequired(true);
+		if(isset($savedFields["complaintJustified"]))
+		$complaintJustified->setValue($savedFields["complaintJustified"]);
+		else $complaintJustified->setValue("YES");
+		$complaintJustified->setTable("evaluation");
+		$complaintJustified->setHelpId(9011);
+
+
+		// Dependency
+		$complaintJustified_dependency = new dependency();
+		$complaintJustified_dependency->addRule(new rule('complaintJustifiedGroup', 'complaintJustified', 'NO'));
+		$complaintJustified_dependency->setGroup('complaintJustifiedYes');
+		$complaintJustified_dependency->setShow(false);
+
+		$complaintJustified->addControllingDependency($complaintJustified_dependency);
+		$complaintJustifiedGroup->add($complaintJustified);
+
+
+		$teamLeader = new textbox("teamLeader");
+		if(isset($savedFields["teamLeader"]))
+		$teamLeader->setValue($savedFields["teamLeader"]);
+		$teamLeader->setGroup("complaintJustifiedYes");
+		$teamLeader->setDataType("string");
+		$teamLeader->setLength(255);
+		$teamLeader->setRowTitle("team_leader");
+		$teamLeader->setRequired(false);
+		$teamLeader->setTable("evaluation");
+		$teamLeader->setHelpId(9012);
+		$complaintJustifiedYes->add($teamLeader);
+
+		$teamMember = new textarea("teamMember");
+		if(isset($savedFields["teamMember"]))
+		$teamMember->setValue($savedFields["teamMember"]);
+		$teamMember->setGroup("complaintJustifiedYes");
+		$teamMember->setDataType("text");
+		$teamMember->setRowTitle("team_member");
+		$teamMember->setRequired(false);
+		$teamMember->setTable("evaluation");
+		$teamMember->setHelpId(9013);
+		$complaintJustifiedYes->add($teamMember);
+
+		$rootCauses = new textarea("rootCauses");
+		if(isset($savedFields["rootCauses"]))
+		$rootCauses->setValue($savedFields["rootCauses"]);
+		$rootCauses->setGroup("complaintJustifiedYes");
+		$rootCauses->setDataType("text");
+		$rootCauses->setRowTitle("root_causes");
+		$rootCauses->setRequired(false);
+		$rootCauses->setTable("evaluation");
+		$rootCauses->setHelpId(9014);
+		$complaintJustifiedYes->add($rootCauses);
+
+		$rootCausesyn = new radio("rootCausesyn");
+		$rootCausesyn->setGroup("complaintJustifiedYes");
+		$rootCausesyn->setDataType("string");
+		$rootCausesyn->setLength(3);
+		$rootCausesyn->setArraySource(array(
+		array('value' => 'Yes', 'display' => 'Yes'),
+		array('value' => 'No', 'display' => 'No')
+		));
+		$rootCausesyn->setRowTitle("rootCauses_entered");
+		$rootCausesyn->setRequired(false);
+		$rootCausesyn->setVisible(false);
+		if(isset($savedFields["rootCausesyn"]))
+		$rootCausesyn->setValue($savedFields["rootCausesyn"]);
+		else $rootCausesyn->setValue("No");
+		$rootCausesyn->setTable("complaint");
+		$complaintJustifiedYes->add($rootCausesyn);
+
+
+		if($this->complaint->getComplaintType($this->complaint->getId()) == "supplier_complaint")
+		{
+			// do nothing
+		}
+		else
+		{
+			if($this->complaint->form->get("siteAtOrigin")->getValue() == 'Ashton' || $this->complaint->form->get("siteAtOrigin")->getValue() == 'Rorschach')
+			{
+				$failureCode = new dropdown("failureCode");
+				$failureCode->setSQLSource("complaints","SELECT `details` AS name, `details` AS value FROM `dropdownsData` WHERE `site` = '". $this->complaint->form->get("siteAtOrigin")->getValue() ."' AND field = 'failureCode' ORDER BY `details`");
+			}
+			else
+			{
+				$failureCode = new textbox("failureCode");
+			}
+
+			//$failureCode = new textbox("failureCode");
+			//$failureCode = new dropdown("failureCode");
+			if(isset($savedFields["failureCode"]))
+			$failureCode->setValue($savedFields["failureCode"]);
+			$failureCode->setGroup("complaintJustifiedYes");
+			$failureCode->setDataType("string");
+			$failureCode->setLength(255);
+			$failureCode->setRowTitle("failure_code");
+			$failureCode->setRequired(false);
+			$failureCode->setTable("evaluation");
+			$failureCode->setHelpId(9037);
+			$complaintJustifiedYes->add($failureCode);
+		}
+
+		if($this->complaint->form->get("siteAtOrigin")->getValue() == 'Ashton' || $this->complaint->form->get("siteAtOrigin")->getValue() == 'Rorschach')
+		{
+			$rootCauseCode = new dropdown("rootCauseCode");
+			$rootCauseCode->setSQLSource("complaints","SELECT `details` AS name, `details` AS value FROM `dropdownsData` WHERE `site` = '". $this->complaint->form->get("siteAtOrigin")->getValue() ."' AND field = 'rootCauseCode' ORDER BY `details`");
+		}
+		else
+		{
+			$rootCauseCode = new textbox("rootCauseCode");
+		}
+		//$rootCauseCode = new textbox("rootCauseCode");
+		//$rootCauseCode = new dropdown("rootCauseCode");
+		if(isset($savedFields["rootCauseCode"]))
+		$rootCauseCode->setValue($savedFields["rootCauseCode"]);
+		$rootCauseCode->setGroup("complaintJustifiedYes");
+		$rootCauseCode->setDataType("string");
+		$rootCauseCode->setLength(255);
+		$rootCauseCode->setRowTitle("root_cause_code");
+		$rootCauseCode->setRequired(false);
+		$rootCauseCode->setTable("evaluation");
+		$rootCauseCode->setHelpId(9038);
+		$complaintJustifiedYes->add($rootCauseCode);
+
+
+		$site = $this->complaint->form->get("siteAtOrigin")->getValue();
+		if($site == 'Ashton' || $site == 'Bellegarde' || $site == 'Carlstadt' || $site == 'Dunstable' || $site == 'Ghislarengo' || $site == 'Inglewood' || $site == 'Renfrew' || $site == 'Rorschach' || $site == 'Syracuse' || $site == 'Valence' || $site == 'Windsor')
+		{
+			$attributableProcess = new dropdown("attributableProcess");
+			$attributableProcess->setSQLSource("complaints","SELECT `details` AS name, `details` AS value FROM `dropdownsData` WHERE `site` = '". $this->complaint->form->get("siteAtOrigin")->getValue() ."' AND field = 'attributableProcess' ORDER BY `details`");
+		}
+		else
+		{
+			$attributableProcess = new textbox("attributableProcess");
+		}
+
+		if(isset($savedFields["attributableProcess"]))
+		$attributableProcess->setValue($savedFields["attributableProcess"]);
+		$attributableProcess->setGroup("complaintJustifiedYes");
+		$attributableProcess->setDataType("string");
+		$attributableProcess->setLength(255);
+		$attributableProcess->setRowTitle("attributable_process");
+		$attributableProcess->setRequired(false);
+		//$this->complaint->form->get("siteAtOrigin")->getValue() == 'Rorschach' ?	$attributableProcess->setXMLSource("./apps/complaints/xml/attributableProcessRorschach.xml") : '';
+		$attributableProcess->setTable("evaluation");
+		$attributableProcess->setHelpId(9015);
+		$complaintJustifiedYes->add($attributableProcess);
+
+		$rootCausesAuthor = new textbox("rootCausesAuthor");
+		if(isset($savedFields["rootCausesAuthor"]))
+		$rootCausesAuthor->setValue($savedFields["rootCausesAuthor"]);
+		$rootCausesAuthor->setGroup("complaintJustifiedYes");
+		$rootCausesAuthor->setDataType("string");
+		$rootCausesAuthor->setLength(255);
+		$rootCausesAuthor->setRowTitle("root_causes_author");
+		$rootCausesAuthor->setRequired(false);
+		$rootCausesAuthor->setTable("evaluation");
+		$rootCausesAuthor->setHelpId(9015);
+		$complaintJustifiedYes->add($rootCausesAuthor);
+
+		$rootCausesDate = new textbox("rootCausesDate");
+		if(isset($savedFields["rootCausesDate"]))
+		$rootCausesDate->setValue($savedFields["rootCausesDate"]);
+		$rootCausesDate->setGroup("complaintJustifiedYes");
+		$rootCausesDate->setDataType("date");
+		$rootCausesDate->setRowTitle("root_causes_date");
+		$rootCausesDate->setRequired(false);
+		$rootCausesDate->setTable("evaluation");
+		$rootCausesDate->setHelpId(9016);
+		$complaintJustifiedYes->add($rootCausesDate);
+
+		$returnGoods = new radio("returnGoods");
+		$returnGoods->setGroup("complaintJustifiedYes");
+		$returnGoods->setDataType("string");
+		$returnGoods->setLength(5);
+		$returnGoods->setArraySource(array(
+		array('value' => 'YES', 'display' => 'Yes'),
+		array('value' => 'NO', 'display' => 'No')
+		));
+		$returnGoods->setRowTitle("return_goods");
+		$returnGoods->setRequired(true);
+		if(isset($savedFields["returnGoods"]))
+		$returnGoods->setValue($savedFields["returnGoods"]);
+		else $returnGoods->setValue("NO");
+		$returnGoods->setTable("evaluation");
+		$returnGoods->setHelpId(9017);
+		
+		// Dependency
+		$returnGoods_dependency = new dependency();
+		$returnGoods_dependency->addRule(new rule('complaintJustifiedYes', 'returnGoods', 'YES'));
+		$returnGoods_dependency->setGroup('returnGoodsYes');
+		$returnGoods_dependency->setShow(true);
+
+		$returnGoods->addControllingDependency($returnGoods_dependency);
+		$complaintJustifiedYes->add($returnGoods);
+
+		//$datasetAmerican = mysql::getInstance()->selectDatabase("complaints")->Execute("SELECT `complaintLocation`, `salesOffice`, `complaintValue_quantity` FROM complaint WHERE id = '"  . $this->complaint->getId()."'");
+		//$fieldsAmerican = mysql_fetch_array($datasetAmerican);
+		
+		//if($fieldsAmerican['complaintLocation'] == 'american')
+				
+		$cat = $this->getCategory();
+
+		if(usercache::getInstance()->get(currentuser::getInstance()->getNTlogon())->getLocale() == "USA" && ($cat[0] == "M" || $cat[0] == "D" || $cat[0] == "S"))
+		{									
+			$returnGoodsReadOnly = new readonly("returnGoodsReadOnly");
+			$returnGoodsReadOnly->setGroup("complaintJustifiedYes");
+			$returnGoodsReadOnly->setRowTitle("return_goods");
+			$returnGoodsReadOnly->setTable("evaluation");
+			$returnGoodsReadOnly->setLabel("Return The Goods Request");
+			$returnGoodsReadOnly->setVisible(false);
+			$returnGoodsReadOnly->setHelpId(9017);
+			$complaintJustifiedYes->add($returnGoodsReadOnly);
+			
+			$returnRequestValue = new measurement("returnRequestValue");
+			if(isset($savedFields["returnRequestValue"]))
+			$returnRequestValue->setValue($savedFields["returnRequestValue"]);
+			$returnRequestValue->setGroup("returnGoodsYes");
+			$returnRequestValue->setDataType("string");
+			$returnRequestValue->setRowTitle("return_goods_value");
+			$returnRequestValue->setRequired(false);
+			$returnRequestValue->setXMLSource("./apps/complaints/xml/currency.xml");
+			$returnRequestValue->setTable("evaluation");
+			$returnRequestValue->setHelpId(9016);
+			$returnGoodsYes->add($returnRequestValue);
+			
+			$returnRequestValueReadOnly = new readonly("returnRequestValueReadOnly");
+			$returnRequestValueReadOnly->setGroup("complaintJustifiedYes");
+			$returnRequestValueReadOnly->setRowTitle("return_goods_value");
+			$returnRequestValueReadOnly->setVisible(false);
+			$returnRequestValueReadOnly->setTable("evaluation");
+			$returnRequestValueReadOnly->setHelpId(9017);
+			$complaintJustifiedYes->add($returnRequestValueReadOnly);
+			
+			$returnRequestComment = new textarea("returnRequestComment");
+			if(isset($savedFields["returnRequestComment"]))
+			$returnRequestComment->setValue($savedFields["returnRequestComment"]);
+			$returnRequestComment->setGroup("returnGoodsYes");
+			$returnRequestComment->setDataType("text");
+			$returnRequestComment->setRowTitle("comment");
+			$returnRequestComment->setRequired(false);
+			$returnRequestComment->setTable("evaluation");
+			$returnRequestComment->setHelpId(9087);
+			$returnGoodsYes->add($returnRequestComment);
+			
+			$returnRequestCommentReadOnly = new readonly("returnRequestCommentReadOnly");
+			$returnRequestCommentReadOnly->setGroup("complaintJustifiedYes");
+			$returnRequestCommentReadOnly->setRowTitle("comment");
+			$returnRequestCommentReadOnly->setTable("evaluation");
+			$returnRequestCommentReadOnly->setVisible(false);
+			$returnRequestCommentReadOnly->setHelpId(9017);
+			$complaintJustifiedYes->add($returnRequestCommentReadOnly);
+
+			$returnRequestName = new dropdown("returnRequestName");
+			if(isset($savedFields["returnRequestName"]))
+			$returnRequestName->setValue($savedFields["returnRequestName"]);
+			$returnRequestName->setGroup("returnGoodsYes");
+			$returnRequestName->setDataType("string");
+			$returnRequestName->setRowTitle("send_request_to");
+			$returnRequestName->setRequired(false);
+						
+			if($this->complaint->form->get("complaintValue")->getQuantity() < 2500)
+			{
+				$limits = "lower";
+			}
+			elseif($this->complaint->form->get("complaintValue")->getQuantity() > 2500 && $this->complaint->form->get("complaintValue")->getQuantity() < 1000)
+			{
+				$limits = "lower_mid";
+			}
+			elseif($this->complaint->form->get("complaintValue")->getQuantity() > 10000 && $this->complaint->form->get("complaintValue")->getQuantity() < 30000)
+			{
+				$limits = "upper_mid";
+			}
+			elseif($this->complaint->form->get("complaintValue")->getQuantity() > 30000)
+			{
+				$limits = "upper";
+			}
+			else 
+			{
+				$limits = "";
+			}
+			
+//			if($fieldsAmerican['complaintValue_quantity'] < 2500)
+//			{
+//				$limits = 'lower';
+//			}
+//			elseif($fieldsAmerican['complaintValue_quantity'] > 2500 && $fieldsAmerican['complaintValue_quantity'] < 10000)
+//			{
+//				$limits = 'lower_mid';
+//			}
+//			elseif($fieldsAmerican['complaintValue_quantity'] > 10000 && $fieldsAmerican['complaintValue_quantity'] < 30000)
+//			{
+//				$limits = 'upper_mid';
+//			}
+//			elseif($fieldsAmerican['complaintValue_quantity'] > 30000)
+//			{
+//				$limits = 'upper';
+//			}
+						
+			//$returnApprovalName->setSQLSource("membership","SELECT DISTINCT CONCAT(firstName, ' ',lastName) AS name, employee.NTLogon AS value FROM `permissions` INNER JOIN `employee` ON employee.ntlogon=permissions.ntlogon WHERE `permission` LIKE 'complaints_return_approval_" . $fieldsAmerican['salesOffice'] . "_" . $limits . "' ORDER BY employee.NTLogon");
+			
+			$returnRequestName->setSQLSource("membership","SELECT DISTINCT CONCAT(firstName, ' ',lastName) AS name, employee.NTLogon AS value FROM `permissions` INNER JOIN `employee` ON employee.ntlogon=permissions.ntlogon WHERE `permission` LIKE 'complaints_return_approval_na_" . $limits . "' ORDER BY employee.NTLogon");
+			$returnRequestName->setTable("evaluation");
+			$returnRequestName->setHelpId(9017);
+			$returnGoodsYes->add($returnRequestName);
+			
+			$returnRequestNameReadOnly = new readonly("returnRequestNameReadOnly");
+			$returnRequestNameReadOnly->setGroup("complaintJustifiedYes");
+			$returnRequestNameReadOnly->setRowTitle("send_request_to");
+			$returnRequestNameReadOnly->setTable("evaluation");
+			$returnRequestNameReadOnly->setVisible(false);
+			$returnRequestNameReadOnly->setHelpId(9017);
+			$complaintJustifiedYes->add($returnRequestNameReadOnly);
+			
+			$returnRequestSubmit = new submit("returnRequestSubmit");
+			$returnRequestSubmit->setGroup("returnGoodsYes");
+			$returnRequestSubmit->setVisible(true);
+			$returnGoodsYes->add($returnRequestSubmit);
+			
+			$returnApprovalRequestStatus = new textbox("returnApprovalRequestStatus");
+			$returnApprovalRequestStatus->setGroup("complaintJustifiedYes");
+			$returnApprovalRequestStatus->setDataType("number");
+			$returnApprovalRequestStatus->setVisible(false);
+			$returnApprovalRequestStatus->setIgnore(false);
+			$returnApprovalRequestStatus->setTable("evaluation");
+			$returnApprovalRequestStatus->setHelpId(9016);
+			$complaintJustifiedYes->add($returnApprovalRequestStatus);
+			
+			$returnApprovalRequest = new radio("returnApprovalRequest");
+			$returnApprovalRequest->setGroup("returnGoodsApprovalGroup");
+			$returnApprovalRequest->setDataType("string");
+			$returnApprovalRequest->setLength(5);
+			$returnApprovalRequest->setArraySource(array(
+			array('value' => 'YES', 'display' => 'Yes'),
+			array('value' => 'NO', 'display' => 'No')
+			));
+			$returnApprovalRequest->setRowTitle("return_approval_request");
+			$returnApprovalRequest->setRequired(true);
+			if(isset($savedFields["returnApprovalRequest"]))
+			$returnApprovalRequest->setValue($savedFields["returnApprovalRequest"]);
+			else $returnApprovalRequest->setValue("NO");
+			$returnApprovalRequest->setTable("evaluation");
+			$returnApprovalRequest->setHelpId(9017);
+			
+			// Dependency
+			$returnApprovalRequest_dependency = new dependency();
+			$returnApprovalRequest_dependency->addRule(new rule('returnGoodsApprovalGroup', 'returnApprovalRequest', 'YES'));
+			$returnApprovalRequest_dependency->setGroup('returnGoodsApprovalGroupYes');
+			$returnApprovalRequest_dependency->setShow(true);
+	
+			$returnApprovalRequest->addControllingDependency($returnApprovalRequest_dependency);
+			$returnGoodsApprovalGroup->add($returnApprovalRequest);
+			
+			$returnApprovalRequestReadOnly = new readonly("returnApprovalRequestReadOnly");
+			$returnApprovalRequestReadOnly->setGroup("complaintJustifiedYes");
+			$returnApprovalRequestReadOnly->setRowTitle("return_approval_request");
+			$returnApprovalRequestReadOnly->setTable("evaluation");
+			$returnApprovalRequestReadOnly->setVisible(false);
+			$returnApprovalRequestReadOnly->setLabel("Return The Goods Request Approval");
+			$returnApprovalRequestReadOnly->setHelpId(9017);
+			$complaintJustifiedYes->add($returnApprovalRequestReadOnly);
+			
+			$returnApprovalRequestComment = new textarea("returnApprovalRequestComment");
+			if(isset($savedFields["returnApprovalRequestComment"]))
+			$returnApprovalRequestComment->setValue($savedFields["returnApprovalRequestComment"]);
+			$returnApprovalRequestComment->setGroup("returnGoodsApprovalGroupYes");
+			$returnApprovalRequestComment->setDataType("text");
+			$returnApprovalRequestComment->setRowTitle("comment");
+			$returnApprovalRequestComment->setRequired(false);
+			$returnApprovalRequestComment->setTable("evaluation");
+			$returnApprovalRequestComment->setHelpId(9087);
+			$returnGoodsApprovalGroupYes->add($returnApprovalRequestComment);
+			
+			$returnApprovalRequestCommentReadOnly = new readonly("returnApprovalRequestCommentReadOnly");
+			$returnApprovalRequestCommentReadOnly->setGroup("complaintJustifiedYes");
+			$returnApprovalRequestCommentReadOnly->setRowTitle("comment");
+			$returnApprovalRequestCommentReadOnly->setTable("evaluation");
+			$returnApprovalRequestCommentReadOnly->setVisible(false);
+			$returnApprovalRequestCommentReadOnly->setHelpId(9017);
+			$complaintJustifiedYes->add($returnApprovalRequestCommentReadOnly);
+			
+			$returnApprovalRequestName = new dropdown("returnApprovalRequestName");
+			if(isset($savedFields["returnApprovalRequestName"]))
+			$returnApprovalRequestName->setValue($savedFields["returnApprovalRequestName"]);
+			$returnApprovalRequestName->setGroup("returnGoodsApprovalGroupYes");
+			$returnApprovalRequestName->setDataType("string");
+			$returnApprovalRequestName->setRowTitle("send_to");
+			$returnApprovalRequestName->setRequired(false);
+			$returnApprovalRequestName->setSQLSource("membership","SELECT DISTINCT CONCAT(firstName, ' ',lastName) AS name, employee.NTLogon AS value FROM `permissions` INNER JOIN `employee` ON employee.ntlogon=permissions.ntlogon ORDER BY employee.NTLogon");
+			$returnApprovalRequestName->setTable("evaluation");
+			$returnApprovalRequestName->clearData();
+			$returnApprovalRequestName->setHelpId(9002);
+			$returnGoodsApprovalGroupYes->add($returnApprovalRequestName);
+			
+			$returnApprovalRequestNameReadOnly = new readonly("returnApprovalRequestNameReadOnly");
+			$returnApprovalRequestNameReadOnly->setGroup("complaintJustifiedYes");
+			$returnApprovalRequestNameReadOnly->setRowTitle("send_to");
+			$returnApprovalRequestNameReadOnly->setTable("evaluation");
+			$returnApprovalRequestNameReadOnly->setVisible(false);
+			$returnApprovalRequestNameReadOnly->setHelpId(9017);
+			$complaintJustifiedYes->add($returnApprovalRequestNameReadOnly);
+			
+			$returnApprovalRequestSubmit = new submit("returnApprovalRequestSubmit");
+			$returnApprovalRequestSubmit->setGroup("returnGoodsApprovalGroupYes");
+			$returnApprovalRequestSubmit->setVisible(true);
+			$returnGoodsApprovalGroupYes->add($returnApprovalRequestSubmit);
+		}
+
+		$disposeGoods = new radio("disposeGoods");
+		$disposeGoods->setGroup("complaintJustifiedYes2");
+		$disposeGoods->setDataType("string");
+		$disposeGoods->setLength(5);
+		$disposeGoods->setArraySource(array(
+		array('value' => 'YES', 'display' => 'Yes'),
+		array('value' => 'NO', 'display' => 'No')
+		));
+		$disposeGoods->setRowTitle("dispose_goods");
+		$disposeGoods->setRequired(true);
+		if(isset($savedFields["disposeGoods"]))
+		$disposeGoods->setValue($savedFields["disposeGoods"]);
+		else $disposeGoods->setValue("NO");
+		$disposeGoods->setTable("evaluation");
+		$disposeGoods->setHelpId(9018);
+		
+		// Dependency
+		$disposeGoods_dependency = new dependency();
+		$disposeGoods_dependency->addRule(new rule('complaintJustifiedYes2', 'disposeGoods', 'YES'));
+		$disposeGoods_dependency->setGroup('disposeGoodsYes');
+		$disposeGoods_dependency->setShow(true);
+
+		$disposeGoods->addControllingDependency($disposeGoods_dependency);
+		$complaintJustifiedYes2->add($disposeGoods);
+		
+		if(usercache::getInstance()->get(currentuser::getInstance()->getNTlogon())->getLocale() == "USA" && ($cat[0] == "M" || $cat[0] == "D" || $cat[0] == "S"))
+		{
+			$disposeGoodsReadOnly = new readonly("disposeGoodsReadOnly");
+			$disposeGoodsReadOnly->setGroup("complaintJustifiedYes");
+			$disposeGoodsReadOnly->setRowTitle("dispose_goods");
+			$disposeGoodsReadOnly->setTable("evaluation");
+			$disposeGoodsReadOnly->setLabel("Dispose The Goods Request");
+			$disposeGoodsReadOnly->setVisible(false);
+			$disposeGoodsReadOnly->setHelpId(9017);
+			$complaintJustifiedYes->add($disposeGoodsReadOnly);
+			
+			$returnApprovalDisposalValue = new measurement("returnApprovalDisposalValue");
+			if(isset($savedFields["returnApprovalDisposalValue"]))
+			$returnApprovalDisposalValue->setValue($savedFields["returnApprovalDisposalValue"]);
+			$returnApprovalDisposalValue->setGroup("disposeGoodsYes");
+			$returnApprovalDisposalValue->setDataType("string");
+			$returnApprovalDisposalValue->setRowTitle("disposal_goods_value");
+			$returnApprovalDisposalValue->setXMLSource("./apps/complaints/xml/currency.xml");
+			$returnApprovalDisposalValue->setRequired(false);
+			$returnApprovalDisposalValue->setTable("evaluation");
+			$returnApprovalDisposalValue->setHelpId(9016);
+			$disposeGoodsYes->add($returnApprovalDisposalValue);
+			
+			$returnApprovalDisposalValueReadOnly = new readonly("returnApprovalDisposalValueReadOnly");
+			$returnApprovalDisposalValueReadOnly->setGroup("complaintJustifiedYes");
+			$returnApprovalDisposalValueReadOnly->setRowTitle("disposal_goods_value");
+			$returnApprovalDisposalValueReadOnly->setTable("evaluation");
+			$returnApprovalDisposalValueReadOnly->setVisible(false);
+			$returnApprovalDisposalValueReadOnly->setHelpId(9017);
+			$complaintJustifiedYes->add($returnApprovalDisposalValueReadOnly);
+			
+			$returnApprovalDisposalComment = new textarea("returnApprovalDisposalComment");
+			if(isset($savedFields["returnApprovalDisposalComment"]))
+			$returnApprovalDisposalComment->setValue($savedFields["returnApprovalDisposalComment"]);
+			$returnApprovalDisposalComment->setGroup("disposeGoodsYes");
+			$returnApprovalDisposalComment->setDataType("text");
+			$returnApprovalDisposalComment->setRowTitle("comment");
+			$returnApprovalDisposalComment->setRequired(false);
+			$returnApprovalDisposalComment->setTable("evaluation");
+			$returnApprovalDisposalComment->setHelpId(9087);
+			$disposeGoodsYes->add($returnApprovalDisposalComment);
+			
+			$returnApprovalDisposalCommentReadOnly = new readonly("returnApprovalDisposalCommentReadOnly");
+			$returnApprovalDisposalCommentReadOnly->setGroup("complaintJustifiedYes");
+			$returnApprovalDisposalCommentReadOnly->setRowTitle("comment");
+			$returnApprovalDisposalCommentReadOnly->setTable("evaluation");
+			$returnApprovalDisposalCommentReadOnly->setVisible(false);
+			$returnApprovalDisposalCommentReadOnly->setHelpId(9017);
+			$complaintJustifiedYes->add($returnApprovalDisposalCommentReadOnly);
+
+			$returnApprovalDisposalName = new dropdown("returnApprovalDisposalName");
+			if(isset($savedFields["returnApprovalDisposalName"]))
+			$returnApprovalDisposalName->setValue($savedFields["returnApprovalDisposalName"]);
+			$returnApprovalDisposalName->setGroup("disposeGoodsYes");
+			$returnApprovalDisposalName->setDataType("string");
+			$returnApprovalDisposalName->setRowTitle("send_request_to");
+			$returnApprovalDisposalName->setRequired(false);
+						
+			if($this->complaint->form->get("complaintValue")->getQuantity() < 2500)
+			{
+				$limits = "lower";
+			}
+			elseif($this->complaint->form->get("complaintValue")->getQuantity() > 2500 && $this->complaint->form->get("complaintValue")->getQuantity() < 1000)
+			{
+				$limits = "lower_mid";
+			}
+			elseif($this->complaint->form->get("complaintValue")->getQuantity() > 10000 && $this->complaint->form->get("complaintValue")->getQuantity() < 30000)
+			{
+				$limits = "upper_mid";
+			}
+			elseif($this->complaint->form->get("complaintValue")->getQuantity() > 30000)
+			{
+				$limits = "upper";
+			}
+			
+//			if($fieldsAmerican['complaintValue_quantity'] < 2500)
+//			{
+//				$limits = 'lower';
+//			}
+//			elseif($fieldsAmerican['complaintValue_quantity'] > 2500 && $fieldsAmerican['complaintValue_quantity'] < 10000)
+//			{
+//				$limits = 'lower_mid';
+//			}
+//			elseif($fieldsAmerican['complaintValue_quantity'] > 10000 && $fieldsAmerican['complaintValue_quantity'] < 30000)
+//			{
+//				$limits = 'upper_mid';
+//			}
+//			elseif($fieldsAmerican['complaintValue_quantity'] > 30000)
+//			{
+//				$limits = 'upper';
+//			}
+						
+			//$returnApprovalName->setSQLSource("membership","SELECT DISTINCT CONCAT(firstName, ' ',lastName) AS name, employee.NTLogon AS value FROM `permissions` INNER JOIN `employee` ON employee.ntlogon=permissions.ntlogon WHERE `permission` LIKE 'complaints_return_approval_" . $fieldsAmerican['salesOffice'] . "_" . $limits . "' ORDER BY employee.NTLogon");
+			
+			$returnApprovalDisposalName->setSQLSource("membership","SELECT DISTINCT CONCAT(firstName, ' ',lastName) AS name, employee.NTLogon AS value FROM `permissions` INNER JOIN `employee` ON employee.ntlogon=permissions.ntlogon WHERE `permission` LIKE 'complaints_return_approval_na_" . $limits . "' ORDER BY employee.NTLogon");
+			$returnApprovalDisposalName->setTable("evaluation");
+			$returnApprovalDisposalName->setHelpId(9017);
+			$disposeGoodsYes->add($returnApprovalDisposalName);
+			
+			$returnApprovalDisposalNameReadOnly = new readonly("returnApprovalDisposalNameReadOnly");
+			$returnApprovalDisposalNameReadOnly->setGroup("complaintJustifiedYes");
+			$returnApprovalDisposalNameReadOnly->setRowTitle("send_request_to");
+			$returnApprovalDisposalNameReadOnly->setTable("evaluation");
+			$returnApprovalDisposalNameReadOnly->setVisible(false);
+			$returnApprovalDisposalNameReadOnly->setHelpId(9017);
+			$complaintJustifiedYes->add($returnApprovalDisposalNameReadOnly);
+			
+			$returnApprovalDisposalSubmit = new submit("returnApprovalDisposalSubmit");
+			$returnApprovalDisposalSubmit->setGroup("disposeGoodsYes");
+			$returnApprovalDisposalSubmit->setVisible(true);
+			$disposeGoodsYes->add($returnApprovalDisposalSubmit);
+			
+			$returnApprovalDisposalRequestStatus = new textbox("returnApprovalDisposalRequestStatus");
+			$returnApprovalDisposalRequestStatus->setGroup("complaintJustifiedYes");
+			$returnApprovalDisposalRequestStatus->setDataType("number");
+			$returnApprovalDisposalRequestStatus->setVisible(false);
+			$returnApprovalDisposalRequestStatus->setIgnore(false);
+			$returnApprovalDisposalRequestStatus->setTable("evaluation");
+			$returnApprovalDisposalRequestStatus->setHelpId(9016);
+			$complaintJustifiedYes->add($returnApprovalDisposalRequestStatus);
+			
+			$returnApprovalDisposalRequest = new radio("returnApprovalDisposalRequest");
+			$returnApprovalDisposalRequest->setGroup("disposeGoodsApprovalGroup");
+			$returnApprovalDisposalRequest->setDataType("string");
+			$returnApprovalDisposalRequest->setLength(5);
+			$returnApprovalDisposalRequest->setArraySource(array(
+				array('value' => 'YES', 'display' => 'Yes'),
+				array('value' => 'NO', 'display' => 'No')
+			));
+			$returnApprovalDisposalRequest->setRowTitle("return_approval_disposal_request");
+			$returnApprovalDisposalRequest->setRequired(true);
+			if(isset($savedFields["returnApprovalDisposalRequest"]))
+			$returnApprovalDisposalRequest->setValue($savedFields["returnApprovalDisposalRequest"]);
+			else $returnApprovalDisposalRequest->setValue("NO");
+			$returnApprovalDisposalRequest->setTable("evaluation");
+			$returnApprovalDisposalRequest->setHelpId(9017);
+			
+			// Dependency
+			$returnApprovalDisposalRequest_dependency = new dependency();
+			$returnApprovalDisposalRequest_dependency->addRule(new rule('disposeGoodsApprovalGroup', 'returnApprovalDisposalRequest', 'YES'));
+			$returnApprovalDisposalRequest_dependency->setGroup('disposeGoodsApprovalGroupYes');
+			$returnApprovalDisposalRequest_dependency->setShow(true);
+	
+			$returnApprovalDisposalRequest->addControllingDependency($returnApprovalDisposalRequest_dependency);
+			$disposeGoodsApprovalGroup->add($returnApprovalDisposalRequest);
+			
+			$returnApprovalDisposalRequestReadOnly = new readonly("returnApprovalDisposalRequestReadOnly");
+			$returnApprovalDisposalRequestReadOnly->setGroup("complaintJustifiedYes");
+			$returnApprovalDisposalRequestReadOnly->setRowTitle("return_approval_disposal_request");
+			$returnApprovalDisposalRequestReadOnly->setLabel("Dispose The Goods Approval");
+			$returnApprovalDisposalRequestReadOnly->setTable("evaluation");
+			$returnApprovalDisposalRequestReadOnly->setVisible(false);
+			$returnApprovalDisposalRequestReadOnly->setHelpId(9017);
+			$complaintJustifiedYes->add($returnApprovalDisposalRequestReadOnly);
+			
+			$returnDisposalRequestComment = new textarea("returnDisposalRequestComment");
+			if(isset($savedFields["returnDisposalRequestComment"]))
+			$returnDisposalRequestComment->setValue($savedFields["returnDisposalRequestComment"]);
+			$returnDisposalRequestComment->setGroup("disposeGoodsApprovalGroupYes");
+			$returnDisposalRequestComment->setDataType("text");
+			$returnDisposalRequestComment->setRowTitle("comment");
+			$returnDisposalRequestComment->setRequired(false);
+			$returnDisposalRequestComment->setTable("evaluation");
+			$returnDisposalRequestComment->setHelpId(9087);
+			$disposeGoodsApprovalGroupYes->add($returnDisposalRequestComment);
+			
+			$returnDisposalRequestCommentReadOnly = new readonly("returnDisposalRequestCommentReadOnly");
+			$returnDisposalRequestCommentReadOnly->setGroup("complaintJustifiedYes");
+			$returnDisposalRequestCommentReadOnly->setRowTitle("comment");
+			$returnDisposalRequestCommentReadOnly->setTable("evaluation");
+			$returnDisposalRequestCommentReadOnly->setVisible(false);
+			$returnDisposalRequestCommentReadOnly->setHelpId(9017);
+			$complaintJustifiedYes->add($returnDisposalRequestCommentReadOnly);
+			
+			$returnDisposalRequestName = new dropdown("returnDisposalRequestName");
+			if(isset($savedFields["returnDisposalRequestName"]))
+			$returnDisposalRequestName->setValue($savedFields["returnDisposalRequestName"]);
+			$returnDisposalRequestName->setGroup("disposeGoodsApprovalGroupYes");
+			$returnDisposalRequestName->setDataType("string");
+			$returnDisposalRequestName->setRowTitle("send_to");
+			$returnDisposalRequestName->setRequired(false);
+			$returnDisposalRequestName->setSQLSource("membership","SELECT DISTINCT CONCAT(firstName, ' ',lastName) AS name, employee.NTLogon AS value FROM `permissions` INNER JOIN `employee` ON employee.ntlogon=permissions.ntlogon ORDER BY employee.NTLogon");
+			$returnDisposalRequestName->setTable("evaluation");
+			$returnDisposalRequestName->clearData();
+			$returnDisposalRequestName->setHelpId(9002);
+			$disposeGoodsApprovalGroupYes->add($returnDisposalRequestName);
+			
+			$returnDisposalRequestNameReadOnly = new readonly("returnDisposalRequestNameReadOnly");
+			$returnDisposalRequestNameReadOnly->setGroup("complaintJustifiedYes");
+			$returnDisposalRequestNameReadOnly->setRowTitle("send_to");
+			$returnDisposalRequestNameReadOnly->setTable("evaluation");
+			$returnDisposalRequestNameReadOnly->setVisible(false);
+			$returnDisposalRequestNameReadOnly->setHelpId(9017);
+			$complaintJustifiedYes->add($returnDisposalRequestNameReadOnly);
+			
+			$returnDisposalSubmit = new submit("returnDisposalSubmit");
+			$returnDisposalSubmit->setGroup("disposeGoodsApprovalGroupYes");
+			$returnDisposalSubmit->setVisible(true);
+			$disposeGoodsApprovalGroupYes->add($returnDisposalSubmit);
+		}
+
+		$updateInitiator = new radio("updateInitiator");
+		$updateInitiator->setGroup("complaintJustifiedYes3");
+		$updateInitiator->setDataType("string");
+		$updateInitiator->setLength(3);
+		$updateInitiator->setArraySource(array(
+		array('value' => 'Yes', 'display' => 'Yes'),
+		array('value' => 'No', 'display' => 'No')
+		));
+		$updateInitiator->setRowTitle("update_initiator");
+		$updateInitiator->setRequired(false);
+		$updateInitiator->setVisible(true);
+		if(isset($savedFields["update_initiator"]))
+		$updateInitiator->setValue($savedFields["update_initiator"]);
+		else $updateInitiator->setValue("No");
+		$updateInitiator->setTable("evaluation");
+		$complaintJustifiedYes3->add($updateInitiator);
+
+
+		//		$submit = new submit("submit");
+		//		$submit->setGroup("complaintJustifiedYes3");
+		//		$submit->setVisible(true);
+		//		$complaintJustifiedYes3->add($submit);
+
+
+
+		//		$datasetCategoryM = mysql::getInstance()->selectDatabase("complaints")->Execute("SELECT category, id FROM complaint WHERE category LIKE 'M%' AND id = " . $this->getComplaint()->form->get("id")->getValue() . "");
+		//		$rowCategoryM = mysql_fetch_array($datasetCategoryM);
+		//		$datasetCategoryD = mysql::getInstance()->selectDatabase("complaints")->Execute("SELECT category, id FROM complaint WHERE category LIKE 'D%' AND id = " . $this->getComplaint()->form->get("id")->getValue() . "");
+		//		$rowCategoryD = mysql_fetch_array($datasetCategoryD);
+
+		$dataset8D = mysql::getInstance()->selectDatabase("complaints")->Execute("SELECT g8d FROM complaint WHERE id = '" . $this->getComplaint()->form->get("id")->getValue() . "'");
+		$fields8D = mysql_fetch_array($dataset8D);
+		//		if($rowCategoryM > 0 || $rowCategoryD > 0)
+		if($fields8D['g8d'] == "yes")
+		{
+			$containmentAction = new textarea("containmentAction");
+			if(isset($savedFields["containmentAction"]))
+			$containmentAction->setValue($savedFields["containmentAction"]);
+			/*
+			$containmentAction->setGroup("complaintJustifiedYes3");
+			$containmentAction->setDataType("string");
+			//$containmentAction->setLength(1000);
+			//echo "HERE";exit;
+			$containmentAction->setRowTitle("containment_actions");
+			$containmentAction->setRequired(false);
+			$containmentAction->setTable("evaluation");
+			$containmentAction->setHelpId(9087);
+			*/
+
+			$containmentAction->setGroup("complaintJustifiedYes3");
+			$containmentAction->setDataType("text");
+			$containmentAction->setRowTitle("containment_actions");
+			$containmentAction->setRequired(false);
+			$containmentAction->setTable("evaluation");
+			$containmentAction->setHelpId(9087);
+
+			$complaintJustifiedYes3->add($containmentAction);
+
+			$containmentActionyn = new radio("containmentActionyn");
+			$containmentActionyn->setGroup("complaintJustifiedYes3");
+			$containmentActionyn->setDataType("string");
+			$containmentActionyn->setLength(3);
+			$containmentActionyn->setArraySource(array(
+			array('value' => 'Yes', 'display' => 'Yes'),
+			array('value' => 'No', 'display' => 'No')
+			));
+			$containmentActionyn->setRowTitle("containmentAction_entered");
+			$containmentActionyn->setRequired(false);
+			$containmentActionyn->setVisible(false);
+			if(isset($savedFields["containmentActionyn"]))
+			$containmentActionyn->setValue($savedFields["containmentActionyn"]);
+			else $containmentActionyn->setValue("No");
+			$containmentActionyn->setTable("complaint");
+			$complaintJustifiedYes3->add($containmentActionyn);
+
+			$containmentActionAuthor = new textbox("containmentActionAuthor");
+			if(isset($savedFields["containmentActionAuthor"]))
+			$containmentActionAuthor->setValue($savedFields["containmentActionAuthor"]);
+			$containmentActionAuthor->setGroup("complaintJustifiedYes3");
+			$containmentActionAuthor->setDataType("string");
+			$containmentActionAuthor->setLength(255);
+			$containmentActionAuthor->setRowTitle("containment_actions_author");
+			$containmentActionAuthor->setRequired(false);
+			$containmentActionAuthor->setTable("evaluation");
+			$containmentActionAuthor->setHelpId(9039);
+			$complaintJustifiedYes3->add($containmentActionAuthor);
+
+			$containmentActionDate = new textbox("containmentActionDate");
+			if(isset($savedFields["containmentActionDate"]))
+			$containmentActionDate->setValue($savedFields["containmentActionDate"]);
+			$containmentActionDate->setGroup("complaintJustifiedYes3");
+			$containmentActionDate->setDataType("date");
+			$containmentActionDate->setLength(255);
+			$containmentActionDate->setRowTitle("containment_actions_date");
+			$containmentActionDate->setRequired(false);
+			$containmentActionDate->setTable("evaluation");
+			$containmentActionDate->setHelpId(9025);
+			$complaintJustifiedYes3->add($containmentActionDate);
+
+			$possibleSolutions = new textarea("possibleSolutions");
+			if(isset($savedFields["possibleSolutions"]))
+			$possibleSolutions->setValue($savedFields["possibleSolutions"]);
+			$possibleSolutions->setGroup("complaintJustifiedYes3");
+			$possibleSolutions->setDataType("text");
+			$possibleSolutions->setRowTitle("possible_solutions");
+			$possibleSolutions->setRequired(false);
+			$possibleSolutions->setTable("evaluation");
+			$possibleSolutions->setHelpId(9088);
+			$complaintJustifiedYes3->add($possibleSolutions);
+
+			$possibleSolutionsyn = new radio("possibleSolutionsyn");
+			$possibleSolutionsyn->setGroup("complaintJustifiedYes3");
+			$possibleSolutionsyn->setDataType("string");
+			$possibleSolutionsyn->setLength(3);
+			$possibleSolutionsyn->setArraySource(array(
+			array('value' => 'Yes', 'display' => 'Yes'),
+			array('value' => 'No', 'display' => 'No')
+			));
+			$possibleSolutionsyn->setRowTitle("possibleSolutions_entered");
+			$possibleSolutionsyn->setRequired(false);
+			$possibleSolutionsyn->setVisible(false);
+			if(isset($savedFields["possibleSolutionsyn"]))
+			$possibleSolutionsyn->setValue($savedFields["possibleSolutionsyn"]);
+			else $possibleSolutionsyn->setValue("No");
+			$possibleSolutionsyn->setTable("complaint");
+			$complaintJustifiedYes3->add($possibleSolutionsyn);
+
+			$possibleSolutionsAuthor = new textbox("possibleSolutionsAuthor");
+			if(isset($savedFields["possibleSolutionsAuthor"]))
+			$possibleSolutionsAuthor->setValue($savedFields["possibleSolutionsAuthor"]);
+			$possibleSolutionsAuthor->setGroup("complaintJustifiedYes3");
+			$possibleSolutionsAuthor->setDataType("string");
+			$possibleSolutionsAuthor->setLength(255);
+			$possibleSolutionsAuthor->setRowTitle("possible_solutions_author");
+			$possibleSolutionsAuthor->setRequired(false);
+			$possibleSolutionsAuthor->setTable("evaluation");
+			$possibleSolutionsAuthor->setHelpId(9025);
+			$complaintJustifiedYes3->add($possibleSolutionsAuthor);
+
+			$possibleSolutionsDate = new textbox("possibleSolutionsDate");
+			if(isset($savedFields["possibleSolutionsDate"]))
+			$possibleSolutionsDate->setValue($savedFields["possibleSolutionsDate"]);
+			$possibleSolutionsDate->setGroup("complaintJustifiedYes3");
+			$possibleSolutionsDate->setDataType("date");
+			$possibleSolutionsDate->setLength(255);
+			$possibleSolutionsDate->setRowTitle("possible_solutions_date");
+			$possibleSolutionsDate->setRequired(false);
+			$possibleSolutionsDate->setTable("evaluation");
+			$possibleSolutionsDate->setHelpId(9025);
+			$complaintJustifiedYes3->add($possibleSolutionsDate);
+
+		}
+
+		$implementedActions = new textarea("implementedActions");
+		if(isset($savedFields["implementedActions"]))
+		$implementedActions->setValue($savedFields["implementedActions"]);
+		$implementedActions->setGroup("complaintJustifiedYes3");
+		$implementedActions->setDataType("text");
+		$implementedActions->setRowTitle("implemented_actions");
+		$implementedActions->setRequired(false);
+		$implementedActions->setTable("evaluation");
+		$implementedActions->setHelpId(9020);
+		$complaintJustifiedYes3->add($implementedActions);
+
+		$implementedActionsyn = new radio("implementedActionsyn");
+		$implementedActionsyn->setGroup("complaintJustifiedYes3");
+		$implementedActionsyn->setDataType("string");
+		$implementedActionsyn->setLength(3);
+		$implementedActionsyn->setArraySource(array(
+		array('value' => 'Yes', 'display' => 'Yes'),
+		array('value' => 'No', 'display' => 'No')
+		));
+		$implementedActionsyn->setRowTitle("implementedAction_entered");
+		$implementedActionsyn->setRequired(false);
+		$implementedActionsyn->setVisible(false);
+		if(isset($savedFields["implementedActionsyn"]))
+		$implementedActionsyn->setValue($savedFields["implementedActionsyn"]);
+		else $implementedActionsyn->setValue("No");
+		$implementedActionsyn->setTable("complaint");
+		$complaintJustifiedYes3->add($implementedActionsyn);
+
+		$implementedActionsAuthor = new textbox("implementedActionsAuthor");
+		if(isset($savedFields["implementedActionsAuthor"]))
+		$implementedActionsAuthor->setValue($savedFields["implementedActionsAuthor"]);
+		$implementedActionsAuthor->setGroup("complaintJustifiedYes3");
+		$implementedActionsAuthor->setDataType("string");
+		$implementedActionsAuthor->setLength(255);
+		$implementedActionsAuthor->setRowTitle("implemented_actions_author");
+		$implementedActionsAuthor->setRequired(false);
+		$implementedActionsAuthor->setTable("evaluation");
+		$implementedActionsAuthor->setHelpId(9021);
+		$complaintJustifiedYes3->add($implementedActionsAuthor);
+
+		$implementedActionsDate = new textbox("implementedActionsDate");
+		if(isset($savedFields["implementedActionsDate"]))
+		$implementedActionsDate->setValue($savedFields["implementedActionsDate"]);
+		$implementedActionsDate->setGroup("complaintJustifiedYes3");
+		$implementedActionsDate->setDataType("date");
+		$implementedActionsDate->setLength(255);
+		$implementedActionsDate->setRowTitle("implemented_actions_date");
+		$implementedActionsDate->setRequired(false);
+		$implementedActionsDate->setTable("evaluation");//was complaintEval?????
+		$implementedActionsDate->setHelpId(9022);
+		$complaintJustifiedYes3->add($implementedActionsDate);
+
+		$implementedActionsEstimated = new textbox("implementedActionsEstimated");
+		if(isset($savedFields["implementedActionsEstimated"]))
+		$implementedActionsEstimated->setValue($savedFields["implementedActionsEstimated"]);
+		$implementedActionsEstimated->setGroup("complaintJustifiedYes3");
+		$implementedActionsEstimated->setDataType("date");
+		$implementedActionsEstimated->setLength(255);
+		$implementedActionsEstimated->setRowTitle("implemented_actions_estimated");
+		$implementedActionsEstimated->setRequired(false);
+		$implementedActionsEstimated->setTable("evaluation");
+		$implementedActionsEstimated->setHelpId(9023);
+		$complaintJustifiedYes3->add($implementedActionsEstimated);
+
+		$implementedActionsImplementation = new textbox("implementedActionsImplementation");
+		if(isset($savedFields["implementedActionsImplementation"]))
+		$implementedActionsImplementation->setValue($savedFields["implementedActionsImplementation"]);
+		$implementedActionsImplementation->setGroup("complaintJustifiedYes3");
+		$implementedActionsImplementation->setDataType("date");
+		$implementedActionsImplementation->setLength(255);
+		$implementedActionsImplementation->setRowTitle("implemented_actions_implementation");
+		$implementedActionsImplementation->setRequired(false);
+		$implementedActionsImplementation->setTable("evaluation");
+		$implementedActionsImplementation->setHelpId(9024);
+		$complaintJustifiedYes3->add($implementedActionsImplementation);
+
+		$implementedActionsEffectiveness = new textbox("implementedActionsEffectiveness");
+		if(isset($savedFields["implementedActionsEffectiveness"]))
+		$implementedActionsEffectiveness->setValue($savedFields["implementedActionsEffectiveness"]);
+		$implementedActionsEffectiveness->setGroup("complaintJustifiedYes3");
+		$implementedActionsEffectiveness->setDataType("date");
+		$implementedActionsEffectiveness->setLength(255);
+		$implementedActionsEffectiveness->setRowTitle("implemented_actions_effectiveness");
+		$implementedActionsEffectiveness->setRequired(false);
+		$implementedActionsEffectiveness->setTable("evaluation");
+		$implementedActionsEffectiveness->setHelpId(9025);
+		$complaintJustifiedYes3->add($implementedActionsEffectiveness);
+
+		if($fields8D['g8d'] == "yes")
+		{
+
+			$preventiveActions = new textarea("preventiveActions");
+			if(isset($savedFields["preventiveActions"]))
+			$preventiveActions->setValue($savedFields["preventiveActions"]);
+			$preventiveActions->setGroup("complaintJustifiedYes3");
+			$preventiveActions->setDataType("text");
+			$preventiveActions->setRowTitle("preventive_action");
+			$preventiveActions->setRequired(false);
+			$preventiveActions->setTable("evaluation");
+			$preventiveActions->setHelpId(9089);
+			$complaintJustifiedYes3->add($preventiveActions);
+
+			$preventiveActionsyn = new radio("preventiveActionsyn");
+			$preventiveActionsyn->setGroup("complaintJustifiedYes3");
+			$preventiveActionsyn->setDataType("string");
+			$preventiveActionsyn->setLength(3);
+			$preventiveActionsyn->setArraySource(array(
+			array('value' => 'Yes', 'display' => 'Yes'),
+			array('value' => 'No', 'display' => 'No')
+			));
+			$preventiveActionsyn->setRowTitle("preventiveActions_entered");
+			$preventiveActionsyn->setRequired(false);
+			$preventiveActionsyn->setVisible(false);
+			if(isset($savedFields["preventiveActionsyn"]))
+			$preventiveActionsyn->setValue($savedFields["preventiveActionsyn"]);
+			else $preventiveActionsyn->setValue("No");
+			$preventiveActionsyn->setTable("complaint");
+			$complaintJustifiedYes3->add($preventiveActionsyn);
+
+			$preventiveActionsAuthor = new textbox("preventiveActionsAuthor");
+			if(isset($savedFields["preventiveActionsAuthor"]))
+			$preventiveActionsAuthor->setValue($savedFields["preventiveActionsAuthor"]);
+			$preventiveActionsAuthor->setGroup("complaintJustifiedYes3");
+			$preventiveActionsAuthor->setDataType("string");
+			$preventiveActionsAuthor->setLength(255);
+			$preventiveActionsAuthor->setRowTitle("preventive_actions_author");
+			$preventiveActionsAuthor->setRequired(false);
+			$preventiveActionsAuthor->setTable("evaluation");
+			$preventiveActionsAuthor->setHelpId(9090);
+			$complaintJustifiedYes3->add($preventiveActionsAuthor);
+
+			$preventiveActionsDate = new textbox("preventiveActionsDate");
+			if(isset($savedFields["preventiveActionsDate"]))
+			$preventiveActionsDate->setValue($savedFields["preventiveActionsDate"]);
+			$preventiveActionsDate->setGroup("complaintJustifiedYes3");
+			$preventiveActionsDate->setDataType("date");
+			$preventiveActionsDate->setLength(255);
+			$preventiveActionsDate->setRowTitle("preventive_actions_date");
+			$preventiveActionsDate->setRequired(false);
+			$preventiveActionsDate->setTable("evaluation");
+			$preventiveActionsDate->setHelpId(9091);
+			$complaintJustifiedYes3->add($preventiveActionsDate);
+
+			$preventiveActionsEstimatedDate = new textbox("preventiveActionsEstimatedDate");
+			if(isset($savedFields["preventiveActionsEstimatedDate"]))
+			$preventiveActionsEstimatedDate->setValue($savedFields["preventiveActionsEstimatedDate"]);
+			$preventiveActionsEstimatedDate->setGroup("complaintJustifiedYes3");
+			$preventiveActionsEstimatedDate->setDataType("date");
+			$preventiveActionsEstimatedDate->setLength(255);
+			$preventiveActionsEstimatedDate->setRowTitle("preventive_actions_estimated_date");
+			$preventiveActionsEstimatedDate->setRequired(false);
+			$preventiveActionsEstimatedDate->setTable("evaluation");
+			$preventiveActionsEstimatedDate->setHelpId(9092);
+			$complaintJustifiedYes3->add($preventiveActionsEstimatedDate);
+
+			$preventiveActionsImplementedDate = new textbox("preventiveActionsImplementedDate");
+			if(isset($savedFields["preventiveActionsImplementedDate"]))
+			$preventiveActionsImplementedDate->setValue($savedFields["preventiveActionsImplementedDate"]);
+			$preventiveActionsImplementedDate->setGroup("complaintJustifiedYes3");
+			$preventiveActionsImplementedDate->setDataType("date");
+			$preventiveActionsImplementedDate->setLength(255);
+			$preventiveActionsImplementedDate->setRowTitle("preventive_actions_implemented_date");
+			$preventiveActionsImplementedDate->setRequired(false);
+			$preventiveActionsImplementedDate->setTable("evaluation");
+			$preventiveActionsImplementedDate->setHelpId(9093);
+			$complaintJustifiedYes3->add($preventiveActionsImplementedDate);
+
+			$preventiveActionsValidationDate = new textbox("preventiveActionsValidationDate");
+			if(isset($savedFields["preventiveActionsValidationDate"]))
+			$preventiveActionsValidationDate->setValue($savedFields["preventiveActionsValidationDate"]);
+			$preventiveActionsValidationDate->setGroup("complaintJustifiedYes3");
+			$preventiveActionsValidationDate->setDataType("date");
+			$preventiveActionsValidationDate->setLength(255);
+			$preventiveActionsValidationDate->setRowTitle("preventive_actions_validation_date");
+			$preventiveActionsValidationDate->setRequired(false);
+			$preventiveActionsValidationDate->setTable("evaluation");
+			$preventiveActionsValidationDate->setHelpId(9094);
+			$complaintJustifiedYes3->add($preventiveActionsValidationDate);
+
+		}
+
+
+		$dataset8D = mysql::getInstance()->selectDatabase("complaints")->Execute("SELECT g8d FROM complaint WHERE id = '" . $this->getComplaint()->form->get("id")->getValue() . "'");
+		$fields8D = mysql_fetch_array($dataset8D);
+
+		if($fields8D['g8d'] == "yes")
+		{
+			$managementSystemReviewed = new radio("managementSystemReviewed");
+			$managementSystemReviewed->setGroup("managementSystemGroup");
+			$managementSystemReviewed->setDataType("string");
+			$managementSystemReviewed->setLength(5);
+			$managementSystemReviewed->setArraySource(array(
+			array('value' => 'YES', 'display' => 'Yes'),
+			array('value' => 'NO', 'display' => 'No'),
+			array('value' => 'na', 'display' => 'N/A')
+			));
+			$managementSystemReviewed->setRowTitle("management_system_ref");
+			$managementSystemReviewed->setRequired(false);
+			if(isset($savedFields["managementSystemReviewed"]))
+			$managementSystemReviewed->setValue($savedFields["managementSystemReviewed"]);
+			else $managementSystemReviewed->setValue("NO");
+			$managementSystemReviewed->setTable("evaluation");
+			$managementSystemReviewed->setHelpId(9026);
+
+
+			// Dependency
+			$managementSystemReviewed_dependency = new dependency();
+			$managementSystemReviewed_dependency->addRule(new rule('managementSystemGroup', 'managementSystemReviewed', 'YES'));
+			$managementSystemReviewed_dependency->setGroup('managementSystemRefYes');
+			$managementSystemReviewed_dependency->setShow(true);
+
+			$managementSystemReviewed->addControllingDependency($managementSystemReviewed_dependency);
+			$managementSystemGroup->add($managementSystemReviewed);
+
+			$managementSystemReviewedRef = new textbox("managementSystemReviewedRef");
+			if(isset($savedFields["managementSystemReviewedRef"]))
+			$managementSystemReviewedRef->setValue($savedFields["managementSystemReviewedRef"]);
+			$managementSystemReviewedRef->setGroup("managementSystemRefYes");
+			$managementSystemReviewedRef->setDataType("string");
+			$managementSystemReviewedRef->setLength(255);
+			$managementSystemReviewedRef->setRowTitle("management_system_yes_ref");
+			$managementSystemReviewedRef->setRequired(false);
+			$managementSystemReviewedRef->setTable("evaluation");
+			$managementSystemReviewedRef->setHelpId(9027);
+			$managementSystemRefYes->add($managementSystemReviewedRef);
+
+			$managementSystemReviewedDate = new textbox("managementSystemReviewedDate");
+			if(isset($savedFields["managementSystemReviewedDate"]))
+			$managementSystemReviewedDate->setValue($savedFields["managementSystemReviewedDate"]);
+			$managementSystemReviewedDate->setGroup("managementSystemRefYes");
+			$managementSystemReviewedDate->setDataType("date");
+			$managementSystemReviewedDate->setLength(255);
+			$managementSystemReviewedDate->setRowTitle("management_system_date");
+			$managementSystemReviewedDate->setRequired(false);
+			$managementSystemReviewedDate->setTable("evaluation");
+			$managementSystemReviewedDate->setHelpId(9028);
+			$managementSystemRefYes->add($managementSystemReviewedDate);
+
+
+			$fmea = new radio("fmea");
+			$fmea->setGroup("fmeaGroup");
+			$fmea->setDataType("string");
+			$fmea->setLength(5);
+			$fmea->setArraySource(array(
+			array('value' => 'YES', 'display' => 'Yes'),
+			array('value' => 'NO', 'display' => 'No'),
+			array('value' => 'na', 'display' => 'N/A')
+			));
+			$fmea->setRowTitle("fmea");
+			$fmea->setRequired(false);
+			if(isset($savedFields["fmea"]))
+			$fmea->setValue($savedFields["fmea"]);
+			else $fmea->setValue("NO");
+			$fmea->setTable("evaluation");
+			$fmea->setHelpId(9029);
+
+
+			// Dependency
+			$fmea_dependency = new dependency();
+			$fmea_dependency->addRule(new rule('fmeaGroup', 'fmea', 'YES'));
+			$fmea_dependency->setGroup('fmeaDepGroup');
+			$fmea_dependency->setShow(true);
+
+			$fmea->addControllingDependency($fmea_dependency);
+			$fmeaGroup->add($fmea);
+
+			$fmeaRef = new textbox("fmeaRef");
+			if(isset($savedFields["fmeaRef"]))
+			$fmeaRef->setValue($savedFields["fmeaRef"]);
+			$fmeaRef->setGroup("fmeaDepGroup");
+			$fmeaRef->setDataType("string");
+			$fmeaRef->setLength(255);
+			$fmeaRef->setRowTitle("fmea_yes_ref");
+			$fmeaRef->setRequired(false);
+			$fmeaRef->setTable("evaluation");
+			$fmeaRef->setHelpId(9030);
+			$fmeaDepGroup->add($fmeaRef);
+
+			$fmeaDate = new textbox("fmeaDate");
+			if(isset($savedFields["fmeaDate"]))
+			$fmeaDate->setValue($savedFields["fmeaDate"]);
+			$fmeaDate->setGroup("fmeaDepGroup");
+			$fmeaDate->setDataType("date");
+			$fmeaDate->setLength(255);
+			$fmeaDate->setRowTitle("fmea_ref_date");
+			$fmeaDate->setRequired(false);
+			$fmeaDate->setTable("evaluation");
+			$fmeaDate->setHelpId(9031);
+			$fmeaDepGroup->add($fmeaDate);
+
+
+			$customerSpecification = new radio("customerSpecification");
+			$customerSpecification->setDataType("string");
+			$customerSpecification->setLength(5);
+			$customerSpecification->setArraySource(array(
+			array('value' => 'YES', 'display' => 'Yes'),
+			array('value' => 'NO', 'display' => 'No'),
+			array('value' => 'na', 'display' => 'N/A')
+			));
+			$customerSpecification->setRowTitle("customer_specification");
+			$customerSpecification->setRequired(false);
+			if(isset($savedFields["customerSpecification"]))
+			$customerSpecification->setValue($savedFields["customerSpecification"]);
+			else $customerSpecification->setValue("NO");
+			$customerSpecification->setTable("evaluation");
+			$customerSpecification->setHelpId(9032);
+
+
+			// Dependency
+			$customerSpecification_dependency = new dependency();
+			$customerSpecification_dependency->addRule(new rule('customerSpecificationGroup', 'customerSpecification', 'YES'));
+			$customerSpecification_dependency->setGroup('customerSpecificationGroupYes');
+			$customerSpecification_dependency->setShow(true);
+
+			$customerSpecification->addControllingDependency($customerSpecification_dependency);
+			$customerSpecificationGroup->add($customerSpecification);
+
+			$customerSpecificationRef = new textbox("customerSpecificationRef");
+			if(isset($savedFields["customerSpecificationRef"]))
+			$customerSpecificationRef->setValue($savedFields["customerSpecificationRef"]);
+			$customerSpecificationRef->setGroup("customerSpecificationGroupYes");
+			$customerSpecificationRef->setDataType("string");
+			$customerSpecificationRef->setLength(255);
+			$customerSpecificationRef->setRowTitle("customer_specification_ref");
+			$customerSpecificationRef->setRequired(false);
+			$customerSpecificationRef->setTable("evaluation");
+			$customerSpecificationRef->setHelpId(9033);
+			$customerSpecificationGroupYes->add($customerSpecificationRef);
+
+			$customerSpecificationDate = new textbox("customerSpecificationDate");
+			if(isset($savedFields["customerSpecificationDate"]))
+			$customerSpecificationDate->setValue($savedFields["customerSpecificationDate"]);
+			$customerSpecificationDate->setGroup("customerSpecificationGroupYes");
+			$customerSpecificationDate->setDataType("date");
+			$customerSpecificationDate->setLength(255);
+			$customerSpecificationDate->setRowTitle("customer_specification_date");
+			$customerSpecificationDate->setRequired(false);
+			$customerSpecificationDate->setTable("evaluation");
+			$customerSpecificationDate->setHelpId(9034);
+			$customerSpecificationGroupYes->add($customerSpecificationDate);
+
+			/////////////////////
+			$flowChart = new radio("flowChart");
+			$flowChart->setGroup("flowChartGroup");
+			$flowChart->setDataType("string");
+			$flowChart->setLength(5);
+			$flowChart->setArraySource(array(
+			array('value' => 'YES', 'display' => 'Yes'),
+			array('value' => 'NO', 'display' => 'No'),
+			array('value' => 'na', 'display' => 'N/A')
+			));
+			$flowChart->setRowTitle("flow_chart");
+			$flowChart->setRequired(false);
+			if(isset($savedFields["flowChart"]))
+			$flowChart->setValue($savedFields["flowChart"]);
+			else $flowChart->setValue("NO");
+			$flowChart->setTable("evaluation");
+			$flowChart->setHelpId(9035);
+
+
+			// Dependency
+			$flowChart_dependency = new dependency();
+			$flowChart_dependency->addRule(new rule('flowChartGroup', 'flowChart', 'YES'));
+			$flowChart_dependency->setGroup('flowChartGroupYes');
+			$flowChart_dependency->setShow(true);
+
+			$flowChart->addControllingDependency($flowChart_dependency);
+			$flowChartGroup->add($flowChart);
+
+			$flowChartRef = new textbox("flowChartRef");
+			if(isset($savedFields["flowChartRef"]))
+			$flowChartRef->setValue($savedFields["flowChartRef"]);
+			$flowChartRef->setGroup("flowChartGroupYes");
+			$flowChartRef->setDataType("string");
+			$flowChartRef->setLength(255);
+			$flowChartRef->setRowTitle("flow_chart_yes_ref");
+			$flowChartRef->setRequired(false);
+			$flowChartRef->setTable("evaluation");
+			$flowChartRef->setHelpId(9030);
+			$flowChartGroupYes->add($flowChartRef);
+
+			$flowChartDate = new textbox("flowChartDate");
+			if(isset($savedFields["flowChartDate"]))
+			$flowChartDate->setValue($savedFields["flowChartDate"]);
+			$flowChartDate->setGroup("flowChartGroupYes");
+			$flowChartDate->setDataType("date");
+			$flowChartDate->setLength(255);
+			$flowChartDate->setRowTitle("flow_chart_ref_date");
+			$flowChartDate->setRequired(false);
+			$flowChartDate->setTable("evaluation");
+			$flowChartDate->setHelpId(9031);
+			$flowChartGroupYes->add($flowChartDate);
+
+			///////////////////
+		}
+
+		$comments = new textarea("comments");
+		if(isset($savedFields["comments"]))
+		$comments->setValue($savedFields["comments"]);
+		$comments->setGroup("commentsGroup");
+		$comments->setDataType("text");
+		$comments->setRowTitle("additional_comments");
+		$comments->setRequired(false);
+		$comments->setTable("evaluation");
+		$comments->setHelpId(9035);
+		$commentsGroup->add($comments);
+
+
+		$processOwnerLink = new textboxlink("processOwnerLink");
+		$processOwnerLink->setRowTitle("process_owner_link");
+		$processOwnerLink->setHelpId(1111);
+		$processOwnerLink->setLink("http://scapanet/apps/complaints/data/process_owner_matrix_na.xls");
+		$processOwnerLink->setValue("Process Owner Matrix");
+		$transferOwnership2GroupYes->add($processOwnerLink);
+
+		//$processOwner = new dropdown("processOwner");
+		$processOwner = new autocomplete("processOwner");
+		if(isset($savedFields["processOwner"]))
+		$processOwner->setValue($savedFields["processOwner"]);
+		$processOwner->setGroup("commentsGroup");
+		$processOwner->setDataType("string");
+		$processOwner->setRowTitle("chosen_complaint_owner");
+		$processOwner->setRequired(false);
+		//$processOwner->setSQLSource("membership","SELECT DISTINCT CONCAT(firstName, ' ',lastName) AS name, employee.NTLogon AS value FROM `permissions` INNER JOIN `employee` ON employee.ntlogon=permissions.ntlogon ORDER BY employee.NTLogon");
+		$processOwner->setUrl("/apps/complaints/ajax/complaintOwner?");
+		$processOwner->setTable("evaluation");
+		//$processOwner->clearData();
+		$processOwner->setHelpId(8145);
+		$transferOwnership2GroupYes->add($processOwner);
+
+
+		//		$copyTo = new autocomplete("copyTo");
+		//		if(isset($savedFields["copyTo"]))
+		//			$copyTo->setValue($savedFields["copyTo"]);
+		//		$copyTo->setGroup("commentsGroup");
+		//		$copyTo->setDataType("string");
+		//		$copyTo->setRowTitle("CC");
+		//		$copyTo->setRequired(false);
+		//		$copyTo->setUrl("/apps/complaints/ajax/ccevaluation?");
+		//		$copyTo->setTable("evaluation");
+		//		$copyTo->setHelpId(8145);
+		//		$transferOwnership2GroupYes->add($copyTo);
+
+		if(!isset($savedFields["0|copy_to"])){//the first one will always need to be set if its saved
+			$copy_to = new autocomplete("copy_to");
+			if(isset($savedFields["0|copy_to"]))
+			$copy_to->setValue($savedFields["0|copy_to"]);
+			$copy_to->setGroup("transferOwnership2GroupYes");
+			$copy_to->setDataType("string");
+			$copy_to->setRowTitle("CC");
+			//$copy_to->setSQLSource("membership","SELECT DISTINCT CONCAT(firstName, ' ',lastName) AS name, employee.NTLogon AS value FROM `permissions` INNER JOIN `employee` ON employee.ntlogon=permissions.ntlogon ORDER BY employee.firstName, employee.lastName ASC");
+			$copy_to->setUrl("/apps/complaints/ajax/copyToMulti?");
+			$copy_to->setRequired(false);
+			$copy_to->setTable("ccGroup");
+			$copy_to->setHelpId(8146);
+			$transferOwnership2GroupYes2->add($copy_to);
+		}else{
+			$this->form->groupsToExclude[] = "ccComplaintGroup";
+			$i=0;
+			$endList = false;
+			do{
+				if(!isset($savedFields[$i."|copy_to"])){
+					$maxList = $i;
+					$endList = true;
+				}
+				$i++;
+			}while(!$endList);
+			for($i=0; $i<$maxList; $i++){
+				if($i==0){//first will always be set
+					$copy_to = new autocomplete("copy_to");
+					if(isset($savedFields["0|copy_to"]))
+					$copy_to->setValue($savedFields["0|copy_to"]);
+					$copy_to->setGroup("transferOwnership2GroupYes");
+					$copy_to->setDataType("string");
+					$copy_to->setRowTitle("CC");
+					//$copy_to->setSQLSource("membership","SELECT DISTINCT CONCAT(firstName, ' ',lastName) AS name, employee.NTLogon AS value FROM `permissions` INNER JOIN `employee` ON employee.ntlogon=permissions.ntlogon ORDER BY employee.firstName, employee.lastName ASC");
+					$copy_to->setUrl("/apps/complaints/ajax/copyToMulti?");
+					$copy_to->setRequired(false);
+					$copy_to->setTable("ccGroup");
+					$copy_to->setHelpId(8146);
+					$transferOwnership2GroupYes2->add($copy_to);
+				}else{
+
+					$copy_to = new autocomplete("copy_to");
+					if(isset($savedFields[$i."|copy_to"]))
+					$copy_to->setValue($savedFields[$i."|copy_to"]);
+					$copy_to->setGroup("ccComplaintGroup");
+					$copy_to->setDataType("string");
+					$copy_to->setRowTitle("CC");
+					//$copy_to->setSQLSource("membership","SELECT DISTINCT CONCAT(firstName, ' ',lastName) AS name, employee.NTLogon AS value FROM `permissions` INNER JOIN `employee` ON employee.ntlogon=permissions.ntlogon ORDER BY employee.firstName, employee.lastName ASC");
+					$copy_to->setUrl("/apps/complaints/ajax/copyToMulti?");
+					$copy_to->setRequired(false);
+					$copy_to->setTable("ccGroup");
+					$copy_to->setHelpId(8146);
+					//$ccComplaintGroup->add($copy_to);
+
+
+					$transferOwnership2GroupYes2->addRowCustom($savedFields[$i."|copy_to"]);
+				}
+			}
+		}
+
+
+
+
+
+		$emailText = new textarea("emailText");
+		if(isset($savedFields["emailText"]))
+		$emailText->setValue($savedFields["emailText"]);
+		$emailText->setGroup("commentsGroup");
+		$emailText->setDataType("text");
+		$emailText->setRowTitle("emailText");
+		$emailText->setRequired(false);
+		$emailText->setTable("evaluation");
+		$emailText->setHelpId(9078);
+		$transferOwnership2GroupYes3->add($emailText);
+
+
+
+
+		$submit = new submit("submit");
+		$submit->setGroup("sentTo");
+		$submit->setVisible(true);
+		$submitGroup->add($submit);
+
+
+		$this->form->add($initiation);
+		$this->form->add($isPORightNo);
+		//$this->form->add($transferOwnership2Group);
+		$this->form->add($sampleReceivedGroup);
+		$this->form->add($isSampleReceivedYes);
+		$this->form->add($sampleReceivedGroupAfter);
+		$this->form->add($isComplaintCatRightNo);
+		$this->form->add($complaintJustifiedGroup);
+		$this->form->add($complaintJustifiedYes);
+		$this->form->add($returnGoodsYes);		
+		$this->form->add($returnGoodsApprovalGroup);		
+		$this->form->add($returnGoodsApprovalGroupYes);
+		$this->form->add($complaintJustifiedYes2);
+		$this->form->add($disposeGoodsYes);
+		$this->form->add($disposeGoodsApprovalGroup);
+		$this->form->add($disposeGoodsApprovalGroupYes);
+		$this->form->add($complaintJustifiedYes3);
+		$this->form->add($managementSystemGroup);
+		$this->form->add($managementSystemRefYes);
+		$this->form->add($fmeaGroup);
+		$this->form->add($fmeaDepGroup);
+		$this->form->add($customerSpecificationGroup);
+		$this->form->add($customerSpecificationGroupYes);
+		$this->form->add($flowChartGroup);
+		$this->form->add($flowChartGroupYes);
+		$this->form->add($transferOwnership2Group);
+		$this->form->add($commentsGroup);
+		$this->form->add($transferOwnership2GroupYes);
+		$this->form->add($transferOwnership2GroupYes2);
+		$this->form->add($transferOwnership2GroupYes3);
+		$this->form->add($submitGroup);
+
+
+
+	}
+
+	public function defineSupplierForm()
+	{
+		$savedFields = array();
+
+		if(isset($_REQUEST["sfID"])){
+			$this->sfID = $_REQUEST["sfID"];
+			$dataset = mysql::getInstance()->selectDatabase("complaints")->Execute("SELECT sfValue FROM savedForms WHERE `sfOwner` = '" . currentuser::getInstance()->getNTLogon() . "' AND sfID = '".$this->sfID."' LIMIT 1");
+			while ($fields = mysql_fetch_array($dataset)){
+				$savedFields = unserialize($fields["sfValue"]);
+			}
+		}
+		$today = date("Y-m-d",time());
+		$next_week_date = date("Y-m-d",time() + 604800);
+
+		// define the actual form
+		$this->form = new form("complaint");
+		$this->form->setStoreInSession(true);
+		$this->form->showLegend(true);
+
+		$initiation = new group("initiation");
+		$evaluationStart = new group("evaluationStart");
+		$useGoodsGroup = new group("useGoodsGroup");
+		$evaluationGroup = new group("evaluationGroup");
+		$evaluationGroup2 = new group("evaluationGroup2");
+		
+		// CC in here
+
+		$actionsGroup2 = new group("actionsGroup2");
+		$actionsGroup2->setBorder(false);
+
+		$sendToUser = new group("sendToUser");
+		$sendToUser->setBorder(false);
+		
+		
+
+		$complaintId = new invisibletext("complaintId");
+		$complaintId->setTable("evaluation");
+		$complaintId->setVisible(false);
+		$complaintId->setGroup("initiation");
+		$complaintId->setDataType("number");
+		$complaintId->setValue(0);
+		$initiation->add($complaintId);
+
+		$owner = new textbox("owner");
+		if(isset($savedFields["owner"]))
+		$owner->setValue($savedFields["owner"]);
+		$owner->setTable("complaint");
+		$owner->setVisible(false);
+		$owner->setIgnore(false);
+		$owner->setDataType("string");
+		$initiation->add($owner);
+
+//		$scapaStatus = new textbox("scapaStatus");
+//		if(isset($savedFields["scapaStatus"]))
+//		$status->setValue($savedFields["scapaStatus"]);
+//		$scapaStatus->setExtTable("evaluationExt");
+//		$scapaStatus->setVisible(false);
+//		$scapaStatus->setDataType("number");
+//		$initiation->add($scapaStatus);
+
+//		$extStatus = new textbox("extStatus");
+//		if(isset($savedFields["extStatus"]))
+//		$extStatus->setValue($savedFields["extStatus"]);
+//		$extStatus->setExtTable("evaluationExt");
+//		$extStatus->setVisible(false);
+//		$extStatus->setDataType("number");
+//		$initiation->add($extStatus);
+
+//		$added = new textbox("added");
+//		if(isset($savedFields["added"]))
+//		$added->setValue($savedFields["added"]);
+//		$added->setExtTable("evaluationExt");
+//		$added->setVisible(false);
+//		$added->setDataType("number");
+//		$initiation->add($added);
+
+		if(isset($_GET["print"]) && !isset($_REQUEST["printAll"]))
+		{
+			// do nothing ...
+		}
+
+		//		$sp_8dReceivedDate = new textbox("sp_8dReceivedDate");
+		//		if(isset($savedFields["sp_8dReceivedDate"]))
+		//		$sp_8dReceivedDate->setValue($savedFields["sp_8dReceivedDate"]);
+		//		$sp_8dReceivedDate->setGroup("evaluationStart");
+		//		$sp_8dReceivedDate->setDataType("date");
+		//		$sp_8dReceivedDate->setLength(255);
+		//		$sp_8dReceivedDate->setRowTitle("date_8d_received");
+		//		$sp_8dReceivedDate->setRequired(false);
+		//		$sp_8dReceivedDate->setTable("evaluation");
+		//		$sp_8dReceivedDate->setHelpId(9031);
+		//		$evaluationStart->add($sp_8dReceivedDate);
+
+		$teamLeader = new textbox("teamLeader");
+		if(isset($savedFields["teamLeader"]))
+		$teamLeader->setValue($savedFields["teamLeader"]);
+		$teamLeader->setGroup("evaluationStart");
+		$teamLeader->setDataType("string");
+		$teamLeader->setLength(255);
+		$teamLeader->setRowTitle("person_responsible");
+		$teamLeader->setRequired(false);
+		$teamLeader->setTable("evaluation");
+		$teamLeader->setExtTable("evaluationExt");
+		$teamLeader->setHelpId(9032);
+		$evaluationStart->add($teamLeader);
+
+		//		$teamMember = new textarea("teamMember");
+		//		if(isset($savedFields["teamMember"]))
+		//		$teamMember->setValue($savedFields["teamMember"]);
+		//		$teamMember->setGroup("evaluationStart");
+		//		$teamMember->setDataType("text");
+		//		$teamMember->setLength(255);
+		//		$teamMember->setRowTitle("team_member");
+		//		$teamMember->setRequired(false);
+		//		$teamMember->setTable("evaluation");
+		//		$teamMember->setHelpId(9033);
+		//		$evaluationStart->add($teamMember);
+		
+		$warehouseDate = new textbox("warehouseDate");
+		$warehouseDate->setGroup("evaluationStart");
+		$warehouseDate->setDataType("string");
+		$warehouseDate->setRowTitle("warehouse_date");
+		$warehouseDate->setTable("evaluation");
+		$warehouseDate->setExtTable("evaluationExt");
+		$warehouseDate->setHelpId(10018);
+		$evaluationStart->add($warehouseDate);
+		
+		$defectQuantity = new measurement("defectQuantity");
+		$defectQuantity->setGroup("evaluationStart");
+		$defectQuantity->setDataType("string");
+		$defectQuantity->setRowTitle("warehouse_quantity");
+		$defectQuantity->setXMLSource("./apps/complaints/xml/uom.xml");
+		$defectQuantity->setTable("evaluation");
+		$defectQuantity->setExtTable("evaluationExt");
+		$defectQuantity->setHelpId(10018);
+		$evaluationStart->add($defectQuantity);
+		
+		$productionDate = new textbox("productionDate");
+		$productionDate->setGroup("evaluationStart");
+		$productionDate->setDataType("date");
+		$productionDate->setRowTitle("production_date");
+		$productionDate->setTable("evaluation");
+		$productionDate->setExtTable("evaluationExt");
+		$productionDate->setHelpId(10018);
+		$evaluationStart->add($productionDate);
+		
+		$defectQuantity2 = new measurement("defectQuantity2");
+		$defectQuantity2->setGroup("evaluationStart");
+		$defectQuantity2->setDataType("string");
+		$defectQuantity2->setRowTitle("production_quantity");
+		$defectQuantity2->setXMLSource("./apps/complaints/xml/uom.xml");
+		$defectQuantity2->setTable("evaluation");
+		$defectQuantity2->setExtTable("evaluationExt");
+		$defectQuantity2->setHelpId(10018);
+		$evaluationStart->add($defectQuantity2);
+		
+		$transitDate = new textbox("transitDate");
+		$transitDate->setGroup("evaluationStart");
+		$transitDate->setDataType("date");
+		$transitDate->setRowTitle("transit_date");
+		$transitDate->setTable("evaluation");
+		$transitDate->setExtTable("evaluationExt");
+		$transitDate->setHelpId(10018);
+		$evaluationStart->add($transitDate);
+		
+		$defectQuantity3 = new measurement("defectQuantity3");
+		$defectQuantity3->setGroup("evaluationStart");
+		$defectQuantity3->setDataType("string");
+		$defectQuantity3->setRowTitle("transit_quantity");
+		$defectQuantity3->setXMLSource("./apps/complaints/xml/uom.xml");
+		$defectQuantity3->setTable("evaluation");
+		$defectQuantity3->setExtTable("evaluationExt");
+		$defectQuantity3->setHelpId(10018);
+		$evaluationStart->add($defectQuantity3);
+		
+		$invoiceDeliveryNote = new textarea("invoiceDeliveryNote");
+		$invoiceDeliveryNote->setGroup("evaluationStart");
+		$invoiceDeliveryNote->setDataType("string");
+		$invoiceDeliveryNote->setRowTitle("invoice_delivery_note");
+		$invoiceDeliveryNote->setTable("evaluation");
+		$invoiceDeliveryNote->setExtTable("evaluationExt");
+		$invoiceDeliveryNote->setHelpId(10018);
+		$evaluationStart->add($invoiceDeliveryNote);
+		
+		$goodJobInvoiceNo = new textbox("goodJobInvoiceNo");
+		$goodJobInvoiceNo->setGroup("evaluationStart");
+		$goodJobInvoiceNo->setDataType("string");
+		$goodJobInvoiceNo->setRowTitle("invoice_no");
+		$goodJobInvoiceNo->setTable("evaluation");
+		$goodJobInvoiceNo->setExtTable("evaluationExt");
+		$goodJobInvoiceNo->setHelpId(10018);
+		$evaluationStart->add($goodJobInvoiceNo);
+		
+		$deliveryNote = new textarea("deliveryNote");
+		$deliveryNote->setGroup("evaluationStart");
+		$deliveryNote->setDataType("string");
+		$deliveryNote->setRowTitle("delivery_note");
+		$deliveryNote->setTable("evaluation");
+		$deliveryNote->setExtTable("evaluationExt");
+		$deliveryNote->setHelpId(10018);
+		$evaluationStart->add($deliveryNote);
+
+		$analysis = new textbox("analysis");
+		if(isset($savedFields["analysis"]))
+		$analysis->setValue($savedFields["analysis"]);
+		$analysis->setGroup("evaluationStart");
+		$analysis->setDataType("string");
+		$analysis->setLength(255);
+		$analysis->setRowTitle("analysis");
+		$analysis->setRequired(false);
+		$analysis->setTable("evaluation");
+		$analysis->setExtTable("evaluationExt");
+		$analysis->setHelpId(9034);
+		$evaluationStart->add($analysis);
+		
+		$author = new textbox("author");
+		if(isset($savedFields["author"]))
+		$author->setValue($savedFields["author"]);
+		$author->setGroup("evaluationStart");
+		$author->setDataType("string");
+		$author->setLength(255);
+		$author->setRowTitle("name");
+		$author->setTable("evaluation");
+		$author->setExtTable("evaluationExt");
+		$author->setHelpId(9036);
+		$evaluationStart->add($author);
+
+		$analysisDate = new textbox("analysisDate");
+		if(isset($savedFields["analysisDate"]))
+		$analysisDate->setValue($savedFields["analysisDate"]);
+		$analysisDate->setGroup("evaluationStart");
+		$analysisDate->setDataType("date");
+		$analysisDate->setRowTitle("date");
+		$analysisDate->setTable("evaluation");
+		$analysisDate->setExtTable("evaluationExt");
+		$analysisDate->setHelpId(9037);
+		$evaluationStart->add($analysisDate);
+
+		$rootCauses = new textarea("rootCauses");
+		if(isset($savedFields["rootCauses"]))
+		$rootCauses->setValue($savedFields["rootCauses"]);
+		$rootCauses->setGroup("evaluationStart");
+		$rootCauses->setDataType("text");
+		$rootCauses->setLength(255);
+		$rootCauses->setRowTitle("root_causes");
+		$rootCauses->setRequired(false);
+		$rootCauses->setTable("evaluation");
+		$rootCauses->setExtTable("evaluationExt");
+		$rootCauses->setHelpId(9035);
+		$evaluationStart->add($rootCauses);
+
+		$rootCausesAuthor = new textbox("rootCausesAuthor");
+		if(isset($savedFields["rootCausesAuthor"]))
+		$rootCausesAuthor->setValue($savedFields["rootCausesAuthor"]);
+		$rootCausesAuthor->setGroup("evaluationStart");
+		$rootCausesAuthor->setDataType("string");
+		$rootCausesAuthor->setLength(255);
+		$rootCausesAuthor->setRowTitle("name");
+		$rootCausesAuthor->setTable("evaluation");
+		$rootCausesAuthor->setExtTable("evaluationExt");
+		$rootCausesAuthor->setHelpId(9036);
+		$evaluationStart->add($rootCausesAuthor);
+
+		$rootCausesDate = new textbox("rootCausesDate");
+		if(isset($savedFields["rootCausesDate"]))
+		$rootCausesDate->setValue($savedFields["rootCausesDate"]);
+		$rootCausesDate->setGroup("evaluationStart");
+		$rootCausesDate->setDataType("date");
+		$rootCausesDate->setRowTitle("date");
+		$rootCausesDate->setTable("evaluation");
+		$rootCausesDate->setExtTable("evaluationExt");
+		$rootCausesDate->setHelpId(9037);
+		$evaluationStart->add($rootCausesDate);
+
+		$complaintJustified = new radio("complaintJustified");
+		$complaintJustified->setGroup("evaluationStart");
+		$complaintJustified->setDataType("string");
+		$complaintJustified->setLength(5);
+		$complaintJustified->setArraySource(array(
+		array('value' => 'YES', 'display' => 'Yes'),
+		array('value' => 'NO', 'display' => 'No'),
+		array('value' => 'undecided', 'display' => 'Undecided')
+		));
+		$complaintJustified->setRowTitle("complaint_accepted");
+		$complaintJustified->setRequired(false);
+		if(isset($savedFields["complaintJustified"]))
+		$complaintJustified->setValue($savedFields["complaintJustified"]);
+		else $complaintJustified->setValue("undecided");
+		$complaintJustified->setTable("evaluation");
+		$complaintJustified->setExtTable("evaluationExt");
+		$complaintJustified->setHelpId(9011);
+		$evaluationStart->add($complaintJustified);
+
+		$returnGoods = new radio("returnGoods");
+		$returnGoods->setGroup("$evaluationStart");
+		$returnGoods->setDataType("string");
+		$returnGoods->setLength(5);
+		$returnGoods->setArraySource(array(
+		array('value' => 'YES', 'display' => 'Yes'),
+		array('value' => 'NO', 'display' => 'No')
+		));
+		$returnGoods->setRowTitle("return_goods");
+		$returnGoods->setRequired(false);
+		if(isset($savedFields["returnGoods"]))
+		$returnGoods->setValue($savedFields["returnGoods"]);
+		else $returnGoods->setValue("NO");
+		$returnGoods->setTable("evaluation");
+		$returnGoods->setExtTable("evaluationExt");
+		$returnGoods->setHelpId(9017);
+		$evaluationStart->add($returnGoods);
+
+		$disposeGoods = new radio("disposeGoods");
+		$disposeGoods->setGroup("evaluationStart");
+		$disposeGoods->setDataType("string");
+		$disposeGoods->setLength(5);
+		$disposeGoods->setArraySource(array(
+		array('value' => 'YES', 'display' => 'Yes'),
+		array('value' => 'NO', 'display' => 'No')
+		));
+		$disposeGoods->setRowTitle("dispose_goods");
+		$disposeGoods->setRequired(false);
+		if(isset($savedFields["disposeGoods"]))
+		$disposeGoods->setValue($savedFields["disposeGoods"]);
+		else $disposeGoods->setValue("NO");
+		$disposeGoods->setTable("evaluation");
+		$disposeGoods->setExtTable("evaluationExt");
+		$disposeGoods->setHelpId(9018);
+		$evaluationStart->add($disposeGoods);
+
+		$sp_materialCredited = new radio("sp_materialCredited");
+		$sp_materialCredited->setGroup("evaluationStart");
+		$sp_materialCredited->setDataType("string");
+		$sp_materialCredited->setLength(5);
+		$sp_materialCredited->setArraySource(array(
+		array('value' => 'YES', 'display' => 'Yes'),
+		array('value' => 'NO', 'display' => 'No')
+		));
+		$sp_materialCredited->setRowTitle("material_credited");
+		$sp_materialCredited->setRequired(false);
+		if(isset($savedFields["sp_materialCredited"]))
+		$sp_materialCredited->setValue($savedFields["sp_materialCredited"]);
+		else $sp_materialCredited->setValue("NO");
+		$sp_materialCredited->setTable("evaluation");
+		$sp_materialCredited->setExtTable("evaluationExt");
+		$sp_materialCredited->setHelpId(9018);
+		$evaluationStart->add($sp_materialCredited);
+
+		$sp_materialReplaced = new radio("sp_materialReplaced");
+		$sp_materialReplaced->setGroup("evaluationStart");
+		$sp_materialReplaced->setDataType("string");
+		$sp_materialReplaced->setLength(5);
+		$sp_materialReplaced->setArraySource(array(
+		array('value' => 'YES', 'display' => 'Yes'),
+		array('value' => 'NO', 'display' => 'No')
+		));
+		$sp_materialReplaced->setRowTitle("material_replaced");
+		$sp_materialReplaced->setRequired(false);
+		if(isset($savedFields["sp_materialReplaced"]))
+		$sp_materialReplaced->setValue($savedFields["sp_materialReplaced"]);
+		else $sp_materialReplaced->setValue("NO");
+		$sp_materialReplaced->setTable("evaluation");
+		$sp_materialReplaced->setExtTable("evaluationExt");
+		$sp_materialReplaced->setHelpId(9018);
+		$evaluationStart->add($sp_materialReplaced);
+		
+		$dateOfAnalysis = new textbox("dateOfAnalysis");
+		$dateOfAnalysis->setGroup("evaluationStart");
+		$dateOfAnalysis->setDataType("date");
+		$dateOfAnalysis->setRowTitle("date_of_analysis");
+		$dateOfAnalysis->setTable("evaluation");
+		$dateOfAnalysis->setHelpId(10026);
+		$evaluationStart->add($dateOfAnalysis);
+
+		$sp_useGoods = new radio("sp_useGoods");
+		$sp_useGoods->setGroup("evaluationStart");
+		$sp_useGoods->setDataType("string");
+		$sp_useGoods->setLength(5);
+		$sp_useGoods->setArraySource(array(
+		array('value' => 'YES', 'display' => 'Yes'),
+		array('value' => 'NO', 'display' => 'No')
+		));
+		$sp_useGoods->setRowTitle("use_goods");
+		$sp_useGoods->setRequired(false);
+		if(isset($savedFields["sp_useGoods"]))
+		$sp_useGoods->setValue($savedFields["sp_useGoods"]);
+		else $sp_useGoods->setValue("NO");
+		$sp_useGoods->setTable("evaluation");
+		$sp_useGoods->setExtTable("evaluationExt");
+		$sp_useGoods->setHelpId(9018);
+
+		$useGoods_dependency = new dependency();
+		$useGoods_dependency->addRule(new rule('evaluationStart', 'sp_useGoods', 'YES'));
+		$useGoods_dependency->setGroup('useGoodsGroup');
+		$useGoods_dependency->setShow(true);
+
+		$sp_useGoods->addControllingDependency($useGoods_dependency);
+		$evaluationStart->add($sp_useGoods);
+
+		$sp_reworkGoods = new radio("sp_reworkGoods");
+		$sp_reworkGoods->setGroup("useGoodsGroup");
+		$sp_reworkGoods->setDataType("string");
+		$sp_reworkGoods->setLength(5);
+		$sp_reworkGoods->setArraySource(array(
+		array('value' => 'YES', 'display' => 'Yes'),
+		array('value' => 'NO', 'display' => 'No')
+		));
+		$sp_reworkGoods->setRowTitle("rework_goods");
+		$sp_reworkGoods->setRequired(false);
+		if(isset($savedFields["sp_reworkGoods"]))
+		$sp_reworkGoods->setValue($savedFields["sp_reworkGoods"]);
+		else $sp_reworkGoods->setValue("NO");
+		$sp_reworkGoods->setTable("evaluation");
+		$sp_reworkGoods->setExtTable("evaluationExt");
+		$sp_reworkGoods->setHelpId(9018);
+		$useGoodsGroup->add($sp_reworkGoods);
+
+		$sp_sortGoods = new radio("sp_sortGoods");
+		$sp_sortGoods->setGroup("useGoodsGroup");
+		$sp_sortGoods->setDataType("string");
+		$sp_sortGoods->setLength(5);
+		$sp_sortGoods->setArraySource(array(
+		array('value' => 'YES', 'display' => 'Yes'),
+		array('value' => 'NO', 'display' => 'No')
+		));
+		$sp_sortGoods->setRowTitle("sort_goods");
+		$sp_sortGoods->setRequired(false);
+		if(isset($savedFields["sp_sortGoods"]))
+		$sp_sortGoods->setValue($savedFields["sp_sortGoods"]);
+		else $sp_sortGoods->setValue("NO");
+		$sp_sortGoods->setTable("evaluation");
+		$sp_sortGoods->setExtTable("evaluationExt");
+		$sp_sortGoods->setHelpId(9018);
+		$useGoodsGroup->add($sp_sortGoods);
+
+		$sp_verificationMade = new radio("sp_verificationMade");
+		$sp_verificationMade->setGroup("useGoodsGroup");
+		$sp_verificationMade->setDataType("string");
+		$sp_verificationMade->setLength(5);
+		$sp_verificationMade->setArraySource(array(
+		array('value' => 'YES', 'display' => 'Yes'),
+		array('value' => 'NO', 'display' => 'No')
+		));
+		$sp_verificationMade->setRowTitle("verification_made");
+		$sp_verificationMade->setRequired(false);
+		if(isset($savedFields["sp_verificationMade"]))
+		$sp_verificationMade->setValue($savedFields["sp_verificationMade"]);
+		else $sp_verificationMade->setValue("NO");
+		$sp_verificationMade->setTable("evaluation");
+		$sp_verificationMade->setHelpId(9018);
+		$useGoodsGroup->add($sp_verificationMade);
+
+		$containmentAction = new textarea("containmentAction");
+		if(isset($savedFields["containmentAction"]))
+		$containmentAction->setValue($savedFields["containmentAction"]);
+		$containmentAction->setGroup("evaluationGroup2");
+		$containmentAction->setDataType("text");
+		$containmentAction->setLength(255);
+		//$containmentAction->setRowTitle("containment_action");
+		$containmentAction->setRowTitle("containment_action");
+		$containmentAction->setRequired(false);
+		$containmentAction->setTable("evaluation");
+		$containmentAction->setExtTable("evaluationExt");
+		$containmentAction->setHelpId(9037);
+		$evaluationGroup2->add($containmentAction);
+
+//		$immediateAction = new textarea("immediateAction");
+//		if(isset($savedFields["immediateAction"]))
+//		$immediateAction->setValue($savedFields["immediateAction"]);
+//		$immediateAction->setGroup("evaluationGroup");
+//		$immediateAction->setDataType("text");
+//		$immediateAction->setLength(255);
+//		//$immediateAction->setRowTitle("containment_action");
+//		$immediateAction->setRowTitle("immediate_actions");
+//		$immediateAction->setRequired(false);
+//		$immediateAction->setTable("evaluation");
+//		$immediateAction->setExtTable("evaluationExt");
+//		$immediateAction->setHelpId(9037);
+//		$evaluationGroup->add($immediateAction);
+		
+
+//		$containmentActionAuthor = new textbox("containmentActionAuthor");
+//		if(isset($savedFields["containmentActionAuthor"]))
+//		$containmentActionAuthor->setValue($savedFields["containmentActionAuthor"]);
+//		$containmentActionAuthor->setGroup("evaluationGroup");
+//		$containmentActionAuthor->setDataType("string");
+//		$containmentActionAuthor->setLength(255);
+//		//$containmentActionAuthor->setRowTitle("containment_action_author");
+//		$containmentActionAuthor->setRowTitle("author");
+//		$containmentActionAuthor->setRequired(false);
+//		$containmentActionAuthor->setTable("evaluation");
+//		$containmentActionAuthor->setHelpId(9037);
+//		$evaluationGroup->add($containmentActionAuthor);
+//
+//		$containmentActionDate = new textbox("containmentActionDate");
+//		if(isset($savedFields["containmentActionDate"]))
+//		$containmentActionDate->setValue($savedFields["containmentActionDate"]);
+//		$containmentActionDate->setGroup("evaluationGroup");
+//		$containmentActionDate->setDataType("date");
+//		$containmentActionDate->setLength(255);
+//		//$containmentActionDate->setRowTitle("containment_action_date");
+//		$containmentActionDate->setRowTitle("date");
+//		$containmentActionDate->setRequired(false);
+//		$containmentActionDate->setTable("evaluation");
+//		$containmentActionDate->setHelpId(9037);
+//		$evaluationGroup->add($containmentActionDate);
+
+		$possibleSolutions = new textarea("possibleSolutions");
+		if(isset($savedFields["possibleSolutions"]))
+		$possibleSolutions->setValue($savedFields["possibleSolutions"]);
+		$possibleSolutions->setGroup("evaluationGroup2");
+		$possibleSolutions->setDataType("text");
+		$possibleSolutions->setLength(255);
+		$possibleSolutions->setRowTitle("possible_solutions");
+		$possibleSolutions->setRequired(false);
+		$possibleSolutions->setTable("evaluation");
+		$possibleSolutions->setExtTable("evaluationExt");
+		$possibleSolutions->setHelpId(9037);
+		$evaluationGroup2->add($possibleSolutions);
+
+		$possibleSolutionsAuthor = new textbox("possibleSolutionsAuthor");
+		if(isset($savedFields["possibleSolutionsAuthor"]))
+		$possibleSolutionsAuthor->setValue($savedFields["possibleSolutionsAuthor"]);
+		$possibleSolutionsAuthor->setGroup("evaluationGroup2");
+		$possibleSolutionsAuthor->setDataType("string");
+		$possibleSolutionsAuthor->setLength(255);
+		$possibleSolutionsAuthor->setRowTitle("possible_solutions_author");
+		$possibleSolutionsAuthor->setRequired(false);
+		$possibleSolutionsAuthor->setTable("evaluation");
+		$possibleSolutionsAuthor->setExtTable("evaluationExt");
+		$possibleSolutionsAuthor->setHelpId(9037);
+		$evaluationGroup2->add($possibleSolutionsAuthor);
+
+		$possibleSolutionsDate = new textbox("possibleSolutionsDate");
+		if(isset($savedFields["possibleSolutionsDate"]))
+		$possibleSolutionsDate->setValue($savedFields["possibleSolutionsDate"]);
+		$possibleSolutionsDate->setGroup("evaluationGroup2");
+		$possibleSolutionsDate->setDataType("date");
+		$possibleSolutionsDate->setLength(255);
+		$possibleSolutionsDate->setRowTitle("possible_solutions_date");
+		$possibleSolutionsDate->setRequired(false);
+		$possibleSolutionsDate->setTable("evaluation");
+		$possibleSolutionsDate->setHelpId(9037);
+		$evaluationGroup2->add($possibleSolutionsDate);
+
+		$implementedActions = new textarea("implementedActions");
+		if(isset($savedFields["implementedActions"]))
+		$implementedActions->setValue($savedFields["implementedActions"]);
+		$implementedActions->setGroup("evaluationGroup2");
+		$implementedActions->setDataType("text");
+		$implementedActions->setRowTitle("implemented_actions");
+		$implementedActions->setRequired(false);
+		$implementedActions->setTable("evaluation");
+		$implementedActions->setExtTable("evaluationExt");
+		$implementedActions->setHelpId(9020);
+		$evaluationGroup2->add($implementedActions);
+
+		$implementedActionsAuthor = new textbox("implementedActionsAuthor");
+		if(isset($savedFields["implementedActionsAuthor"]))
+		$implementedActionsAuthor->setValue($savedFields["implementedActionsAuthor"]);
+		$implementedActionsAuthor->setGroup("evaluationGroup2");
+		$implementedActionsAuthor->setDataType("string");
+		$implementedActionsAuthor->setLength(255);
+		$implementedActionsAuthor->setRowTitle("implemented_actions_author");
+		$implementedActionsAuthor->setRequired(false);
+		$implementedActionsAuthor->setTable("evaluation");
+		$implementedActionsAuthor->setExtTable("evaluationExt");
+		$implementedActionsAuthor->setHelpId(9021);
+		$evaluationGroup2->add($implementedActionsAuthor);
+
+		$implementedActionsDate = new textbox("implementedActionsDate");
+		if(isset($savedFields["implementedActionsDate"]))
+		$implementedActionsDate->setValue($savedFields["implementedActionsDate"]);
+		$implementedActionsDate->setGroup("evaluationGroup2");
+		$implementedActionsDate->setDataType("date");
+		$implementedActionsDate->setLength(255);
+		$implementedActionsDate->setRowTitle("implemented_actions_date");
+		$implementedActionsDate->setRequired(false);
+		$implementedActionsDate->setTable("evaluation");
+		$implementedActionsDate->setExtTable("evaluationExt");
+		$implementedActionsDate->setHelpId(9022);
+		$evaluationGroup2->add($implementedActionsDate);
+
+		$implementedActionsEstimated = new textbox("implementedActionsEstimated");
+		if(isset($savedFields["implementedActionsEstimated"]))
+		$implementedActionsEstimated->setValue($savedFields["implementedActionsEstimated"]);
+		$implementedActionsEstimated->setGroup("evaluationGroup2");
+		$implementedActionsEstimated->setDataType("date");
+		$implementedActionsEstimated->setLength(255);
+		$implementedActionsEstimated->setRowTitle("implemented_actions_estimated");
+		$implementedActionsEstimated->setRequired(false);
+		$implementedActionsEstimated->setTable("evaluation");
+		$implementedActionsEstimated->setExtTable("evaluationExt");
+		$implementedActionsEstimated->setHelpId(9023);
+		$evaluationGroup2->add($implementedActionsEstimated);
+
+		$implementedActionsImplementation = new textbox("implementedActionsImplementation");
+		if(isset($savedFields["implementedActionsImplementation"]))
+		$implementedActionsImplementation->setValue($savedFields["implementedActionsImplementation"]);
+		$implementedActionsImplementation->setGroup("evaluationGroup2");
+		$implementedActionsImplementation->setDataType("date");
+		$implementedActionsImplementation->setLength(255);
+		$implementedActionsImplementation->setRowTitle("implemented_actions_implementation");
+		$implementedActionsImplementation->setRequired(false);
+		$implementedActionsImplementation->setTable("evaluation");
+		$implementedActionsImplementation->setExtTable("evaluationExt");
+		$implementedActionsImplementation->setHelpId(9024);
+		$evaluationGroup2->add($implementedActionsImplementation);
+
+		$implementedActionsEffectiveness = new textbox("implementedActionsEffectiveness");
+		if(isset($savedFields["implementedActionsEffectiveness"]))
+		$implementedActionsEffectiveness->setValue($savedFields["implementedActionsEffectiveness"]);
+		$implementedActionsEffectiveness->setGroup("evaluationGroup2");
+		$implementedActionsEffectiveness->setDataType("date");
+		$implementedActionsEffectiveness->setLength(255);
+		$implementedActionsEffectiveness->setRowTitle("implemented_actions_effectiveness");
+		$implementedActionsEffectiveness->setRequired(false);
+		$implementedActionsEffectiveness->setTable("evaluation");
+		$implementedActionsEffectiveness->setExtTable("evaluationExt");
+		$implementedActionsEffectiveness->setHelpId(9025);
+		$evaluationGroup2->add($implementedActionsEffectiveness);
+
+		$managementSystemReviewed = new radio("managementSystemReviewed");
+		$managementSystemReviewed->setGroup("evaluationGroup2");
+		$managementSystemReviewed->setDataType("string");
+		$managementSystemReviewed->setLength(5);
+		$managementSystemReviewed->setArraySource(array(
+		array('value' => 'YES', 'display' => 'Yes'),
+		array('value' => 'NO', 'display' => 'No'),
+		array('value' => 'na', 'display' => 'N/A')
+		));
+		$managementSystemReviewed->setRowTitle("management_system_ref");
+		$managementSystemReviewed->setRequired(false);
+		if(isset($savedFields["managementSystemReviewed"]))
+		$managementSystemReviewed->setValue($savedFields["managementSystemReviewed"]);
+		else $managementSystemReviewed->setValue("NO");
+		$managementSystemReviewed->setTable("evaluation");
+		$managementSystemReviewed->setExtTable("evaluationExt");
+		$managementSystemReviewed->setHelpId(9026);
+		$evaluationGroup2->add($managementSystemReviewed);
+
+		$flowChart = new radio("flowChart");
+		$flowChart->setGroup("evaluationGroup2");
+		$flowChart->setDataType("string");
+		$flowChart->setLength(5);
+		$flowChart->setArraySource(array(
+		array('value' => 'YES', 'display' => 'Yes'),
+		array('value' => 'NO', 'display' => 'No'),
+		array('value' => 'na', 'display' => 'N/A')
+		));
+		$flowChart->setRowTitle("flow_chart");
+		$flowChart->setRequired(false);
+		if(isset($savedFields["flowChart"]))
+		$flowChart->setValue($savedFields["flowChart"]);
+		else $flowChart->setValue("NO");
+		$flowChart->setTable("evaluation");
+		$flowChart->setExtTable("evaluationExt");
+		$flowChart->setHelpId(9026);
+		$evaluationGroup2->add($flowChart);
+
+		$fmea = new radio("fmea");
+		$fmea->setGroup("evaluationGroup2");
+		$fmea->setDataType("string");
+		$fmea->setLength(5);
+		$fmea->setArraySource(array(
+		array('value' => 'YES', 'display' => 'Yes'),
+		array('value' => 'NO', 'display' => 'No')
+		));
+		$fmea->setRowTitle("fmea");
+		$fmea->setRequired(false);
+		if(isset($savedFields["fmea"]))
+		$fmea->setValue($savedFields["fmea"]);
+		else $fmea->setValue("NO");
+		$fmea->setTable("evaluation");
+		$fmea->setExtTable("evaluationExt");
+		$fmea->setHelpId(9026);
+		$evaluationGroup2->add($fmea);
+
+		$customerSpecification = new radio("customerSpecification");
+		$customerSpecification->setGroup("evaluationGroup2");
+		$customerSpecification->setDataType("string");
+		$customerSpecification->setLength(5);
+		$customerSpecification->setArraySource(array(
+		array('value' => 'YES', 'display' => 'Yes'),
+		array('value' => 'NO', 'display' => 'No')
+		));
+		$customerSpecification->setRowTitle("customer_specification");
+		$customerSpecification->setRequired(false);
+		if(isset($savedFields["customerSpecification"]))
+		$customerSpecification->setValue($savedFields["customerSpecification"]);
+		else $customerSpecification->setValue("NO");
+		$customerSpecification->setTable("evaluation");
+		$customerSpecification->setExtTable("evaluationExt");
+		$customerSpecification->setHelpId(9026);
+		$evaluationGroup2->add($customerSpecification);
+
+		$additionalComments = new textarea("additionalComments");
+		if(isset($savedFields["comments"]))
+		$additionalComments->setValue($savedFields["comments"]);
+		$additionalComments->setGroup("evaluationGroup2");
+		$additionalComments->setDataType("text");
+		$additionalComments->setLength(255);
+		$additionalComments->setRowTitle("comments");
+		$additionalComments->setRequired(false);
+		$additionalComments->setTable("evaluation");
+		$additionalComments->setExtTable("evaluationExt");
+		$additionalComments->setHelpId(9037);
+		$evaluationGroup2->add($additionalComments);
+		
+//		$processOwnerLink = new textboxlink("processOwnerLink");
+//		$processOwnerLink->setRowTitle("process_owner_link");
+//		$processOwnerLink->setHelpId(1111);
+//		$processOwnerLink->setLink("http://scapanet/apps/complaints/data/po.xls");
+//		$processOwnerLink->setValue("Process Owner Matrix");
+//		$actionsGroup2->add($processOwnerLink);
+
+		$processOwner = new autocomplete("processOwner");
+		if(isset($savedFields["processOwner"]))
+		$processOwner->setValue($savedFields["processOwner"]);
+		$processOwner->setGroup("commentsGroup");
+		$processOwner->setDataType("string");
+		$processOwner->setRowTitle("chosen_complaint_owner");
+		$processOwner->setRequired(false);
+		$processOwner->setUrl("/apps/complaints/ajax/complaintOwner?");
+		$processOwner->setTable("evaluation");
+		$processOwner->setHelpId(8145);
+		$actionsGroup2->add($processOwner);
+
+		$emailText = new textarea("emailText");
+		if(isset($savedFields["emailText"]))
+		$emailText->setValue($savedFields["emailText"]);
+		$emailText->setGroup("evaluationGroup");
+		$emailText->setDataType("text");
+		$emailText->setRowTitle("emailText");
+		$emailText->setRequired(false);
+		$emailText->setTable("evaluation");
+		$emailText->setHelpId(9078);
+		$sendToUser->add($emailText);
+
+		//		$sp_submitToExtSupplier = new radio("sp_submitToExtSupplier");
+		//		$sp_submitToExtSupplier->setGroup("evaluationGroup");
+		//		$sp_submitToExtSupplier->setDataType("string");
+		//		$sp_submitToExtSupplier->setLength(5);
+		//		$sp_submitToExtSupplier->setArraySource(array(
+		//			array('value' => 'Yes', 'display' => 'Yes'),
+		//			array('value' => 'No', 'display' => 'No')
+		//		));
+		//		$sp_submitToExtSupplier->setRowTitle("submit_to_external_supplier");
+		//		$sp_submitToExtSupplier->setValue("No");
+		//		$sp_submitToExtSupplier->setRequired(true);
+		//		$sp_submitToExtSupplier->setTable("complaint");
+		//		if(isset($savedFields["sp_submitToExtSupplier"]))
+		//			$sp_submitToExtSupplier->setValue($savedFields["sp_submitToExtSupplier"]);
+		//		else $sp_submitToExtSupplier->setValue("No");
+		//		$sendToUser->add($sp_submitToExtSupplier);
+
+		$submit = new submit("submit");
+		$submit->setGroup("evaluationGroup");
+		$submit->setVisible(true);
+		$sendToUser->add($submit);
+
+
+		$this->form->add($initiation);
+		$this->form->add($evaluationStart);
+		$this->form->add($evaluationGroup);
+		$this->form->add($useGoodsGroup);
+		$this->form->add($evaluationGroup2);
+		$this->form->add($actionsGroup2);
+		$this->form->add($sendToUser);
+
+	}
+	
+	public function defineQualityForm()
+	{
+		$savedFields = array();
+
+		if(isset($_REQUEST["sfID"])){
+			$this->sfID = $_REQUEST["sfID"];
+			$dataset = mysql::getInstance()->selectDatabase("complaints")->Execute("SELECT sfValue FROM savedForms WHERE `sfOwner` = '" . currentuser::getInstance()->getNTLogon() . "' AND sfID = '".$this->sfID."' LIMIT 1");
+			while ($fields = mysql_fetch_array($dataset)){
+				$savedFields = unserialize($fields["sfValue"]);
+			}
+		}
+		$today = date("Y-m-d",time());
+		$next_week_date = date("Y-m-d",time() + 604800);
+
+		// define the actual form
+		$this->form = new form("complaint");
+		$this->form->setStoreInSession(true);
+		$this->form->showLegend(true);
+		$this->form->groupsToExclude = array();
+		
+		$initiation = new group("initiation");
+		$typeOfComplaintGroup = new group("typeOfComplaintGroup");
+		$complaintGroup = new group("complaintGroup");
+		$qu_verificationMadeYesGroup = new group("qu_verificationMadeYesGroup");
+		$complaintGroup2 = new group("complaintGroup2");
+		$qu_supplierIssueYesGroup = new group("qu_supplierIssueYesGroup");
+		$qu_supplierIssueActionYesGroup = new group("qu_supplierIssueActionYesGroup");
+		$qu_supplierIssueActionNoGroup = new group("qu_supplierIssueActionNoGroup");
+		$complaintGroup3 = new group("complaintGroup3");
+		$qu_useGoodsDerongationYesGroup = new group("qu_useGoodsDerongationYesGroup");
+		$qu_customerApprovedYesGroup = new group("qu_customerApprovedYesGroup");
+		$complaintGroup4 = new group("complaintGroup4");
+		$sendToUser2 = new group("sendToUser2");
+		
+		
+		$complaintId = new invisibletext("complaintId");
+		$complaintId->setTable("evaluation");
+		$complaintId->setVisible(false);
+		$complaintId->setGroup("initiation");
+		$complaintId->setDataType("number");
+		$complaintId->setValue(0);
+		$initiation->add($complaintId);
+
+		$status = new textbox("status");
+		if(isset($savedFields["status"]))
+			$status->setValue($savedFields["status"]);
+		$status->setTable("complaint");
+		$status->setVisible(false);
+		$status->setIgnore(false);
+		$status->setDataType("string");
+		$status->setValue("complaint");
+		$initiation->add($status);
+		
+		$openDate = new textbox("openDate");
+		if(isset($savedFields["openDate"]))
+			$openDate->setValue($savedFields["openDate"]);
+		$openDate->setTable("complaint");
+		$openDate->setVisible(false);
+		$openDate->setIgnore(false);
+		$openDate->setDataType("text");
+		$initiation->add($openDate);
+
+		$owner = new textbox("owner");
+		if(isset($savedFields["owner"]))
+			$owner->setValue($savedFields["owner"]);
+		$owner->setTable("complaint");
+		$owner->setVisible(false);
+		$owner->setIgnore(false);
+		$owner->setDataType("string");
+		$initiation->add($owner);
+
+		$complaintLocation = new radio("complaintLocation");
+		$complaintLocation->setTable("complaint");
+		$complaintLocation->setLength(20);
+		$complaintLocation->setArraySource(array(
+			array('value' => 'european', 'display' => 'European'),
+			array('value' => 'american', 'display' => 'American'),
+			array('value' => 'malaysian', 'display' => 'Malaysian')
+		));
+		if(isset($savedFields["complaintLocation"]))
+			$complaintLocation->setValue($savedFields["complaintLocation"]);
+		$complaintLocation->setVisible(false);
+		$complaintLocation->setIgnore(false);
+		$complaintLocation->setDataType("string");
+		$initiation->add($complaintLocation);
+
+		$typeOfComplaint = new dropdown("typeOfComplaint");
+		$typeOfComplaint->setGroup("typeOfComplaintGroup");
+		$typeOfComplaint->setDataType("string");
+		$typeOfComplaint->setXMLSource("./apps/complaints/xml/complaintType.xml");
+		$typeOfComplaint->setRowTitle("complaint_type");
+		$typeOfComplaint->setRequired(false);
+//		$typeOfComplaint->setLabel("Complaint Type Details");
+		$typeOfComplaint->setTable("complaint");
+		$typeOfComplaint->setVisible(false);
+		$typeOfComplaint->setHelpId(8199);
+		if(isset($savedFields["typeOfComplaint"]))
+			$typeOfComplaint->setValue($savedFields["typeOfComplaint"]);
+		else $typeOfComplaint->setValue("customer_complaint");
+		$typeOfComplaintGroup->add($typeOfComplaint);
+		
+		$teamLeader = new textbox("teamLeader");
+		if(isset($savedFields["teamLeader"]))
+		$teamLeader->setValue($savedFields["teamLeader"]);
+		$teamLeader->setGroup("complaintGroup");
+		$teamLeader->setDataType("string");
+		$teamLeader->setLength(255);
+		$teamLeader->setRowTitle("team_leader");
+		$teamLeader->setRequired(false);
+		$teamLeader->setTable("evaluation");
+		$teamLeader->setHelpId(9012);
+		$complaintGroup->add($teamLeader);
+
+		$teamMember = new textarea("teamMember");
+		if(isset($savedFields["teamMember"]))
+		$teamMember->setValue($savedFields["teamMember"]);
+		$teamMember->setGroup("complaintGroup");
+		$teamMember->setDataType("text");
+		$teamMember->setRowTitle("team_member");
+		$teamMember->setRequired(false);
+		$teamMember->setTable("evaluation");
+		$teamMember->setHelpId(9013);
+		$complaintGroup->add($teamMember);
+		
+		$qu_verificationMade = new radio("qu_verificationMade");
+		$qu_verificationMade->setGroup("complaintGroup");
+		$qu_verificationMade->setDataType("string");
+		$qu_verificationMade->setLength(5);
+		$qu_verificationMade->setArraySource(array(
+			array('value' => 'YES', 'display' => 'Yes'),
+			array('value' => 'NO', 'display' => 'No')
+			));
+		$qu_verificationMade->setRowTitle("verification_made");
+		$qu_verificationMade->setRequired(true);
+		if(isset($savedFields["qu_verificationMade"]))
+			$qu_verificationMade->setValue($savedFields["qu_verificationMade"]);
+		else $qu_verificationMade->setValue("NO");
+		$qu_verificationMade->setTable("evaluation");
+		$qu_verificationMade->setHelpId(9018);
+		
+		// Dependency
+		$qu_verificationMade_dependency = new dependency();
+		$qu_verificationMade_dependency->addRule(new rule('complaintGroup', 'qu_verificationMade', 'YES'));
+		$qu_verificationMade_dependency->setGroup('qu_verificationMadeYesGroup');
+		$qu_verificationMade_dependency->setShow(true);
+
+		$qu_verificationMade->addControllingDependency($qu_verificationMade_dependency);
+		$complaintGroup->add($qu_verificationMade);
+		
+		$qu_verificationName = new textbox("qu_verificLeader");
+		$qu_verificationName->setValue($savedFields["qu_verificationNameLeader"]);
+		$qu_verificationName->setGroup("qu_verificationMadeYesGroup");
+		$qu_verificationName->setDataType("string");
+		$qu_verificationName->setLength(255);
+		$qu_verificationName->setRowTitle("stock_verification_name");
+		$qu_verificationName->setRequired(false);
+		$qu_verificationName->setTable("evaluation");
+		$qu_verificationName->setHelpId(9012);
+		$qu_verificationMadeYesGroup->add($qu_verificationName);
+		
+		$qu_verificationDate = new textbox("qu_verificationDate");
+		if(isset($savedFields["qu_verificationDate"]))
+		$qu_verificationDate->setValue($savedFields["qu_verificationDate"]);
+		$qu_verificationDate->setGroup("qu_verificationMadeYesGroup");
+		$qu_verificationDate->setDataType("date");
+		$qu_verificationDate->setRowTitle("stock_verification_date");
+		$qu_verificationDate->setRequired(false);
+		$qu_verificationDate->setTable("evaluation");
+		$qu_verificationDate->setHelpId(9012);
+		$qu_verificationMadeYesGroup->add($qu_verificationDate);
+		
+		$qu_otherMaterialEffected = new radio("qu_otherMaterialEffected");
+		$qu_otherMaterialEffected->setGroup("complaintGroup2");
+		$qu_otherMaterialEffected->setDataType("string");
+		$qu_otherMaterialEffected->setLength(5);
+		$qu_otherMaterialEffected->setArraySource(array(
+			array('value' => 'YES', 'display' => 'Yes'),
+			array('value' => 'NO', 'display' => 'No')
+			));
+		$qu_otherMaterialEffected->setRowTitle("qu_other_material_effected");
+		$qu_otherMaterialEffected->setRequired(true);
+		if(isset($savedFields["qu_otherMaterialEffected"]))
+			$qu_otherMaterialEffected->setValue($savedFields["qu_otherMaterialEffected"]);
+		else $qu_otherMaterialEffected->setValue("NO");
+		$qu_otherMaterialEffected->setTable("evaluation");
+		$qu_otherMaterialEffected->setHelpId(9018);
+		$complaintGroup2->add($qu_otherMaterialEffected);
+		
+		$qu_otherMatDetails = new textarea("qu_otherMatDetails");
+		if(isset($savedFields["qu_otherMatDetails"]))
+		$qu_otherMatDetails->setValue($savedFields["qu_otherMatDetails"]);
+		$qu_otherMatDetails->setGroup("complaintGroup2");
+		$qu_otherMatDetails->setDataType("text");
+		$qu_otherMatDetails->setRowTitle("qu_other_mat_details");
+		$qu_otherMatDetails->setRequired(false);
+		$qu_otherMatDetails->setTable("evaluation");
+		$qu_otherMatDetails->setHelpId(9013);
+		$complaintGroup2->add($qu_otherMatDetails);
+		
+		$analysis = new textarea("analysis");
+		if(isset($savedFields["analysis"]))
+		$analysis->setValue($savedFields["analysis"]);
+		//else
+		//$analysis->setValue("ALLY");
+		$analysis->setGroup("complaintGroup2");
+		$analysis->setDataType("text");
+		$analysis->setRowTitle("analysis");
+		$analysis->setRequired(false);
+		$analysis->setTable("evaluation");
+		$analysis->setHelpId(9005);
+		$complaintGroup2->add($analysis);
+
+		$analysisyn = new radio("analysisyn");
+		$analysisyn->setGroup("complaintGroup2");
+		$analysisyn->setDataType("string");
+		$analysisyn->setLength(3);
+		$analysisyn->setArraySource(array(
+		array('value' => 'Yes', 'display' => 'Yes'),
+		array('value' => 'No', 'display' => 'No')
+		));
+		$analysisyn->setRowTitle("analysis_entered");
+		$analysisyn->setRequired(false);
+		$analysisyn->setVisible(false);
+		if(isset($savedFields["analysis_entered"]))
+		$analysisyn->setValue($savedFields["analysis_entered"]);
+		else $analysisyn->setValue("No");
+		$analysisyn->setTable("complaint");
+		$complaintGroup2->add($analysisyn);
+
+		$author = new textbox("author");
+		if(isset($savedFields["author"]))
+		$author->setValue($savedFields["author"]);
+		$author->setGroup("complaintGroup2");
+		$author->setDataType("string");
+		$author->setLength(255);
+		$author->setRowTitle("author");
+		$author->setRequired(false);
+		$author->setTable("evaluation");
+		$author->setHelpId(9006);
+		$complaintGroup2->add($author);
+
+		$analysisDate = new textbox("analysisDate");
+		if(isset($savedFields["analysisDate"]))
+		$analysisDate->setValue($savedFields["analysisDate"]);
+		$analysisDate->setGroup("complaintGroup2");
+		$analysisDate->setDataType("date");
+		$analysisDate->setLength(30);
+		$analysisDate->setRowTitle("analysis_date");
+		$analysisDate->setRequired(false);
+		$analysisDate->setTable("evaluation");//was complaintEval???
+		$analysisDate->setHelpId(9007);
+		$complaintGroup2->add($analysisDate);
+		
+		$qu_supplierIssue = new radio("qu_supplierIssue");
+		$qu_supplierIssue->setGroup("complaintGroup2");
+		$qu_supplierIssue->setDataType("string");
+		$qu_supplierIssue->setLength(3);
+		$qu_supplierIssue->setArraySource(array(
+			array('value' => 'Yes', 'display' => 'Yes'),
+			array('value' => 'No', 'display' => 'No')
+		));
+		$qu_supplierIssue->setRowTitle("issue_supplier_complaint");
+		$qu_supplierIssue->setRequired(false);
+		if(isset($savedFields["qu_supplierIssue"]))
+			$qu_supplierIssue->setValue($savedFields["qu_supplierIssue"]);
+		else $qu_supplierIssue->setValue("No");
+		$qu_supplierIssue->setTable("evaluation");
+		
+		// Dependency
+		$qu_supplierIssue_dependency = new dependency();
+		$qu_supplierIssue_dependency->addRule(new rule('complaintGroup2', 'qu_supplierIssue', 'Yes'));
+		$qu_supplierIssue_dependency->setGroup('qu_supplierIssueYesGroup');
+		$qu_supplierIssue_dependency->setShow(true);
+		
+		// Dependency
+		$qu_supplierIssue2_dependency = new dependency();
+		$qu_supplierIssue2_dependency->addRule(new rule('complaintGroup2', 'qu_supplierIssue', 'No'));
+		$qu_supplierIssue2_dependency->setGroup('qu_normalComplaintProcess');
+		$qu_supplierIssue2_dependency->setShow(true);
+
+		$qu_supplierIssue->addControllingDependency($qu_supplierIssue_dependency);
+		$qu_supplierIssue->addControllingDependency($qu_supplierIssue2_dependency);
+		$complaintGroup2->add($qu_supplierIssue);
+		
+		$qu_supplierIssueAction = new radio("qu_supplierIssueAction");
+		$qu_supplierIssueAction->setGroup("qu_supplierIssueYesGroup");
+		$qu_supplierIssueAction->setDataType("string");
+		$qu_supplierIssueAction->setLength(3);
+		$qu_supplierIssueAction->setArraySource(array(
+			array('value' => 'Open', 'display' => 'Open'),
+			array('value' => 'Close', 'display' => 'Close')
+		));
+		$qu_supplierIssueAction->setRowTitle("issue_supplier_action");
+		$qu_supplierIssueAction->setRequired(false);
+		if(isset($savedFields["qu_supplierIssueAction"]))
+			$qu_supplierIssueAction->setValue($savedFields["qu_supplierIssueAction"]);
+		else $qu_supplierIssueAction->setValue("Open");
+		$qu_supplierIssueAction->setTable("evaluation");
+		
+		// Dependency
+		$qu_supplierIssueAction_dependency = new dependency();
+		$qu_supplierIssueAction_dependency->addRule(new rule('qu_supplierIssueYesGroup', 'qu_supplierIssueAction', 'Open'));
+		$qu_supplierIssueAction_dependency->setGroup('qu_supplierIssueActionYesGroup');
+		$qu_supplierIssueAction_dependency->setShow(true);
+
+		$qu_supplierIssueAction->addControllingDependency($qu_supplierIssueAction_dependency);
+		$qu_supplierIssueYesGroup->add($qu_supplierIssueAction);
+		
+		$qu_actionComplaint = new radio("qu_actionComplaint");
+		$qu_actionComplaint->setGroup("qu_supplierIssueActionYesGroup");
+		$qu_actionComplaint->setDataType("string");
+		$qu_actionComplaint->setLength(3);
+		$qu_actionComplaint->setArraySource(array(
+			array('value' => 'Yes', 'display' => 'Yes'),
+			array('value' => 'No', 'display' => 'No')
+		));
+		$qu_actionComplaint->setRowTitle("action_complaint");
+		$qu_actionComplaint->setRequired(false);
+		if(isset($savedFields["qu_actionComplaint"]))
+			$qu_actionComplaint->setValue($savedFields["qu_actionComplaint"]);
+		else $qu_actionComplaint->setValue("Yes");
+		$qu_actionComplaint->setTable("evaluation");
+		
+		// Dependency
+		$qu_supplierIssueAction_dependency = new dependency();
+		$qu_supplierIssueAction_dependency->addRule(new rule('qu_supplierIssueActionYesGroup', 'qu_actionComplaint', 'No'));
+		$qu_supplierIssueAction_dependency->setGroup('qu_supplierIssueActionNoGroup');
+		$qu_supplierIssueAction_dependency->setShow(true);
+
+		$qu_supplierIssueAction->addControllingDependency($qu_supplierIssueAction_dependency);		
+		$qu_supplierIssueActionYesGroup->add($qu_actionComplaint);
+		
+		$qu_actionComplaintReason = new textarea("qu_actionComplaintReason");
+		if(isset($savedFields["qu_actionComplaintReason"]))
+		$qu_actionComplaintReason->setValue($savedFields["qu_actionComplaintReason"]);
+		$qu_actionComplaintReason->setGroup("qu_supplierIssueActionNoGroup");
+		$qu_actionComplaintReason->setDataType("text");
+		$qu_actionComplaintReason->setRowTitle("action_complaint_reason");
+		$qu_actionComplaintReason->setRequired(false);
+		$qu_actionComplaintReason->setTable("evaluation");
+		$qu_actionComplaintReason->setHelpId(9005);
+		$qu_supplierIssueActionNoGroup->add($qu_actionComplaintReason);
+			
+		$rootCausesAuthor = new textbox("rootCausesAuthor");
+		if(isset($savedFields["rootCausesAuthor"]))
+		$rootCausesAuthor->setValue($savedFields["rootCausesAuthor"]);
+		$rootCausesAuthor->setGroup("complaintGroup3");
+		$rootCausesAuthor->setDataType("string");
+		$rootCausesAuthor->setLength(255);
+		$rootCausesAuthor->setRowTitle("root_causes_author");
+		$rootCausesAuthor->setRequired(false);
+		$rootCausesAuthor->setTable("evaluation");
+		$rootCausesAuthor->setHelpId(9015);
+		$complaintGroup3->add($rootCausesAuthor);
+
+		$rootCausesDate = new textbox("rootCausesDate");
+		if(isset($savedFields["rootCausesDate"]))
+		$rootCausesDate->setValue($savedFields["rootCausesDate"]);
+		$rootCausesDate->setGroup("complaintGroup3");
+		$rootCausesDate->setDataType("date");
+		$rootCausesDate->setRowTitle("root_causes_date");
+		$rootCausesDate->setRequired(false);
+		$rootCausesDate->setTable("evaluation");
+		$rootCausesDate->setHelpId(9016);
+		$complaintGroup3->add($rootCausesDate);
+		
+		$attributableProcess = new textbox("attributableProcess");
+		if(isset($savedFields["attributableProcess"]))
+		$attributableProcess->setValue($savedFields["attributableProcess"]);
+		$attributableProcess->setGroup("complaintGroup3");
+		$attributableProcess->setDataType("string");
+		$attributableProcess->setLength(255);
+		$attributableProcess->setRowTitle("attributable_process");
+		$attributableProcess->setRequired(false);
+		$attributableProcess->setTable("evaluation");
+		$attributableProcess->setHelpId(9015);
+		$complaintGroup3->add($attributableProcess);
+		
+		$failureCode = new textbox("failureCode");
+		if(isset($savedFields["failureCode"]))
+		$failureCode->setValue($savedFields["failureCode"]);
+		$failureCode->setGroup("complaintGroup3");
+		$failureCode->setDataType("string");
+		$failureCode->setLength(255);
+		$failureCode->setRowTitle("failure_code");
+		$failureCode->setRequired(false);
+		$failureCode->setTable("evaluation");
+		$failureCode->setHelpId(9037);
+		$complaintGroup3->add($failureCode);
+		
+		$rootCauseCode = new textbox("rootCauseCode");
+		if(isset($savedFields["rootCauseCode"]))
+		$rootCauseCode->setValue($savedFields["rootCauseCode"]);
+		$rootCauseCode->setGroup("complaintGroup3");
+		$rootCauseCode->setDataType("string");
+		$rootCauseCode->setLength(255);
+		$rootCauseCode->setRowTitle("root_cause_code");
+		$rootCauseCode->setRequired(false);
+		$rootCauseCode->setTable("evaluation");
+		$rootCauseCode->setHelpId(9038);
+		$complaintGroup3->add($rootCauseCode);
+		
+		$attachment = new attachment("attachment");
+		$attachment->setTempFileLocation("/apps/complaints/tmp");
+		$attachment->setFinalFileLocation("/apps/complaints/attachments/eval");
+		$attachment->setRowTitle("attach_document");
+		$attachment->setHelpId(9008);
+		$attachment->setNextAction("evaluation");
+		$complaintGroup3->add($attachment);
+		
+		$disposeGoods = new radio("disposeGoods");
+		$disposeGoods->setGroup("complaintGroup3");
+		$disposeGoods->setDataType("string");
+		$disposeGoods->setLength(5);
+		$disposeGoods->setArraySource(array(
+			array('value' => 'YES', 'display' => 'Yes'),
+			array('value' => 'NO', 'display' => 'No')
+		));
+		$disposeGoods->setRowTitle("dispose_goods");
+		$disposeGoods->setRequired(true);
+		if(isset($savedFields["disposeGoods"]))
+			$disposeGoods->setValue($savedFields["disposeGoods"]);
+		else $disposeGoods->setValue("NO");
+		$disposeGoods->setTable("evaluation");
+		$disposeGoods->setHelpId(9018);
+		$complaintGroup3->add($disposeGoods);
+		
+		$qu_useGoods = new radio("qu_useGoods");
+		$qu_useGoods->setGroup("complaintGroup3");
+		$qu_useGoods->setDataType("string");
+		$qu_useGoods->setLength(5);
+		$qu_useGoods->setArraySource(array(
+			array('value' => 'YES', 'display' => 'Yes'),
+			array('value' => 'NO', 'display' => 'No')
+		));
+		$qu_useGoods->setRowTitle("use_goods");
+		$qu_useGoods->setRequired(true);
+		if(isset($savedFields["qu_useGoods"]))
+			$qu_useGoods->setValue($savedFields["qu_useGoods"]);
+		else $qu_useGoods->setValue("NO");
+		$qu_useGoods->setTable("evaluation");
+		$qu_useGoods->setHelpId(9018);
+		$complaintGroup3->add($qu_useGoods);
+		
+		$qu_useGoodsDerongation = new radio("qu_useGoodsDerongation");
+		$qu_useGoodsDerongation->setGroup("complaintGroup3");
+		$qu_useGoodsDerongation->setDataType("string");
+		$qu_useGoodsDerongation->setLength(5);
+		$qu_useGoodsDerongation->setArraySource(array(
+			array('value' => 'YES', 'display' => 'Yes'),
+			array('value' => 'NO', 'display' => 'No')
+		));
+		$qu_useGoodsDerongation->setRowTitle("use_goods_derongation");
+		$qu_useGoodsDerongation->setRequired(true);
+		if(isset($savedFields["qu_useGoodsDerongation"]))
+			$qu_useGoodsDerongation->setValue($savedFields["qu_useGoodsDerongation"]);
+		else $qu_useGoodsDerongation->setValue("NO");
+		$qu_useGoodsDerongation->setTable("evaluation");
+		$qu_useGoodsDerongation->setHelpId(9018);
+		
+		// Dependency
+		$qu_useGoodsDerongation_dependency = new dependency();
+		$qu_useGoodsDerongation_dependency->addRule(new rule('complaintGroup3', 'qu_useGoodsDerongation', 'Yes'));
+		$qu_useGoodsDerongation_dependency->setGroup('qu_useGoodsDerongationYesGroup');
+		$qu_useGoodsDerongation_dependency->setShow(true);
+
+		$qu_useGoodsDerongation->addControllingDependency($qu_useGoodsDerongation_dependency);	
+		$complaintGroup3->add($qu_useGoodsDerongation);
+		
+		$qu_customerApproved = new radio("qu_customerApproved");
+		$qu_customerApproved->setGroup("qu_useGoodsDerongationYesGroup");
+		$qu_customerApproved->setDataType("string");
+		$qu_customerApproved->setLength(5);
+		$qu_customerApproved->setArraySource(array(
+			array('value' => 'YES', 'display' => 'Yes'),
+			array('value' => 'NO', 'display' => 'No')
+		));
+		$qu_customerApproved->setRowTitle("customer_approved");
+		$qu_customerApproved->setRequired(true);
+		if(isset($savedFields["qu_customerApproved"]))
+			$qu_customerApproved->setValue($savedFields["qu_customerApproved"]);
+		else $qu_customerApproved->setValue("NO");
+		$qu_customerApproved->setTable("evaluation");
+		$qu_customerApproved->setHelpId(9018);
+		
+		// Dependency
+		$qu_customerApproved_dependency = new dependency();
+		$qu_customerApproved_dependency->addRule(new rule('qu_useGoodsDerongationYesGroup', 'qu_customerApproved', 'YES'));
+		$qu_customerApproved_dependency->setGroup('qu_customerApprovedYesGroup');
+		$qu_customerApproved_dependency->setShow(true);
+
+		$qu_customerApproved->addControllingDependency($qu_customerApproved_dependency);	
+		$qu_useGoodsDerongationYesGroup->add($qu_customerApproved);
+		
+		$qu_nameOfCustomer = new textbox("qu_nameOfCustomer");
+		if(isset($savedFields["qu_nameOfCustomer"]))
+		$qu_nameOfCustomer->setValue($savedFields["qu_nameOfCustomer"]);
+		$qu_nameOfCustomer->setGroup("qu_customerApprovedYesGroup");
+		$qu_nameOfCustomer->setDataType("string");
+		$qu_nameOfCustomer->setLength(255);
+		$qu_nameOfCustomer->setRowTitle("name_of_customer");
+		$qu_nameOfCustomer->setRequired(false);
+		$qu_nameOfCustomer->setTable("evaluation");
+		$qu_nameOfCustomer->setHelpId(9038);
+		$qu_customerApprovedYesGroup->add($qu_nameOfCustomer);
+		
+		$qu_reworkGoods = new radio("qu_reworkGoods");
+		$qu_reworkGoods->setGroup("complaintGroup4");
+		$qu_reworkGoods->setDataType("string");
+		$qu_reworkGoods->setLength(5);
+		$qu_reworkGoods->setArraySource(array(
+			array('value' => 'YES', 'display' => 'Yes'),
+			array('value' => 'NO', 'display' => 'No')
+		));
+		$qu_reworkGoods->setRowTitle("rework_goods");
+		$qu_reworkGoods->setRequired(true);
+		if(isset($savedFields["qu_reworkGoods"]))
+		$qu_reworkGoods->setValue($savedFields["qu_reworkGoods"]);
+		else $qu_reworkGoods->setValue("NO");
+		$qu_reworkGoods->setTable("evaluation");
+		$qu_reworkGoods->setHelpId(9018);
+		$complaintGroup4->add($qu_reworkGoods);
+		
+		$qu_otherSimilarProducts = new radio("qu_otherSimilarProducts");
+		$qu_otherSimilarProducts->setGroup("complaintGroup4");
+		$qu_otherSimilarProducts->setDataType("string");
+		$qu_otherSimilarProducts->setLength(5);
+		$qu_otherSimilarProducts->setArraySource(array(
+			array('value' => 'YES', 'display' => 'Yes'),
+			array('value' => 'NO', 'display' => 'No')
+		));
+		$qu_otherSimilarProducts->setRowTitle("rework_goods");
+		$qu_otherSimilarProducts->setRequired(true);
+		if(isset($savedFields["qu_otherSimilarProducts"]))
+			$qu_otherSimilarProducts->setValue($savedFields["qu_otherSimilarProducts"]);
+		else $qu_otherSimilarProducts->setValue("NO");
+		$qu_otherSimilarProducts->setTable("evaluation");
+		$qu_otherSimilarProducts->setHelpId(9018);
+		$complaintGroup4->add($qu_otherSimilarProducts);
+		
+		$qu_authorGoodsDecision = new textbox("qu_authorGoodsDecision");
+		if(isset($savedFields["complaintGroup4"]))
+		$qu_authorGoodsDecision->setValue($savedFields["qu_authorGoodsDecision"]);
+		$qu_authorGoodsDecision->setGroup("complaintGroup4");
+		$qu_authorGoodsDecision->setDataType("string");
+		$qu_authorGoodsDecision->setLength(255);
+		$qu_authorGoodsDecision->setRowTitle("author_for_goods_decision");
+		$qu_authorGoodsDecision->setRequired(false);
+		$qu_authorGoodsDecision->setTable("evaluation");
+		$qu_authorGoodsDecision->setHelpId(9038);
+		$complaintGroup4->add($qu_authorGoodsDecision);
+		
+		$qu_authorGoodsDecisionDate = new textbox("qu_authorGoodsDecisionDate");
+		if(isset($savedFields["complaintGroup4"]))
+		$qu_authorGoodsDecisionDate->setValue($savedFields["qu_authorGoodsDecisionDate"]);
+		$qu_authorGoodsDecisionDate->setGroup("complaintGroup4");
+		$qu_authorGoodsDecisionDate->setDataType("date");
+		$qu_authorGoodsDecisionDate->setLength(255);
+		$qu_authorGoodsDecisionDate->setRowTitle("author_for_goods_decision_date");
+		$qu_authorGoodsDecisionDate->setRequired(false);
+		$qu_authorGoodsDecisionDate->setTable("evaluation");
+		$qu_authorGoodsDecisionDate->setHelpId(9038);
+		$complaintGroup4->add($qu_authorGoodsDecisionDate);
+		
+		$containmentAction = new textarea("containmentAction");
+		if(isset($savedFields["containmentAction"]))
+		$containmentAction->setValue($savedFields["containmentAction"]);
+		$containmentAction->setGroup("complaintGroup4");
+		$containmentAction->setDataType("text");
+		$containmentAction->setRowTitle("containment_actions");
+		$containmentAction->setRequired(false);
+		$containmentAction->setTable("evaluation");
+		$containmentAction->setHelpId(9087);
+		$complaintGroup4->add($containmentAction);
+
+		$containmentActionyn = new radio("containmentActionyn");
+		$containmentActionyn->setGroup("complaintGroup4");
+		$containmentActionyn->setDataType("string");
+		$containmentActionyn->setLength(3);
+		$containmentActionyn->setArraySource(array(
+		array('value' => 'Yes', 'display' => 'Yes'),
+		array('value' => 'No', 'display' => 'No')
+		));
+		$containmentActionyn->setRowTitle("containmentAction_entered");
+		$containmentActionyn->setRequired(false);
+		$containmentActionyn->setVisible(false);
+		if(isset($savedFields["containmentActionyn"]))
+		$containmentActionyn->setValue($savedFields["containmentActionyn"]);
+		else $containmentActionyn->setValue("No");
+		$containmentActionyn->setTable("complaint");
+		$complaintGroup4->add($containmentActionyn);
+
+		$containmentActionAuthor = new textbox("containmentActionAuthor");
+		if(isset($savedFields["containmentActionAuthor"]))
+		$containmentActionAuthor->setValue($savedFields["containmentActionAuthor"]);
+		$containmentActionAuthor->setGroup("complaintGroup4");
+		$containmentActionAuthor->setDataType("string");
+		$containmentActionAuthor->setLength(255);
+		$containmentActionAuthor->setRowTitle("containment_actions_author");
+		$containmentActionAuthor->setRequired(false);
+		$containmentActionAuthor->setTable("evaluation");
+		$containmentActionAuthor->setHelpId(9039);
+		$complaintGroup4->add($containmentActionAuthor);
+
+		$containmentActionDate = new textbox("containmentActionDate");
+		if(isset($savedFields["containmentActionDate"]))
+		$containmentActionDate->setValue($savedFields["containmentActionDate"]);
+		$containmentActionDate->setGroup("complaintGroup4");
+		$containmentActionDate->setDataType("date");
+		$containmentActionDate->setLength(255);
+		$containmentActionDate->setRowTitle("containment_actions_date");
+		$containmentActionDate->setRequired(false);
+		$containmentActionDate->setTable("evaluation");
+		$containmentActionDate->setHelpId(9025);
+		$complaintGroup4->add($containmentActionDate);
+		
+		$possibleSolutions = new textarea("possibleSolutions");
+		if(isset($savedFields["possibleSolutions"]))
+		$possibleSolutions->setValue($savedFields["possibleSolutions"]);
+		$possibleSolutions->setGroup("complaintGroup4");
+		$possibleSolutions->setDataType("text");
+		$possibleSolutions->setRowTitle("possible_solutions");
+		$possibleSolutions->setRequired(false);
+		$possibleSolutions->setTable("evaluation");
+		$possibleSolutions->setHelpId(9088);
+		$complaintGroup4->add($possibleSolutions);
+
+		$possibleSolutionsyn = new radio("possibleSolutionsyn");
+		$possibleSolutionsyn->setGroup("complaintGroup4");
+		$possibleSolutionsyn->setDataType("string");
+		$possibleSolutionsyn->setLength(3);
+		$possibleSolutionsyn->setArraySource(array(
+		array('value' => 'Yes', 'display' => 'Yes'),
+		array('value' => 'No', 'display' => 'No')
+		));
+		$possibleSolutionsyn->setRowTitle("possibleSolutions_entered");
+		$possibleSolutionsyn->setRequired(false);
+		$possibleSolutionsyn->setVisible(false);
+		if(isset($savedFields["possibleSolutionsyn"]))
+		$possibleSolutionsyn->setValue($savedFields["possibleSolutionsyn"]);
+		else $possibleSolutionsyn->setValue("No");
+		$possibleSolutionsyn->setTable("complaint");
+		$complaintGroup4->add($possibleSolutionsyn);
+
+		$possibleSolutionsAuthor = new textbox("possibleSolutionsAuthor");
+		if(isset($savedFields["possibleSolutionsAuthor"]))
+		$possibleSolutionsAuthor->setValue($savedFields["possibleSolutionsAuthor"]);
+		$possibleSolutionsAuthor->setGroup("complaintGroup4");
+		$possibleSolutionsAuthor->setDataType("string");
+		$possibleSolutionsAuthor->setLength(255);
+		$possibleSolutionsAuthor->setRowTitle("possible_solutions_author");
+		$possibleSolutionsAuthor->setRequired(false);
+		$possibleSolutionsAuthor->setTable("evaluation");
+		$possibleSolutionsAuthor->setHelpId(9025);
+		$complaintGroup4->add($possibleSolutionsAuthor);
+
+		$possibleSolutionsDate = new textbox("possibleSolutionsDate");
+		if(isset($savedFields["possibleSolutionsDate"]))
+		$possibleSolutionsDate->setValue($savedFields["possibleSolutionsDate"]);
+		$possibleSolutionsDate->setGroup("complaintGroup4");
+		$possibleSolutionsDate->setDataType("date");
+		$possibleSolutionsDate->setLength(255);
+		$possibleSolutionsDate->setRowTitle("possible_solutions_date");
+		$possibleSolutionsDate->setRequired(false);
+		$possibleSolutionsDate->setTable("evaluation");
+		$possibleSolutionsDate->setHelpId(9025);
+		$complaintGroup4->add($possibleSolutionsDate);
+		
+		$implementedActions = new textarea("implementedActions");
+		if(isset($savedFields["implementedActions"]))
+		$implementedActions->setValue($savedFields["implementedActions"]);
+		$implementedActions->setGroup("complaintGroup4");
+		$implementedActions->setDataType("text");
+		$implementedActions->setRowTitle("implemented_actions");
+		$implementedActions->setRequired(false);
+		$implementedActions->setTable("evaluation");
+		$implementedActions->setHelpId(9020);
+		$complaintGroup4->add($implementedActions);
+
+		$implementedActionsyn = new radio("implementedActionsyn");
+		$implementedActionsyn->setGroup("complaintGroup4");
+		$implementedActionsyn->setDataType("string");
+		$implementedActionsyn->setLength(3);
+		$implementedActionsyn->setArraySource(array(
+		array('value' => 'Yes', 'display' => 'Yes'),
+		array('value' => 'No', 'display' => 'No')
+		));
+		$implementedActionsyn->setRowTitle("implementedAction_entered");
+		$implementedActionsyn->setRequired(false);
+		$implementedActionsyn->setVisible(false);
+		if(isset($savedFields["implementedActionsyn"]))
+		$implementedActionsyn->setValue($savedFields["implementedActionsyn"]);
+		else $implementedActionsyn->setValue("No");
+		$implementedActionsyn->setTable("complaint");
+		$complaintGroup4->add($implementedActionsyn);
+
+		$implementedActionsAuthor = new textbox("implementedActionsAuthor");
+		if(isset($savedFields["implementedActionsAuthor"]))
+		$implementedActionsAuthor->setValue($savedFields["implementedActionsAuthor"]);
+		$implementedActionsAuthor->setGroup("complaintGroup4");
+		$implementedActionsAuthor->setDataType("string");
+		$implementedActionsAuthor->setLength(255);
+		$implementedActionsAuthor->setRowTitle("implemented_actions_author");
+		$implementedActionsAuthor->setRequired(false);
+		$implementedActionsAuthor->setTable("evaluation");
+		$implementedActionsAuthor->setHelpId(9021);
+		$complaintGroup4->add($implementedActionsAuthor);
+
+		$implementedActionsDate = new textbox("implementedActionsDate");
+		if(isset($savedFields["implementedActionsDate"]))
+		$implementedActionsDate->setValue($savedFields["implementedActionsDate"]);
+		$implementedActionsDate->setGroup("complaintGroup4");
+		$implementedActionsDate->setDataType("date");
+		$implementedActionsDate->setLength(255);
+		$implementedActionsDate->setRowTitle("implemented_actions_date");
+		$implementedActionsDate->setRequired(false);
+		$implementedActionsDate->setTable("evaluation");//was complaintEval?????
+		$implementedActionsDate->setHelpId(9022);
+		$complaintGroup4->add($implementedActionsDate);
+		
+		
+		$submit = new submit("submit");
+		$submit->setGroup("sendToUser");
+		$submit->setVisible(true);
+		$sendToUser2->add($submit);
+		
+		
+		$this->form->add($initiation);
+		$this->form->add($typeOfComplaintGroup);
+		$this->form->add($complaintGroup);
+		$this->form->add($qu_verificationMadeYesGroup);
+		$this->form->add($complaintGroup2);
+		$this->form->add($qu_supplierIssueYesGroup);
+		$this->form->add($qu_supplierIssueActionYesGroup);
+		$this->form->add($qu_supplierIssueActionNoGroup);
+		$this->form->add($complaintGroup3);
+		$this->form->add($qu_useGoodsDerongationYesGroup);
+		$this->form->add($qu_customerApprovedYesGroup);
+		$this->form->add($complaintGroup4);
+		$this->form->add($sendToUser2);
+	}
+
+	public function emailInitiator()
+	{
+		//email initiator with details of owners choice to return or dispose goods
+		$datasetInitiator = mysql::getInstance()->selectDatabase("complaints")->Execute("SELECT id, internalSalesName FROM complaint WHERE id = '" . $this->getcomplaintId() . "' ORDER BY id DESC LIMIT 1");
+		$fieldsInitiator = mysql_fetch_array($datasetInitiator);
+		$datasetEmployee = mysql::getInstance()->selectDatabase("membership")->Execute("SELECT email FROM employee WHERE CONCAT(firstName, ' ', lastName) = '" . $fieldsInitiator['internalSalesName'] . "' LIMIT 1");
+		$fieldsEmployee = mysql_fetch_array($datasetEmployee);
+
+		if($this->form->get("updateInitiator")->getValue() == "Yes")
+		{
+			if($this->form->get("disposeGoods")->getValue() == "YES" && $this->form->get("returnGoods")->getValue() == "NO")
+			{
+				$message = "The goods are to be disposed";
+				$this->getEmailNotification($fieldsEmployee['email'], usercache::getInstance()->get(currentuser::getInstance()->getNTlogon())->getEmail(), $this->getcomplaintId(), "initiatorUpdate", utf8_encode($message), $this->form->get("complaintJustified")->getValue());
+			}
+			elseif($this->form->get("disposeGoods")->getValue() == "NO" && $this->form->get("returnGoods")->getValue() == "YES")
+			{
+				$message = "The goods are to be returned";
+				$this->getEmailNotification($fieldsEmployee['email'], usercache::getInstance()->get(currentuser::getInstance()->getNTlogon())->getEmail(),	$this->getcomplaintId(), "initiatorUpdate", utf8_encode($message), $this->form->get("complaintJustified")->getValue());
+			}
+		}
+
+		return true;
+	}
+
+	public function getEmailNotification($owner, $sender, $id, $action, $emailText, $complaintJustifiedStatus)
+	{
+		// newAction, email the owner
+		$dom = new DomDocument;
+		$dom->loadXML("<$action><action>" . $id . "</action><sent_from>" . usercache::getInstance()->get(currentuser::getInstance()->getNTlogon())->getName() . "</sent_from><emailText>" . utf8_decode($emailText) . "</emailText><complaint_justified>" . $complaintJustifiedStatus . "</complaint_justified></$action>");
+
+		// load xsl
+		$xsl = new DomDocument;
+		$xsl->load("./apps/complaints/xsl/email.xsl");
+
+		// transform xml using xsl
+		$proc = new xsltprocessor;
+		$proc->importStyleSheet($xsl);
+
+		$email = $proc->transformToXML($dom);
+
+		//$cc = $this->form->get("delegate_owner")->getValue();
+
+		$dataset = mysql::getInstance()->selectDatabase("complaints")->Execute("SELECT copy_to FROM ccGroup WHERE `complaintId` = '" . $id . "'");
+
+		$cc = "";
+
+		while ($fields = mysql_fetch_array($dataset))
+		{
+			if ($fields["copy_to"] != "")
+			{
+				$cc .= usercache::getInstance()->get($fields["copy_to"])->getEmail() . ", ";
+			}
+		}
+
+		email::send($owner, /*"intranet@scapa.com"*/$sender, (translate::getInstance()->translate("new_complaint_action") . " - ID: " . $id), "$email", "$cc");
+
+		return true;
+	}
+
+}
+
+?>
+		

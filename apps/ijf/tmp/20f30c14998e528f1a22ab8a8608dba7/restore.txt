@@ -1,0 +1,12 @@
+		// Sorting out the emailing crap!
+		// getEmailFunction = (The ID of the Request , The Subject Header, The Template Used, Recipients name, Recipients email, Requested Price, Managers name that it is sent to.
+			
+		if($emailTo == 'productManager')
+		{
+			$subjectHeader = (translate::getInstance()->translate("price_request_sent_to_product_manager") . " - Request ID: " . $this->id);
+			
+			// Send email to the initiator
+			
+			// Send email to their sales manager if required
+			
+			// Send Email to the Product manager.;

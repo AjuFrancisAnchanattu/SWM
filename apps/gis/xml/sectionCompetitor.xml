@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="utf-8" ?> 
+
+<!-- Correct as of 23/10/2008 -->
+
+<envelope>
+	<item value="AED" display="United Arab Emirates, Dirhams" />
+	<item value="AFN" display="Afghanistan, Afghanis" />
+	<item value="ALL" display="Albania, Leke" />
+	<item value="AMD" display="Armenia, Drams" />
+	<item value="ANG" display="Netherlands Antilles, Guilders (also called Florins)" />
+	<item value="AOA" display="Angola, Kwanza" />
+	<item value="ARS" display="Argentina, Pesos" />
+	<item value="AUD" display="Australia, Dollars" />
+	<item value="AWG" display="Aruba, Guilders (also called Florins)" />
+	<item value="AZN" display="Azerbaijan, New Manats" />
+	<item value="BAM" display="Bosnia and Herzegovina, Convertible Marka" />
+	<item value="BBD" display="Barbados, Dollars" />
+	<item value="BDT" display="Bangladesh, Taka" />
+	<item value="BGN" display="Bulgaria, Leva" />
+	<item value="BHD" display="Bahrain, Dinars" />
+	<item value="BIF" display="Burundi, Francs" />
+	<item value="BMD" display="Bermuda, Dollars" />
+	<item value="BND" display="Brunei Darussalam, Dollars" />
+	<item value="BOB" display="Bolivia, Bolivianos" />
+	<item value="BRL" display="Brazil, Brazil Real" />
+	<item value="BSD" display="Bahamas, Dollars" />
+	<item value="BTN" display="Bhutan, Ngultrum" />
+	<item value="BWP" display="Botswana, Pulas" />
+	<item value="BYR" display="Belarus, Rubles" />
+	<item value="BZD" display="Belize, Dollars" />
+	<item value="CAD" display="Canada, Dollars" />
+	<item value="CDF" display="Congo/Kinshasa, Congolese Francs" />
+	<item value="CHF" display="Switzerland, Francs" />
+	<item value="CLP" display="Chile, Pesos" />
+	<item value="CNY" display="China, Yuan Renminbi" />
+	<item value="COP" display="Colombia, Pesos" />
+	<item value="CRC" display="Costa Rica, Colones" />
+	<item value="CUP" display="Cuba, Pesos" />
+	<item value="CVE" display="Cape Verde, Escudos" />
+	<item value="CZK" display="Czech Republic, Koruny" />
+	<item value="DJF" display="Djibouti, Francs" />
+	<item value="DKK" display="Denmark, Kroner" />
+	<item value="DOP" display="Dominican Republic, Pesos" />
+	<item value="DZD" display="Algeria, Algeria Dinars" />
+	<item value="EEK" display="Estonia, Krooni" />
+	<item value="EGP" display="Egypt, Pounds" />
+	<item value="ERN" display="Eritrea, Nakfa" />
+	<item value="ETB" display="Ethiopia, Birr" />
+	<item value="EUR" display="Euro Member Countries, Euro" />
+	<item value="FJD" display="Fiji, Dollars" />
+	<item value="FKP" display="Falkland Islands (Malvinas), Pounds" />
+	<item value="GBP" display="United Kingdom, Pounds" />
+	<item value="GEL" display="Georgia, Lari" />
+	<item value="GGP" display="Guernsey, Pounds" />
+	<item value="GHS" display="Ghana, Cedis" />
+	<item value="GIP" display="Gibraltar, Pounds" />
+	<item value="GMD" display="Gambia, Dalasi" />
+	<item value="GNF" display="Guinea, Francs" />
+	<item value="GTQ" display="Guatemala, Quetzales" />
+	<item value="GYD" display="Guyana, Dollars" />
+	<item value="HKD" display="Hong Kong, Dollars" />
+	<item value="HNL" display="Honduras, Lempiras" />
+	<item value="HRK" display="Croatia, Kuna" />
+	<item value="HTG" display="Haiti, Gourdes" />
+	<item value="HUF" display="Hungary, Forint" />
+	<item value="IDR" display="Indonesia, Rupiahs" />
+	<item value="ILS" display="Israel, New Shekels" />
+	<item value="IMP" display="Isle of Man, Pounds" />
+	<item value="INR" display="India, Rupees" />
+	<item value="IQD" display="Iraq, Dinars" />
+	<item value="IRR" display="Iran, Rials" />
+	<item value="ISK" display="Iceland, Kronur" />
+	<item value="JEP" display="Jersey, Pounds" />
+	<item value="JMD" display="Jamaica, Dollars" />
+	<item value="JOD" display="Jordan, Dinars" />
+	<item value="JPY" display="Japan, Yen" />
+	<item value="KES" display="Kenya, Shillings" />
+	<item value="KGS" display="Kyrgyzstan, Soms" />
+	<item value="KHR" display="Cambodia, Riels" />
+	<item value="KMF" display="Comoros, Francs" />
+	<item value="KPW" display="Korea (North), Won" />
+	<item value="KRW" display="Korea (South), Won" />
+	<item value="KWD" display="Kuwait, Dinars" />
+	<item value="KYD" display="Cayman Islands, Dollars" />
+	<item value="KZT" display="Kazakhstan, Tenge" />
+	<item value="LAK" display="Laos, Kips" />
+	<item value="LBP" display="Lebanon, Pounds" />
+	<item value="LKR" display="Sri Lanka, Rupees" />
+	<item value="LRD" display="Liberia, Dollars" />
+	<item value="LSL" display="Lesotho, Maloti" />
+	<item value="LTL" display="Lithuania, Litai" />
+	<item value="LVL" display="Latvia, Lati" />
+	<item value="LYD" display="Libya, Dinars" />
+	<item value="MAD" display="Morocco, Dirhams" />
+	<item value="MDL" display="Moldova, Lei" />
+	<item value="MGA" display="Madagascar, Ariary" />
+	<item value="MKD" display="Macedonia, Denars" />
+	<item value="MMK" display="Myanmar (Burma), Kyats" />
+	<item value="MNT" display="Mongolia, Tugriks" />
+	<item value="MOP" display="Macau, Patacas" />
+	<item value="MRO" display="Mauritania, Ouguiyas" />
+	<item value="MUR" display="Mauritius, Rupees" />
+	<item value="MVR" display="Maldives (Maldive Islands), Rufiyaa" />
+	<item value="MWK" display="Malawi, Kwachas" />
+	<item value="MXN" display="Mexico, Pesos" />
+	<item value="MYR" display="Malaysia, Ringgits" />
+	<item value="MZN" display="Mozambique, Meticais" />
+	<item value="NAD" display="Namibia, Dollars" />
+	<item value="NGN" display="Nigeria, Nairas" />
+	<item value="NIO" display="Nicaragua, Cordobas" />
+	<item value="NOK" display="Norway, Krone" />
+	<item value="NPR" display="Nepal, Nepal Rupees" />
+	<item value="NZD" display="New Zealand, Dollars" />
+	<item value="OMR" display="Oman, Rials" />
+	<item value="PAB" display="Panama, Balboa" />
+	<item value="PEN" display="Peru, Nuevos Soles" />
+	<item value="PGK" display="Papua New Guinea, Kina" />
+	<item value="PHP" display="Philippines, Pesos" />
+	<item value="PKR" display="Pakistan, Rupees" />
+	<item value="PLN" display="Poland, Zlotych" />
+	<item value="PYG" display="Paraguay, Guarani" />
+	<item value="QAR" display="Qatar, Rials" />
+	<item value="RON" display="Romania, New Lei" />
+	<item value="RSD" display="Serbia, Dinars" />
+	<item value="RUB" display="Russia, Rubles" />
+	<item value="RWF" display="Rwanda, Rwanda Francs" />
+	<item value="SAR" display="Saudi Arabia, Riyals" />
+	<item value="SBD" display="Solomon Islands, Dollars" />
+	<item value="SCR" display="Seychelles, Rupees" />
+	<item value="SDG" display="Sudan, Pounds" />
+	<item value="SEK" display="Sweden, Kronor" />
+	<item value="SGD" display="Singapore, Dollars" />
+	<item value="SHP" display="Saint Helena, Pounds" />
+	<item value="SKK" display="Slovakia, Koruny" />
+	<item value="SLL" display="Sierra Leone, Leones" />
+	<item value="SOS" display="Somalia, Shillings" />
+	<item value="SPL" display="Seborga, Luigini" />
+	<item value="SRD" display="Suriname, Dollars" />
+	<item value="STD" display="Sao Tome and Principe, Dobras" />
+	<item value="SVC" display="El Salvador, Colones" />
+	<item value="SYP" display="Syria, Pounds" />
+	<item value="SZL" display="Swaziland, Emalangeni" />
+	<item value="THB" display="Thailand, Baht" />
+	<item value="TJS" display="Tajikistan, Somoni" />
+	<item value="TMM" display="Turkmenistan, Manats" />
+	<item value="TND" display="Tunisia, Dinars" />
+	<item value="TOP" display="Tonga, Pa'anga" />
+	<item value="TRY" display="Turkey, New Lira" />
+	<item value="TTD" display="Trinidad and Tobago, Dollars" />
+	<item value="TVD" display="Tuvalu, Tuvalu Dollars" />
+	<item value="TWD" display="Taiwan, New Dollars" />
+	<item value="TZS" display="Tanzania, Shillings" />
+	<item value="UAH" display="Ukraine, Hryvnia" />
+	<item value="UGX" display="Uganda, Shillings" />
+	<item value="USD" display="United States of America, Dollars" />
+	<item value="UYU" display="Uruguay, Pesos" />
+	<item value="UZS" display="Uzbekistan, Sums" />
+	<item value="VEF" display="Venezuela, Bolivares Fuertes" />
+	<item value="VND" display="Viet Nam, Dong" />
+	<item value="VUV" display="Vanuatu, Vatu" />
+	<item value="WST" display="Samoa, Tala" />
+	<item value="XAF" display="Communaute; Financiere Africaine, Francs" />
+	<item value="XAG" display="Silver, Ounces" />
+	<item value="XAU" display="Gold, Ounces" />
+	<item value="XCD" display="East Caribbean Dollars" />
+	<item value="XDR" display="International Monetary Fund (IMF) Special Drawing Rights" />
+	<item value="XOF" display="Communaute; Financiere Africaine, Francs" />
+	<item value="XPD" display="Palladium Ounces" />
+	<item value="XPF" display="Comptoirs Francais du Pacifique Francs" />
+	<item value="XPT" display="Platinum, Ounces" />
+	<item value="YER" display="Yemen, Rials" />
+	<item value="ZAR" display="South Africa, Rand" />
+	<item value="ZMK" display="Zambia, Kwacha" />
+	<item value="ZWD" display="Zimbabwe, Zimbabwe Dollars" />        
+</envelope>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8" ?> 
+<envelope>
+	<item display="China" value="China" />	
+	<item display="France" value="France"/>
+	<item display="Germany" value="Germany"/>
+	<item display="Italy" value ="Italy" />
+	<item display="Korea" value="Korea" />	
+	<item display="Malaysia" value="Malaysia" />	
+	<item display="Spain" value ="Spain" />
+	<item display="Switzerland" value="Switzerland" />
+	<item display="United Kingdom" value="UK" />
+	<item display="USA" value="USA" />
+</envelope>

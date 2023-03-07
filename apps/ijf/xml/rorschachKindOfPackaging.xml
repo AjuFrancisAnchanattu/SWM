@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8" ?> 
+<envelope>
+	<item display="" value="" />
+	<item display="{TRANSLATE:concertina}" value="{TRANSLATE:concertina}" />
+	<item display="{TRANSLATE:carton}" value="{TRANSLATE:carton}" />
+	<item display="{TRANSLATE:bag}" value="{TRANSLATE:bag}" />
+	<item display="{TRANSLATE:sleeve_packed}" value="{TRANSLATE:sleeve_packed}" />
+	<item display="{TRANSLATE:towerpack}" value="{TRANSLATE:towerpack}" />
+	<item display="{TRANSLATE:single_box}" value="{TRANSLATE:single_box}" />
+	<item display="{TRANSLATE:flowpack}" value="{TRANSLATE:flowpack}" />
+	<item display="{TRANSLATE:blister_packed}" value="{TRANSLATE:blister_packed}" />
+	<item display="{TRANSLATE:mono_blister}" value="{TRANSLATE:mono_blister}" />
+</envelope>

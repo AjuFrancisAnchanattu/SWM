@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8" ?> 
+<envelope>
+	<item display="Ashton" value="Ashton" />	
+	<item display="Barcelona" value="Barcelona" />
+	<item display="Bellegarde" value="Bellegarde" />
+	<item display="Carlstadt" value="Carlstadt" />
+	<item display="Dunstable" value="Dunstable" />
+	<item display="Ghislarengo" value="Ghislarengo" />
+	<item display="Hong Kong" value="HongKong" />
+	<item display="Inglewood" value="Inglewood" />
+	<item display="Korea" value="Korea" />
+	<item display="Kuala Lumpur" value="Kuala Lumpur" />
+	<item display="Luton" value="Luton" />
+	<item display="Lymington" value="Lymington" />
+	<item display="Mannheim" value="Mannheim" />
+	<item display="Mansfield" value="Mansfield" />
+	<item display="Renfrew" value="Renfrew" />
+	<item display="Rorschach" value="Rorschach" />
+	<item display="Shanghai" value="Shanghai" />
+	<item display="Valence" value="Valence" />
+	<item display="Windsor" value="na" />
+	<item display="other" value="Windsor" />
+</envelope>

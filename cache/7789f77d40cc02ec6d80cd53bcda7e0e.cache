@@ -1,0 +1,7 @@
+a:2:{s:4:"date";i:1657289881;s:4:"data";s:212:"<?xml version="1.0" encoding="utf-8" ?> 
+<envelope>
+	<item value="existing_client" />
+	<item value="existing_distributor" />
+	<item value="customer_distributor" />
+	<item value="new_customer" />
+</envelope>";}

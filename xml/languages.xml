@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8" ?> 
+<envelope>
+	<item value="Dutch" />
+	<item value="ENGLISH" />
+	<item value="FRENCH" />
+	<item value="GERMAN" />
+	<item value="ITALIAN" />
+	<item value="SPANISH" />
+	
+</envelope>

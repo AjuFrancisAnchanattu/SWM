@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8" ?> 
+<envelope>
+	<item feedURL="http://newsrss.bbc.co.uk/rss/newsonline_uk_edition/latest_published_stories/rss.xml" feedName="BBC News (UK)" />
+	<item feedURL="http://rss.cnn.com/rss/cnn_latest.rss" feedName="CNN (US)" />
+	<item feedURL="http://www.france24.com/fr/monde/rss" feedName="France 24 (FR)" />
+	<item feedURL="http://www.tagesschau.de/xml/tagesschau-meldungen/" feedName="Tagesschau (DE)" />
+	<item feedURL="http://www.ansa.it/main/notizie/awnplus/topnews/synd/ansait_awnplus_topnews_medsynd_Today_Idx.xml" feedName="ANSA top news (IT)" />
+</envelope>

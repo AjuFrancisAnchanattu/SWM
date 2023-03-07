@@ -1,0 +1,611 @@
+<?php
+
+class item extends control 
+{
+	protected $name;
+	protected $class;
+	protected $dataType = "string";
+	protected $length = 0;
+	protected $value;
+	protected $required = false;
+	protected $rowTitle;
+	protected $showRow = true;
+	protected $valid = true;
+	protected $database = "";
+	protected $table = "";
+	protected $group = "-1"; // a default value that won't be matched
+	protected $ignore = false;
+	protected $label = "";
+	protected $visible = true;
+	protected $dependency = false;
+	protected $helpId = 0;
+	protected $rowType = "row";
+	protected $legend = "";
+	
+	protected $isAnNTLogon = false;
+	
+	
+	function __construct($name)
+	{
+		$reservedNames = array('length');
+		
+		if (in_array($name, $reservedNames))
+		{
+			die("Control $name is a reserved word, please use a different name");
+		}
+		
+		
+		$this->name = $name;
+	}
+	
+	
+	public function processActions()
+	{
+		// nothing by default
+	}
+	
+	public function setValue($value)
+	{
+		$this->value = $value;
+	}
+	public function getValue()
+	{
+		return $this->value;
+	}
+	
+	
+	public function setLegend($legend)
+	{
+		$this->legend = $legend;
+	}
+	public function getLegend()
+	{
+		return $this->legend;
+	}
+	
+	
+	public function getDisplayValue()
+	{
+		if ($this->isAnNTLogon)
+		{
+			if (strlen($this->getValue()) > 0)
+			{
+				//page::addDebug("getName()", __FILE__, __LINE__);
+				return usercache::getInstance()->get($this->getValue())->getName();
+			}
+			else 
+			{
+				return "";
+			}
+		}
+		else 
+		{
+			return $this->getValue();
+		}
+	}
+	
+	
+	
+	public function setIgnore($ignore)
+	{
+		$this->ignore = $ignore;
+	}
+	
+	public function getIgnore()
+	{
+		return $this->ignore;
+	}
+	
+	public function setLabel($label)
+	{
+		$this->label = $label;
+	}
+	
+	public function getLabel()
+	{
+		return $this->label;
+	}
+	
+	public function setHelpId($id)
+	{
+		$this->helpId = $id;
+		
+	//	helpcache::getInstance()->addId($id);
+	}
+	
+	public function getHelpId()
+	{
+		return $this->helpId;
+	}
+	
+	
+	public function setVisible($visible)
+	{
+		$this->visible = $visible;
+	}
+	
+	public function getVisible()
+	{
+		return $this->visible;
+	}
+	
+	
+	public function setDataType($dataType)
+	{
+		$availableTypes = array(
+			'ignore' => 0,
+			'attachment' => 0,
+			'boolean' => 1,
+			'number' => 10,
+			'decimal' => 10,
+			'text' => 1000,
+			'string' => 255,
+			'date' => 10
+		);
+		
+		if (array_key_exists($dataType, $availableTypes))
+		{	
+			$this->dataType = $dataType;
+			$this->setLength($availableTypes[$dataType]);
+		}
+		else 
+		{
+			die("dataType not supported (".$this->name . ") in ". __FILE__);
+		}
+	}
+	public function getDataType()
+	{
+		return $this->dataType;
+	}
+	
+	public function setLength($length)
+	{
+		$this->length = $length;
+	}
+	public function getLength()
+	{
+		return $this->length;
+	}
+	
+	
+	public function setRowTitle($rowTitle)
+	{
+		$this->rowTitle = translate::getInstance()->translate($rowTitle);
+	}
+	public function getRowTitle()
+	{
+		return $this->rowTitle;
+	}
+	
+	public function setShowRow($showRow)
+	{
+		$this->showRow = $showRow;
+	}
+	public function getShowRow()
+	{
+		return $this->showRow;
+	}
+	
+	// only use if you know what you are doing!
+	public function setName($name)
+	{
+		$this->name = $name;
+	}
+	
+	
+	public function getName()
+	{
+		return $this->name;
+	}
+	
+	public function setRequired($required)
+	{
+		$this->required = $required;
+	}
+	
+	public function isRequired()
+	{
+		return $this->required;
+	}
+	
+	public function setValid($valid)
+	{
+		$this->valid = $valid;
+	}
+	
+	public function isValid()
+	{
+		return $this->valid;
+	}
+	
+	public function getRowTop($showHelp = true)
+	{
+		$top = "";
+		
+		if ($this->getShowRow())
+		{
+			$top = sprintf('<row type="%s" name="%s" group="%s" title="%s" show="%s" valid="%s" help="%s" helpedit="%s" debug="%s" %s>',
+				$this->getRowType(),
+				$this->getName(),
+				$this->getGroup(),
+				$this->getRowTitle(),
+				$this->getVisible() == true ? 'true' : 'false',
+				$this->isValid() == true ? 'true' : 'false',
+				$showHelp ? $this->getHelpId() : 0,
+				$this->getHelpId() && (currentuser::getInstance()->isAdmin() || currentuser::getInstance()->hasPermission($GLOBALS['appName'] . "_translations")) ? translate::getInstance()->getTranslateID("HELP_" . $this->getHelpId()) : 0,
+				page::getDebug(),
+				!empty($this->label) ? 'label="'. $this->getLabel() . '"' : ''
+			);
+			
+			if ($this->getHelpId() != 0  && $showHelp)
+			{
+				$top .= "<help id=\"". $this->getHelpId() ."\">" . page::formatAsParagraphs(translate::getInstance()->translate("HELP_" . $this->getHelpId())) . "</help>";
+			}
+		}
+		
+		return $top;
+	}
+	
+	public function setRowType($rowType)
+	{
+		$this->rowType = $rowType;
+	}
+	
+	public function getRowType()
+	{
+		return $this->rowType;
+	}
+	
+	
+	public function getRowBottom()
+	{
+		$bottom = "";
+		
+		if ($this->getShowRow())
+		{
+			$bottom = "</row>";
+		}
+		
+		return $bottom;
+	}
+	
+	public function setTable($table)
+	{
+		$this->table = $table;
+	}
+	
+	public function getTable()
+	{
+		return $this->table;
+	}
+	
+	public function setGroup($group)
+	{
+		$this->group = $group;
+	}
+	
+	public function getGroup()
+	{
+		return $this->group;
+	}
+	
+	
+	
+	public function validate()
+	{
+		$valid = true;
+			
+		if ($this->getVisible())
+		{
+			switch ($this->getDataType())
+			{
+				case 'string':
+				
+					if (strlen($this->getValue()) > 255)
+					{
+						$valid = false;
+						break;
+					}
+					
+					if ($this->isRequired())
+					{
+						if (strlen($this->getValue()) == 0)
+						{
+							$valid = false;
+							break;
+						}
+					}
+					break;
+				
+					
+				case 'text':
+				
+					if ($this->isRequired())
+					{
+						if (strlen($this->getValue()) == 0)
+						{
+							$valid = false;
+							break;
+						}
+					}		
+					break;	
+					
+					
+				case 'date':
+					if ($this->isRequired())
+					{
+						if (strlen($this->getValue()) == 0)
+						{
+							$valid = false;
+							break;
+						}
+					}
+					
+					if (!$this->isRequired() && strlen($this->getValue()) == 0)
+					{
+						//$valid = true;
+						break;
+					}
+					
+					if (!preg_match("/^[0-3][0-9]\/[0-1][0-9]\/[0-9]{4}$/",$this->getValue()))
+					{
+						$valid = false;
+						break;
+					}
+					
+					$dateArray = explode("/",$this->getValue());
+					
+					if (!checkdate($dateArray[1],$dateArray[0],$dateArray[2]))
+					{
+						$valid = false;
+						break;
+					}
+					
+					break;
+					
+					
+				case 'number':
+				case 'decimal':
+					
+					if (!$this->isRequired() && strlen($this->getValue()) == 0)
+					{
+						break;
+					}
+									
+					if (!is_numeric($this->getValue()))
+					{
+						$valid = false;
+						break;
+					}
+
+				case 'boolean':					
+				case 'ignore':
+				case 'attachment':
+					break;
+					
+				default:
+				
+					die($this->getDataType() . " unsupported in validate()");
+			}				
+		}
+		
+		$this->setValid($valid);
+		
+		page::addDebug($this->getName() . ": " . ($valid ? 'true' : 'false') , __FILE__, __LINE__);
+		
+		return $valid;
+	}
+	
+	
+	
+	
+	public function processPost($value)
+	{
+		if (!is_null($value))
+		{
+			if ($this->isAnNTLogon)
+			{
+				$returned = user::getNTLoginFromName($value);
+				
+				if (!is_null($returned))
+				{
+					$this->setValue($returned);
+				}
+				else
+				{
+					$this->setValue($value);
+				//	$this->setValid(false);
+				}
+			}
+			else 
+			{
+				$this->setValue($value);
+			}
+		}
+	}
+	
+	
+	public function generateInsertQuery()
+	{
+		$output = array(
+			'name' => "",
+			'value' => ""
+		);
+		
+		switch ($this->getDataType())
+		{
+			case 'string':
+			case 'text':
+			case 'decimal':
+				$output['name'] = "`".$this->getName()."`";
+				$output['value'] = "'" . addslashes($this->getValue()) . "'";
+				break;
+				
+			case 'date':
+				$output['name'] = "`".$this->getName()."`";
+				$output['value'] = "'" . page::transformDateForMYSQL($this->getValue()) . "'";
+				break;
+				
+			case 'number':
+			case 'boolean':
+				$output['name'] = "`".$this->getName()."`";
+				$output['value'] = $this->getValue();			
+				break;			
+			
+			/*case 'ignore':
+				break;*/
+				
+			default:
+			
+				die($this->getDataType() . " unsupported in generateInsertQuery()");
+		}
+		
+		return $output;
+	}
+	
+	
+	
+	public function generateUpdateQuery()
+	{
+		$output = "";
+		
+		switch ($this->getDataType())
+		{
+			case 'string':
+			case 'text':
+			case 'decimal':
+			
+				$output = "`".$this->getName()."` = '" . addslashes($this->getValue()) . "'";			
+				break;
+				
+			case 'date':
+				$output = "`".$this->getName()."` = '" . page::transformDateForMYSQL($this->getValue()) . "'";		
+				break;
+				
+			case 'number':
+			case 'boolean':
+			
+				$output = "`".$this->getName()."` = " . $this->getValue();			
+				break;
+				
+			/*case 'ignore':
+
+				break;*/
+				
+				
+			default:
+			
+				die($this->getDataType() . " unsupported in generateUpdateQuery() in class Form");
+		}
+		
+		return $output;
+	}
+	
+	public function preInsertOperations()
+	{
+		if ($this->getDataType() == 'number')
+		{
+			// if it's empty, set this control to ignore so we don't try and enter an empty number.
+			if ($this->getValue() == '')
+			{
+				$this->setIgnore(true);
+			}
+		}
+		
+		if ($this->getDataType() == 'date')
+		{
+			// if it's empty, set this control to ignore so we don't try and enter an empty date.
+			if ($this->getValue() == '')
+			{
+				$this->setIgnore(true);
+			}
+		}
+	}
+	
+	public function preUpdateOperations()
+	{
+		if ($this->getDataType() == 'number')
+		{
+			// if it's empty, set this control to ignore so we don't try and enter an empty number.
+			if ($this->getValue() == '')
+			{
+				$this->setIgnore(true);
+			}
+		}
+		
+		if ($this->getDataType() == 'date')
+		{
+			// if it's empty, set this control to ignore so we don't try and enter an empty date.
+			if ($this->getValue() == '')
+			{
+				$this->setIgnore(true);
+			}
+		}
+	}
+	
+
+	public function addControllingDependency($dependency)
+	{
+		$this->dependency[] = $dependency;
+	}
+	
+	public function getDependency()
+	{
+		return $this->dependency;
+	}
+	
+	
+	public function readOnlyOutput()
+	{
+		if (!$this->getVisible())
+		{
+			return "";
+		}
+		
+		$output = $this->getRowTop(false);
+		
+		$tempValue = "";
+		
+		if ($this->getDisplayValue())
+		{
+			if (is_array($this->getDisplayValue()))
+			{
+				$tempValue = implode(", ",$this->getDisplayValue());
+			}
+			else 
+			{
+				$tempValue = trim($this->getDisplayValue());
+			}
+		}
+		else
+		{
+			$tempValue = "-";
+		}
+		
+		if ($tempValue == "" || $tempValue == " ")
+		{
+			$tempValue = "-";
+		}
+			
+
+		$output .= "<readonly>" . page::formatAsParagraphs($tempValue, "\n") . "</readonly>";
+		
+		$output .= $this->getRowBottom();
+		
+		return $output;
+	}
+	
+	
+	public function setIsAnNTLogon($isAnNTLogon)
+	{
+		$this->isAnNTLogon = $isAnNTLogon;
+	}
+	
+	public function getIsAnNTLogon()
+	{
+		return $this->$isAnNTLogon;
+	}
+	
+}
+
+?>

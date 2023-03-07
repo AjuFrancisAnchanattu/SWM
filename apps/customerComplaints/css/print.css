@@ -1,0 +1,41 @@
+.debug
+{
+	display: none;
+}
+
+.showLegend
+{
+	display: none;
+}
+
+.noPrint
+{
+	display: none;
+}
+
+.printMe
+{
+	background: #ffffff;
+	width: 100%;
+	color: #000000;
+	border: none;
+}
+
+.printMe table,
+.printMe table *
+{
+	background: #ffffff;
+	color: #444444;
+	border: none;
+}
+
+.printMe td
+{
+	border: #888888 1px solid;
+	padding: 5px;
+}
+
+.printMe img
+{
+	display: none;
+}

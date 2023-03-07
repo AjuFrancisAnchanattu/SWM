@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<envelope>
+  <item title="home" url="http://myscapa2/">
+    <child title="Euro Link" url="" showInLocale="" hideInLocale="" perms="">
+      <grandchild title="English" url="http://myscapa2/data/euro link/Euro Link August 05.pdf" showInLocale="" hideInLocale="" perms="" />
+      <grandchild title="Francais" url="http://myscapa2/data/euro link/Euro Link August 05 - French.pdf" showInLocale="" hideInLocale="" perms="" />
+      <grandchild title="Deutsche" url="http://myscapa2/data/euro link/Euro Link August 05 - German.pdf" showInLocale="" hideInLocale="" perms="" />
+    </child>
+    <child title="PREFERENCES" url="/home/details?" />
+    <child title="CORPORATE_HOME" url="http://www.scapa.com/" hideInLocale="USA,CANADA,MALAYSIA,KOREA,CHINA" />
+    <child title="CORPORATE_HOME" url="http://www.scapaasia.com/" showInLocale="MALAYSIA,KOREA,CHINA" />
+    <child title="CORPORATE_HOME" url="http://www.scapana.com/" showInLocale="USA,CANADA" />
+    <child title="Organisation Chart" url="http://myscapa2/europeanOrgChart.aspx" showInLocale="" hideInLocale="" perms="" />
+  </item>
+  <item title="Admin" url="#" showInLocale="" hideInLocale="" perms="admin,translations_admin">
+  	<child title="Trac Project Management" url="/trac/" showInLocale="" hideInLocale="" perms="admin" />
+    <child title="Menu Editor" url="http://myscapa2/apps/menuEditor/default.aspx" showInLocale="" hideInLocale="" perms="admin" />
+    <child title="User Manager" url="/apps/usermanager/" showInLocale="" hideInLocale="" perms="admin" />
+    <child title="Statistics" url="/apps/stats/" showInLocale="" hideInLocale="" perms="admin" />
+    <child title="Translations" url="/apps/translations/" showInLocale="" hideInLocale="" perms="admin,translations_admin" />
+    <child title="Documentation" url="/doc/index.html" showInLocale="" hideInLocale="" perms="admin" />
+    <child title="Clear Cache" url="/home/clearCache" showInLocale="" hideInLocale="" perms="admin" />
+    <child title="Clear Session" url="/home/clearSession" showInLocale="" hideInLocale="" perms="admin" />
+    <child title="LIVE_INTRANET" url="http://myscapa2/" perms="admin" />
+    <child title="LIVE PHP INTRANET" url="http://scapanet/" perms="admin" />
+    <child title="DEV PHP INTRANET" url="http://scapanetdev/" perms="admin" />
+  </item>
+  <item title="APPLICATIONS" url="#">
+    <child title="COMPLAINTS" url="http://myscapa2/apps/complaints" showInLocale="" hideInLocale="" perms="" />
+    <child title="Customer Contact Report" url="/apps/ccr/" showInLocale="" hideInLocale="" perms="" />
+    <child title="Document Management System" url="/apps/docman/" showInLocale="" hideInLocale="" perms="admin" />
+    <child title="Global Information System" url="http://myscapa2/apps/gis/default.aspx" showInLocale="" hideInLocale="" perms="" />
+    <child title="HR" url="/apps/hr/" perms="admin" showInLocale="" hideInLocale="" />
+    <child title="IJF" url="http://intranet/apps/IJF%20System/eng/menu.asp" />
+    <child title="NPI" url="http://myscapa2/apps/npi/default.aspx" showInLocale="" hideInLocale="MALAYSIA " perms="">
+      <grandchild title="NEW_SYSTEM" url="http://myscapa2/apps/npi/default.aspx" showInLocale="" hideInLocale="" perms="" />
+      <grandchild title="OLD_SYSTEM" url="http://intranet/apps/npi/menu.asp" showInLocale="" hideInLocale="MALAYSIA" perms="" />
+    </child>
+    <child title="INTRANET_PRODUCT_DATABASE" url="http://myscapa2/apps/productdatabase/" showInLocale="" hideInLocale="" perms="admin,productDB_view,productDB_admin" /> 
+    <child title="SLOBS" url="/apps/slobs/" showInLocale="" hideInLocale="" perms="admin,slobs_admin" />
+    <child title="TES" url="http://intranet/apps/Tech%20Enq/menu.asp" />  
+  </item>
+  <item title="QUALITY" url="#" hideInLocale="MALAYSIA">
+    <child title="Documentations" url="#" showInLocale="FRANCE">
+      <grandchild title="Index des Procédures Européennes Qualité (QPP - Valence)" url="http://intranet/fr/procedures/qualitybellegardevalence.asp" />
+      <grandchild title="Index des Procédures Européennes Qualité (QPP - Bellegarde)" url="http://intranet/fr/procedures/qualitybellegarde.asp" />
+      <grandchild title="Index des Procédures Européennes d activité (BPP - Valence)" url="http://intranet/fr/procedures/BusinessBellegardeValence.asp" />
+      <grandchild title="Index des Procédures Européennes d activité (BPP - Bellegarde)" url="http://intranet/fr/procedures/BusinessBellegarde.asp" />
+      <grandchild title="Index des Politiques Européennes" url="http://intranet/fr/procedures/european%20policy.asp" />
+      <grandchild title="Index de documentation locale France" url="http://intranet/fr/LOCALfr.asp" />
+      <grandchild title="Index des Formations aux Procédures" url="http://intranet/fr/formation.asp" />
+    </child>
+    <child title="Documentazione di Sistema" url="#" showInLocale="ITALY">
+      <grandchild title="Elenco delle procedure europee QPP e documenti collegati" url="http://intranet/it/procedures/qualityghislarengo.asp" />
+      <grandchild title="Elenco delle procedure europee BPP e documenti collegati" url="http://intranet/it/procedures/BusinessGhislarengo.asp" />
+      <grandchild title="Elenco delle procedure e documenti locali" url="http://intranet/it/procedures/proceduresmenu.asp" />
+      <grandchild title="Elenco delle politiche europee" url="http://intranet/it/procedures/european%20policy.asp" />
+    </child>
+    <child title="Procedure Locali" url="http://myscapa2/apps/docmanagement/defaultlocalproceduresIT.aspx" showInLocale="ITALY" hideInLocale="" perms="" />
+    <child title="Manuale QOS" url="file://stghibdc002/shares/DOCUMENTI SISTEMA INTEGRATO/manuali/QOS - 001 I rev05.doc" showInLocale="ITALY" hideInLocale="" perms="" />
+    <child title="EURO_INDICES" url="#">
+      <grandchild title="EURO_PROCEDURE_INDEX" url="http://intranet/en/procedures/qualityprocedures.asp" />
+      <grandchild title="EURO_POLICY_INDEX" url="http://intranet/en/procedures/european policy.asp" />
+    </child>
+    <child title="DATA_TREE" url="#">
+      <grandchild title="SIGNATURE_LIST" url="http://myscapa2/procedures.aspx?mode=asl" />
+      <grandchild title="MATRIX_TREE" url="http://myscapa2/procedures.aspx?mode=matrix" />
+    </child>
+    <child title="Document Management - Admin" url="http://intranet/apps/DocManSystem/menu.asp" hideInLocale="FRANCE,ITALY" />
+    <child title="Document Management - Admin" url="http://intranet/apps/DocManSystem/fr/menu.asp" showInLocale="FRANCE" />
+    <child title="Document Management - Admin" url="http://intranet/apps/DocManSystem/it/menu.asp" showInLocale="ITALY" />
+    <child title="DOC_MANAGEMENT" url="http://myscapa2/apps/docmanagement/default.aspx" perms="admin,docman_admin" />
+  </item>
+  <item title="SAP" url="#">
+    <child title="RELATED_INFORMATION" url="#" hideInLocale="MALAYSIA">
+      <grandchild title="SAP_FUNCTIONS" url="file://Stdunbdc001/SAPFIN/START2.HTM" />
+      <grandchild title="SAP_HOMEPAGE" url="http://www.sap.com" />
+    </child>
+    <child title="MATERIAL_MASTER_FIELDS" url="file://Stdunbdc001/SHARES/A3%20Visio%20Procedures/Material%20master%20fields%20-%20Intranet/Material%20master%20field%20settings%20view%20by%20view%20on%20Intranet.xls" hideInLocale="MALAYSIA" />
+    <child title="STT" url="http://myscapa2/stt.aspx">
+      <grandchild title="INTRODUCTION" url="http://myscapa2/stt.aspx" />
+      <grandchild title="MATERIAL_MANAGEMENT" url="http://myscapa2/stt.aspx?mode=material" />
+      <grandchild title="PRODUCTION_PLANNING" url="http://myscapa2/stt.aspx?mode=production" />
+      <grandchild title="SALES" url="/stt.aspx?mode=sales" />
+    </child>
+    <child title="SAP Training Documents - Admin" url="http://intranet/apps/std/menu.asp " showInLocale="" hideInLocale="" perms="admin,saptd_admin" />
+    <child title="SAP Training Documents" url="#" showInLocale="" hideInLocale="" perms="admin,saptd_admin">
+      <grandchild title="General / Tools" url="http://myscapa2/apps/SAPTrainingDocuments/default.aspx?mode=general" showInLocale="" hideInLocale="" perms="" />
+      <grandchild title="Planning" url="http://myscapa2/apps/SAPTrainingDocuments/default.aspx?mode=planning" showInLocale="" hideInLocale="" perms="" />
+      <grandchild title="Production" url="http://myscapa2/apps/SAPTrainingDocuments/default.aspx?mode=production" showInLocale="" hideInLocale="" perms="" />
+      <grandchild title="Finance &amp; CO" url="http://myscapa2/apps/SAPTrainingDocuments/default.aspx?mode=finance" showInLocale="" hideInLocale="" perms="" />
+      <grandchild title="Purchasing" url="http://myscapa2/apps/SAPTrainingDocuments/default.aspx?mode=purchasing" showInLocale="" hideInLocale="" perms="" />
+      <grandchild title="Sales" url="http://myscapa2/apps/SAPTrainingDocuments/default.aspx?mode=sales" showInLocale="" hideInLocale="" perms="" />
+      <grandchild title="Warehousing" url="http://myscapa2/apps/SAPTrainingDocuments/default.aspx?mode=warehousing" showInLocale="" hideInLocale="" perms="" />
+    </child>
+  </item>
+  <item title="UTILITIES" url="#" hideInLocale="MALAYSIA">
+    <child title="Scapa Group Finance Policy Manual" url="file://10.15.99.21/grouppolicy$/Group Policy Manual Index.doc" showInLocale="" hideInLocale="" perms="" />
+    <child title="CAR_MILEAGE" url="file://10.1.99.21/public/Expense%20Forms/car%20mileage%20Record.xls" />
+    <child title="EXPENSE_CLAIM_FORM" url="file://10.1.99.21/public/Expense%20Forms/Expenses%20Claim%20Form.xls" />
+    <child title="EXPENSE_POLICY_FORM" url="file://10.1.99.21/public/Expense%20Forms/Expenses%20policy%20Summary.doc" />
+    <child title="EXPENSE_CLAIM" url="file://10.1.99.21/public/Expense%20Forms/Expenses%20policy.doc" />
+    <child title="EXPENSE_FLOWCHARTS" url="file://10.1.99.21/public/Expense%20Forms/Expenses%20Flowcharts.ppt" />
+    <child title="OWN_CAR" url="/Own car for business use template.xls" />
+  </item>
+  <item title="TRAINING" url="http://intranet/apps/training/menu.asp" hideInLocale="MALAYSIA">
+    <child title="IT_TRAINING_DOCS" url="http://intranet/apps/training/menu.asp" />
+    <child title="IT Training Videos" url="/apps/training/trainingVideos.aspx" showInLocale="" hideInLocale="" perms="" />
+    <child title="IJF Training Documents" url="/apps/training/IJFTrainingDocuments.aspx" showInLocale="" hideInLocale="" perms="" />
+  </item>
+</envelope>

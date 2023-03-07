@@ -1,0 +1,11 @@
+<attach event="onmouseover" handler="rollOver" />
+<attach event="onmouseout" handler="rollOff" />
+<script type="text/javascript">
+function rollOver() {
+	element.className += (element.className?' ':'') + 'ieHoverHack';
+}
+
+function rollOff() {
+	element.className = element.className.replace(/ ?ieHoverHack$/,'');
+}
+</script>

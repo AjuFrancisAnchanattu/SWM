@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8" ?> 
+<envelope>
+	<item value="ashton" display="Ashton" />
+	<item value="bellegarde" display="Bellegarde" />
+	<item value="dunstable" display="Dunstable"  />
+	<item value="ghislarengo" display="Ghislarengo"  />
+	<item value="rorschach" display="Rorschach"/>
+	<item value="valence" display="Valence"  />
+	<item value="windsor" display="Windsor"  />
+	<!--
+		<item value="megalon" display="Megalon"  /> 
+	-->
+</envelope>

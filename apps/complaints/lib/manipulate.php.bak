@@ -1,0 +1,991 @@
+<?php
+
+require 'complaint.php';
+
+
+class manipulate extends page
+{
+	protected $complaint;
+	protected $pageAction;
+	protected $reportActionId;
+	protected $materialActionId;
+	protected $opportunityId;
+	protected $opportunityActionId;
+	protected $delegateForm;
+	protected $valid = false;
+	protected $orderId;
+	
+	
+	function __construct()
+	{
+		// call page constructor
+		parent::__construct();
+		
+	}
+		
+	
+	// process form submissions
+	
+	public function processPost()
+	{
+		//echo "HERE";exit;
+		// process request
+		if ($_SERVER['REQUEST_METHOD'] == 'POST')
+		{
+			// get anything posted by the form
+						
+			page::addDebug("Current Location: " . $this->getLocation(), __FILE__, __LINE__);
+			//echo $this->getLocation();exit;
+			switch($this->getLocation())
+			{
+				case 'complaint':
+					$this->complaint->form->processPost();
+					// $this->complaint->processHierarchy();
+					break;
+				case 'evaluation':
+					$this->complaint->getEvaluation()->form->processPost();
+					break;
+				case 'conclusion':
+					$this->complaint->getConclusion()->form->processPost();
+					break;
+				/*case 'production':
+					$this->ijf->getProduction()->form->processPost();
+					break;
+				case 'productOwner':
+					$this->ijf->getProductOwner()->form->processPost();
+					break;
+				case 'commercialPlanning':
+					$this->ijf->getCommercialPlanning()->form->processPost();
+					break;
+				case 'finance':
+					$this->ijf->getFinance()->form->processPost();
+					break;
+				//case 'productionSite':
+				//	$this->ijf->getProductionSite()->form->processPost();
+				//	break;
+				*/
+			
+			}
+			
+			$this->complaint->form->processDependencies();
+		}
+	}
+	
+	
+	
+	public function validate()
+	{
+		
+		if ($_SERVER['REQUEST_METHOD'] == 'POST')
+		{
+			/*echo "<pre>";
+			print_r($_SESSION);
+			echo "</pre>";
+			exit;*/
+//			$this->getPageAction();
+			
+//			if ($this->getPageAction() == "complaint")
+//			{		
+
+			//echo "|".$this->valid."<br>";
+				$today = date("Y-m-d");
+				$today_date = strtotime($today);
+				$complaintDate = strtotime(page::transformDateForMYSQL($this->complaint->form->get("customerComplaintDate")->getValue()));
+			
+				if($complaintDate > $today_date)
+				{
+					$this->add_output("<error />");
+					$this->setPageAction("complaint");
+				}
+				
+				if (isset($_POST['validate']) && $_POST['validate']=='true')
+				{
+					$this->valid = $this->complaint->validate();
+				}			
+				
+			
+				$receptionDate = strtotime(page::transformDateForMYSQL($this->complaint->form->get("sampleReceptionDate")->getValue()));
+				
+				if($this->complaint->form->get("sampleReceptionDate")->getValue() == "Yes")
+				{
+					if($receptionDate > $today_date)
+					{
+						$this->add_output("<error />");
+						$this->setPageAction("complaint");
+					}
+					
+					if (isset($_POST['validate']) && $_POST['validate']=='true')
+					{
+						$this->valid = $this->complaint->validate();
+					}		
+				}
+
+				//validate the entry in the processOwner field, is it a valig NTLogon?
+				$datasetLogon = mysql::getInstance()->selectDatabase("membership")->Execute("SELECT DISTINCT NTLogon FROM employee WHERE `NTLogon` = '" . $this->complaint->form->get("processOwner")->getValue() . "'");
+				if (mysql_num_rows($datasetLogon) != 1)
+				{
+					//die("name in PO box incorrect");
+					$this->add_output("<error />");
+					$this->complaint->form->get("processOwner")->setValid(false);
+					$this->setPageAction("complaint");
+				}
+				
+//			}
+			
+			//echo "|".$this->valid."<br>";
+			if($this->complaint->getEvaluation())
+			{
+				if($this->complaint->getEvaluation()->form->get("isSampleReceived")->getValue() == "YES")
+				{
+//					if($this->complaint->getEvaluation()->form->get("dateSampleReceived")->getValue() < $this->complaint->form->get("sampleReceptionDate")->getValue())
+//					
+//					{
+//						$this->add_output("<error />");
+//						$this->setPageAction("evaluation");
+//					}
+				
+					if (isset($_POST['validate']) && $_POST['validate']=='true')
+					{
+						$this->valid = $this->complaint->validate();
+					}
+				}	
+				if (isset($_POST['validate']) && $_POST['validate']=='true')
+				{
+					//echo "|".$this->valid."<br>";
+					$this->valid = $this->complaint->validate();
+					//echo "|".$this->valid;exit;
+				}
+				
+				if($this->complaint->getEvaluation()->form->get("processOwner")->getValue() =='')
+				{
+					$this->add_output("<error />");
+					$this->complaint->getEvaluation()->form->get("processOwner")->setValid(false);
+					$this->setPageAction("evaluation");
+				}
+				else 
+				{
+					$datasetLogon = mysql::getInstance()->selectDatabase("membership")->Execute("SELECT DISTINCT NTLogon FROM employee WHERE `NTLogon` = '" . $this->complaint->getEvaluation()->form->get("processOwner")->getValue() . "'");
+					if (mysql_num_rows($datasetLogon) != 1)
+					{
+						//die("name in PO box incorrect");
+						$this->add_output("<error />");
+						$this->complaint->getEvaluation()->form->get("processOwner")->setValid(false);
+						$this->setPageAction("evaluation");
+					}
+				}
+			}
+			
+			
+		}
+			
+		
+		
+		//strlen($string);
+		
+		//die($this->valid);
+		
+		page::addDebug("page action:" .$this->getPageAction(), __FILE__, __LINE__);
+		if ($this->getPageAction() == "submit")
+		{
+			if ($this->valid)
+			{
+				page::addDebug("valid", __FILE__, __LINE__);
+				page::addDebug("SAVE THE COMPLAINT", __FILE__, __LINE__);
+				if(isset($_REQUEST["sfID"]) && $_REQUEST["sfID"]){
+					mysql::getInstance()->selectDatabase("complaints")->Execute("DELETE FROM savedForms WHERE sfID = '".$_REQUEST["sfID"]."' AND sfOwner = '".currentuser::getInstance()->getNTLogon()."' LIMIT 1");
+				}
+				
+				$this->complaint->save($this->getLocation());
+				//$this->setPageAction("complaint");
+				
+				//commented out for debug BPD
+				//$this->redirect("/apps/complaint/index?id=" . $this->complaint->getId());
+			}
+			else
+			{
+				//echo $this->complaint->form->isValid();exit;
+				$this->add_output("<error />");
+				
+				
+				// find first error.
+				
+				if (!$this->complaint->form->isValid())
+				{
+					$this->setPageAction("complaint");
+				}
+			}
+		}
+	}
+	
+	
+	
+	
+	public function doStuffAndShow($outputType="normal")
+	{
+		//echo "HERE";exit;
+		$output = "";
+		page::addDebug("PAGE ACTION: ". $this->getPageAction(), __FILE__, __LINE__);	
+		if (isset($_REQUEST['id']))
+		{
+			$requestID = $_REQUEST['id'];
+		}
+		else 
+		{
+			$requestID = "-1";
+		}		
+		if ($this->getPageAction() == "evaluation")
+		{
+			
+			$this->setLocation("evaluation");
+			
+//			$dataset = mysql::getInstance()->selectDatabase("complaints")->Execute("SELECT category FROM complaint WHERE id = " . $this->complaint->form->get("id")->getValue() . "");
+//			$fields = mysql_fetch_array($dataset);
+//			
+//			$pos1 = "" . stripos($fields['category'], "M") . "";
+//			$pos2 = "" . stripos($fields['category'], "D") . "";
+//			
+//			page::addDebug("POSITION ONE!!!" . stripos($fields['category'], "M"), __FILE__, __LINE__);
+//			page::addDebug("POSITION TWO!!!" . stripos($fields['category'], "D"), __FILE__, __LINE__);
+//			
+//			if($pos1 == "0")
+//			{
+//				$this->complaint->getEvaluation()->form->get("g8d")->setVisible(false);
+//			}
+//			elseif($pos1 == "")
+//			{
+//				$this->complaint->getEvaluation()->form->get("g8d")->setVisible(true);
+//			}
+			
+			
+			if(page::transformDateForMYSQL($this->complaint->getEvaluation()->form->get("dateSampleReceived")->getValue()) < page::transformDateForMYSQL($this->complaint->form->get("sampleReceptionDate")->getValue()))
+			{
+				$this->complaint->getEvaluation()->form->get("dateSampleReceived")->setValid(false);
+			}
+			
+			$output .= "<complaintReport id=\"" . $requestID . "\">";
+			if ($outputType=="normal")
+			{
+				/*echo "<pre>";
+				print_r($this->complaint->getEvaluation());
+				echo "</pre>";
+				exit;*/
+				$output .= $this->complaint->getEvaluation()->form->output();
+			}
+			else 
+			{
+				$exceptions = array();
+				
+				$this->complaint->getEvaluation()->form->showLegend(false);
+				$output .= $this->complaint->getEvaluation()->form->readOnlyOutput($exceptions);
+			}
+			$output .= "</complaintReport>";
+			
+			return $output;
+		}
+		
+		if ($this->getPageAction() == "conclusion")
+		{
+			$this->setLocation("conclusion");
+			
+			$output .= "<complaintReport id=\"" . $requestID . "\">";
+			
+			if($this->complaint->getConclusion()->form->get("requestForCredit")->getValue() == 'NO')
+			{
+				$this->complaint->getConclusion()->form->get("commercialLevelCreditAuthorisedAdvise")->setVisible(false);
+				$this->complaint->getConclusion()->form->get("commercialReasonAdvise")->setVisible(false);
+				$this->complaint->getConclusion()->form->get("commercialCreditNewCommercialOwner")->setVisible(false);
+				
+				//readonly versions
+				$this->complaint->getConclusion()->form->get("commercialLevelCreditAuthorisedAdvise2")->setVisible(false);
+				$this->complaint->getConclusion()->form->get("commercialCreditAuthoriserAdvise2")->setVisible(false);
+				$this->complaint->getConclusion()->form->get("commercialReasonAdvise2")->setVisible(false);
+				$this->complaint->getConclusion()->form->get("commercialCreditNewCommercialOwner2")->setVisible(false);
+				
+				$this->complaint->getConclusion()->form->get("commercialLevelCreditAuthorised")->setVisible(false);
+				$this->complaint->getConclusion()->form->get("commercialReason")->setVisible(false);
+				$this->complaint->getConclusion()->form->get("commercialCreditNewFinanceOwner")->setVisible(false);
+				
+				//readonly versions
+				$this->complaint->getConclusion()->form->get("commercialLevelCreditAuthorised2")->setVisible(false);
+				$this->complaint->getConclusion()->form->get("commercialCreditAuthoriser2")->setVisible(false);
+				$this->complaint->getConclusion()->form->get("commercialReason2")->setVisible(false);
+				$this->complaint->getConclusion()->form->get("commercialCreditNewFinanceOwner2")->setVisible(false);
+				
+				$this->complaint->getConclusion()->form->get("financeLevelCreditAuthorised")->setVisible(false);
+				$this->complaint->getConclusion()->form->get("financeReason")->setVisible(false);
+				$this->complaint->getConclusion()->form->get("financeCreditNewComplaintOwner")->setVisible(false);
+				
+				//readonly versions
+				$this->complaint->getConclusion()->form->get("financeLevelCreditAuthorised2")->setVisible(false);
+				$this->complaint->getConclusion()->form->get("financeReason2")->setVisible(false);
+				$this->complaint->getConclusion()->form->get("financeCreditNewComplaintOwner2")->setVisible(false);
+				$this->complaint->getConclusion()->form->get("financeCreditAuthoriser2")->setVisible(false);
+				
+				$this->complaint->getConclusion()->form->get("requestForCreditRaised")->setVisible(false);
+				//$this->complaint->getConclusion()->form->get("informISDate")->setVisible(false);
+				//$this->complaint->getConclusion()->form->get("transferOwnership2")->setVisible(false);
+				$this->complaint->getConclusion()->form->get("submitAdvise")->setVisible(false); // Added By Jason 27/12/2007
+				$this->complaint->getConclusion()->form->get("submit2")->setVisible(false);
+				$this->complaint->getConclusion()->form->get("submit3")->setVisible(false);
+				$this->complaint->getConclusion()->form->get("customerCreditNumber")->setVisible(false);
+				$this->complaint->getConclusion()->form->get("dateCreditNoteRaised")->setVisible(false);
+				$this->complaint->getConclusion()->form->get("creditNoteValueReadOnly")->setVisible(false);
+				//$this->complaint->getConclusion()->form->get("creditAuthorisationStatus")->setVisible(false);
+			}
+			//+++++++++++++++++++++++++++++++++++++++++++++++++++++++
+			if($this->complaint->getConclusion()->form->get("requestForCredit")->getValue() == 'YES'/* && !isset($_REQUEST["sfID"])*/)
+			{
+				$this->complaint->getConclusion()->form->get("processOwner")->setVisible(false);
+				$this->complaint->getConclusion()->form->get("creditNoteValue")->setVisible(false);
+				$this->complaint->getConclusion()->form->get("transferOwnership")->setVisible(false);
+				$this->complaint->getConclusion()->form->get("ccCommercialCredit")->setVisible(false);
+				$this->complaint->getConclusion()->form->get("ccCommercialCreditComment")->setVisible(false);
+				$this->complaint->getConclusion()->form->get("submit1")->setVisible(false);	
+				
+			}/*else if($this->complaint->getConclusion()->form->get("requestForCredit")->getValue() == 'YES' && isset($_REQUEST["sfID"]))
+			{
+				$this->complaint->getConclusion()->form->get("processOwner")->setVisible(false);
+				$this->complaint->getConclusion()->form->get("creditNoteValue")->setVisible(false);
+				$this->complaint->getConclusion()->form->get("transferOwnership")->setVisible(false);
+				$this->complaint->getConclusion()->form->get("ccCommercialCredit")->setVisible(false);
+				$this->complaint->getConclusion()->form->get("ccCommercialCreditComment")->setVisible(false);
+				$this->complaint->getConclusion()->form->get("submit1")->setVisible(false);	
+			}*/
+			//+++++++++++++++++++++++++++++++++++++++++++++++++++++++
+			//echo "<pre>";
+			//print_r($this->complaint->getConclusion()->form->get("commercialLevelCreditAuthorised"));
+			//echo "</pre>";
+			//exit;				
+			if($this->complaint->getConclusion()->form->get("commercialLevelCreditAuthorised")->getValue() == '')
+			{
+				$this->complaint->getConclusion()->form->get("financeLevelCreditAuthorised")->setVisible(false);				
+				$this->complaint->getConclusion()->form->get("financeReason")->setVisible(false);
+				$this->complaint->getConclusion()->form->get("financeCreditNewComplaintOwner")->setVisible(false);
+				$this->complaint->getConclusion()->form->get("requestForCreditRaised")->setVisible(false);
+				//$this->complaint->getConclusion()->form->get("informISDate")->setVisible(false);
+				//$this->complaint->getConclusion()->form->get("transferOwnership2")->setVisible(false);
+				$this->complaint->getConclusion()->form->get("submit3")->setVisible(false);
+				$this->complaint->getConclusion()->form->get("customerCreditNumber")->setVisible(false);
+				$this->complaint->getConclusion()->form->get("dateCreditNoteRaised")->setVisible(false);
+				
+				//readonly versions
+				$this->complaint->getConclusion()->form->get("commercialLevelCreditAuthorised2")->setVisible(false);
+				$this->complaint->getConclusion()->form->get("commercialCreditAuthoriser2")->setVisible(false);
+				$this->complaint->getConclusion()->form->get("commercialReason2")->setVisible(false);
+				$this->complaint->getConclusion()->form->get("commercialCreditNewFinanceOwner2")->setVisible(false);
+				
+				//readonly versions
+				$this->complaint->getConclusion()->form->get("financeLevelCreditAuthorised2")->setVisible(false);
+				$this->complaint->getConclusion()->form->get("financeReason2")->setVisible(false);
+				$this->complaint->getConclusion()->form->get("financeCreditNewComplaintOwner2")->setVisible(false);
+				$this->complaint->getConclusion()->form->get("financeCreditAuthoriser2")->setVisible(false);
+			}
+			
+				
+			if($this->complaint->getConclusion()->form->get("commercialLevelCreditAuthorised")->getValue() == 'YES')
+			{
+				$this->complaint->getConclusion()->form->get("commercialLevelCreditAuthorised")->setVisible(false);
+				$this->complaint->getConclusion()->form->get("commercialReason")->setVisible(false);
+				$this->complaint->getConclusion()->form->get("commercialCreditNewFinanceOwner")->setVisible(false);
+				
+				
+				$this->complaint->getConclusion()->form->get("submit2")->setVisible(false);
+			}
+			if($this->complaint->getConclusion()->form->get("commercialLevelCreditAuthorisedAdvise")->getValue() == '')
+			{
+				$datasetCredit = mysql::getInstance()->selectDatabase("complaints")->Execute("SELECT id, creditNoteGBP_quantity, creditNoteValue_measurement, creditNoteValue_quantity FROM conclusion WHERE complaintId = " . $this->complaint->form->get("id")->getValue() . "");
+				$fieldsCredit = mysql_fetch_array($datasetCredit);
+				
+				$level = "";
+				
+				if($fieldsCredit['creditNoteValue_measurement'] == 'EUR')
+				{
+					if($fieldsCredit['creditNoteValue_quantity'] > 1500)
+					{
+						$level = "higher";
+					}
+				}
+				else 
+				{
+					if($fieldsCredit['creditNoteGBP_quantity'] > 1000)
+					{
+						$level = "higher";
+					}
+				}
+				
+				if($level == "higher")
+				{
+				$this->complaint->getConclusion()->form->get("commercialLevelCreditAuthorised")->setVisible(false);
+				$this->complaint->getConclusion()->form->get("commercialCreditAuthoriser")->setVisible(false);
+				$this->complaint->getConclusion()->form->get("commercialReason")->setVisible(false);
+				$this->complaint->getConclusion()->form->get("commercialCreditNewFinanceOwner")->setVisible(false);
+				$this->complaint->getConclusion()->form->get("submit2")->setVisible(false);
+				
+				//readonly versions
+				$this->complaint->getConclusion()->form->get("commercialLevelCreditAuthorised2")->setVisible(false);
+				$this->complaint->getConclusion()->form->get("commercialCreditAuthoriser2")->setVisible(false);
+				$this->complaint->getConclusion()->form->get("commercialReason2")->setVisible(false);
+				$this->complaint->getConclusion()->form->get("commercialCreditNewFinanceOwner2")->setVisible(false);
+				
+				//readonly versions
+				$this->complaint->getConclusion()->form->get("commercialLevelCreditAuthorisedAdvise2")->setVisible(false);
+				$this->complaint->getConclusion()->form->get("commercialCreditAuthoriserAdvise2")->setVisible(false);
+				$this->complaint->getConclusion()->form->get("commercialReasonAdvise2")->setVisible(false);
+				$this->complaint->getConclusion()->form->get("commercialCreditNewCommercialOwner2")->setVisible(false);
+				}
+				else 
+				{
+					$this->complaint->getConclusion()->form->get("commercialLevelCreditAuthorisedAdvise")->setValue("YES");
+					$this->complaint->getConclusion()->form->get("commercialReasonAdvise2")->setValue("ADVISE NOT REQUIRED");
+					//readonly versions
+					$this->complaint->getConclusion()->form->get("commercialLevelCreditAuthorisedAdvise2")->setVisible(false);
+					$this->complaint->getConclusion()->form->get("commercialCreditAuthoriserAdvise2")->setVisible(false);
+					$this->complaint->getConclusion()->form->get("commercialReasonAdvise2")->setVisible(false);
+					$this->complaint->getConclusion()->form->get("commercialCreditNewCommercialOwner2")->setVisible(false);
+				}
+			}
+			
+			if($this->complaint->getConclusion()->form->get("commercialLevelCreditAuthorisedAdvise")->getValue() == 'YES')
+			{
+				$this->complaint->getConclusion()->form->get("commercialLevelCreditAuthorisedAdvise")->setVisible(false);
+				$this->complaint->getConclusion()->form->get("commercialReasonAdvise")->setVisible(false);
+				$this->complaint->getConclusion()->form->get("commercialCreditNewCommercialOwner")->setVisible(false);
+				
+				
+				$this->complaint->getConclusion()->form->get("submitAdvise")->setVisible(false);
+			}
+			
+			if($this->complaint->getConclusion()->form->get("commercialLevelCreditAuthorised")->getValue() == 'NO')
+			{
+				$this->complaint->getConclusion()->form->get("commercialLevelCreditAuthorised")->setVisible(false);
+				$this->complaint->getConclusion()->form->get("commercialReason")->setVisible(false);
+				$this->complaint->getConclusion()->form->get("commercialCreditNewFinanceOwner")->setVisible(false);
+				
+				$this->complaint->getConclusion()->form->get("financeLevelCreditAuthorised")->setVisible(false);
+				$this->complaint->getConclusion()->form->get("financeReason")->setVisible(false);
+				$this->complaint->getConclusion()->form->get("financeCreditNewComplaintOwner")->setVisible(false);
+				
+				$this->complaint->getConclusion()->form->get("submit3")->setVisible(false);
+			}
+			
+			if($this->complaint->getConclusion()->form->get("financeLevelCreditAuthorised")->getValue() == '')
+			{						
+				//readonly versions
+				$this->complaint->getConclusion()->form->get("financeLevelCreditAuthorised2")->setVisible(false);
+				$this->complaint->getConclusion()->form->get("financeReason2")->setVisible(false);
+				$this->complaint->getConclusion()->form->get("financeCreditNewComplaintOwner2")->setVisible(false);
+				$this->complaint->getConclusion()->form->get("financeCreditAuthoriser2")->setVisible(false);
+			}
+
+			if($this->complaint->getConclusion()->form->get("financeLevelCreditAuthorised")->getValue() == 'YES')
+			{
+				$this->complaint->getConclusion()->form->get("financeLevelCreditAuthorised")->setVisible(false);
+				$this->complaint->getConclusion()->form->get("financeReason")->setVisible(false);
+				$this->complaint->getConclusion()->form->get("financeCreditNewComplaintOwner")->setVisible(false);
+				
+				
+				$this->complaint->getConclusion()->form->get("submit2")->setVisible(false);
+				$this->complaint->getConclusion()->form->get("submit3")->setVisible(false);
+			}
+			
+			if($this->complaint->getConclusion()->form->get("financeLevelCreditAuthorised")->getValue() == 'NO')
+			{
+				$this->complaint->getConclusion()->form->get("commercialLevelCreditAuthorised")->setVisible(false);
+				$this->complaint->getConclusion()->form->get("commercialReason")->setVisible(false);
+				$this->complaint->getConclusion()->form->get("commercialCreditNewFinanceOwner")->setVisible(false);
+				
+				$this->complaint->getConclusion()->form->get("financeLevelCreditAuthorised")->setVisible(false);
+				$this->complaint->getConclusion()->form->get("financeReason")->setVisible(false);
+				$this->complaint->getConclusion()->form->get("financeCreditNewComplaintOwner")->setVisible(false);
+				
+				$this->complaint->getConclusion()->form->get("submit2")->setVisible(false);
+				$this->complaint->getConclusion()->form->get("submit3")->setVisible(false);
+			}		
+			
+			if($this->complaint->form->get("creditNoteRequested")->getValue() == "NO")
+			{
+				$this->complaint->getConclusion()->form->get("requestForCredit")->setVisible(true);
+				$this->complaint->getConclusion()->form->get("requestForCredit")->setValue("NO");
+				$this->complaint->getConclusion()->form->get("creditNoteValue")->setVisible(false);
+				$this->complaint->getConclusion()->form->get("transferOwnership")->setVisible(false);
+				$this->complaint->getConclusion()->form->get("transferOwnership")->setVisible(false);
+				$this->complaint->getConclusion()->form->get("ccCommercialCredit")->setVisible(false);
+				$this->complaint->getConclusion()->form->get("ccCommercialCreditComment")->setVisible(false);
+				$this->complaint->getConclusion()->form->get("commercialLevelCreditAuthorised")->setVisible(false);
+				$this->complaint->getConclusion()->form->get("commercialReason")->setVisible(false);
+				$this->complaint->getConclusion()->form->get("commercialCreditNewFinanceOwner")->setVisible(false);
+				$this->complaint->getConclusion()->form->get("financeLevelCreditAuthorised")->setVisible(false);
+				$this->complaint->getConclusion()->form->get("financeReason")->setVisible(false);
+				$this->complaint->getConclusion()->form->get("financeCreditNewComplaintOwner")->setVisible(false);
+				$this->complaint->getConclusion()->form->get("submit2")->setVisible(false);
+				$this->complaint->getConclusion()->form->get("submit3")->setVisible(false);
+				$this->complaint->getConclusion()->form->get("customerCreditNumber")->setVisible(false);
+				$this->complaint->getConclusion()->form->get("dateCreditNoteRaised")->setVisible(false);
+			}
+			
+			//check the db to see if there has already been a credit request
+			$datasetRequest = mysql::getInstance()->selectDatabase("complaints")->Execute("SELECT count(requestForCredit) as creditCount FROM conclusion WHERE complaintId = '" . $this->complaint->form->get("id")->getValue() . "'");
+			$fieldsRequest = mysql_fetch_array($datasetRequest);
+			if($fieldsRequest['creditCount'] == '0')
+			{
+				$this->complaint->getConclusion()->form->get("requestForCredit")->setVisible(true);
+			}
+			else
+			{
+				$datasetRequestValue = mysql::getInstance()->selectDatabase("complaints")->Execute("SELECT requestForCredit FROM conclusion WHERE complaintId = '" . $this->complaint->form->get("id")->getValue() . "'");
+				$fieldsRequestValue = mysql_fetch_array($datasetRequestValue);
+				if($fieldsRequestValue['requestForCredit'] == 'YES')
+				{
+					$this->complaint->getConclusion()->form->get("requestForCredit")->setVisible(false);
+				}
+				else
+				{
+					$this->complaint->getConclusion()->form->get("requestForCredit")->setVisible(true);
+				}
+			}
+
+			if ($outputType=="normal")
+			{
+				$output .= $this->complaint->getConclusion()->form->output();
+			}
+			else 
+			{
+				$exceptions = array();
+				
+				$this->complaint->getConclusion()->form->showLegend(false);
+				$output .= $this->complaint->getConclusion()->form->readOnlyOutput($exceptions);
+			}
+			$output .= "</complaintReport>";
+			
+			return $output;
+		}
+		
+		
+		/*if ($this->getPageAction() == "purchasing")
+		{
+			$this->setLocation("purchasing");
+			
+			$output .= "<ijfReport id=\"" . $requestID . "\">";
+			if ($outputType=="normal")
+			{
+				$output .= $this->ijf->getPurchasing()->form->output();
+			}
+			else 
+			{
+				$exceptions = array();
+				
+				$this->ijf->getPurchasing()->form->showLegend(false);
+				$output .= $this->ijf->getPurchasing()->form->readOnlyOutput($exceptions);
+			}
+			$output .= "</ijfReport>";
+			
+			return $output;
+		}
+		if ($this->getPageAction() == "production")
+		{
+			$this->setLocation("production");
+			
+			$output .= "<ijfReport id=\"" . $requestID . "\">";
+			if ($outputType=="normal")
+			{
+				$output .= $this->ijf->getProduction()->form->output();
+			}
+			else 
+			{
+				$exceptions = array();
+				
+				$this->ijf->getProduction()->form->showLegend(false);
+				$output .= $this->ijf->getProduction()->form->readOnlyOutput($exceptions);
+			}
+			$output .= "</ijfReport>";
+			
+			return $output;
+		}
+		if ($this->getPageAction() == "productOwner")
+		{
+			$this->setLocation("productOwner");
+			
+			$output .= "<ijfReport id=\"" . $requestID . "\">";
+			if ($outputType=="normal")
+			{
+				$output .= $this->ijf->getProductOwner()->form->output();
+			}
+			else 
+			{
+				$exceptions = array();
+				
+				
+				$this->ijf->getProductOwner()->form->showLegend(false);
+				$output .= $this->ijf->getProductOwner()->form->readOnlyOutput($exceptions);
+			}
+			$output .= "</ijfReport>";
+			$output .= "<orderControl />";
+			return $output;
+		}
+		
+		
+
+		
+		if ($this->getPageAction() == "order")
+		{			
+			$output .= "<orderControl id=\"".$this->getOrderId()."\" />";
+			
+			page::addDebug("Show order", __FILE__, __LINE__);
+			
+			$output .= "<ijfReport id=\"".$requestID."\">";
+			$output .= $this->ijf->getProductOwner($this->getOrderId())->form->output();
+			$output .= "</ijfReport>";
+			
+			return $output;
+		}
+		
+		
+		if (preg_match("/^order_([0-9]+)$/", $this->getPageAction(), $match))
+		{
+			$this->setLocation("order");
+			page::adddebug("set order id: " . $match[1],__FILE__,__LINE__);
+			$this->setOrderId($match[1]);
+			
+			$output .= "<orderControl id=\"".$this->getOrderId()."\" />";
+			
+			page::addDebug("Show order", __FILE__, __LINE__);
+			
+			
+			
+			$output .= "<ijfReport orderId=\"" . $this->getOrderId() . "\">";
+			if ($outputType=="normal")
+			{
+				$this->ijf->getProductOwner()->form->showLegend(false);
+				$output .= $this->ijf->getProductOwner()->form->output();
+			}
+			else 
+			{
+				$exceptions = array();
+				
+				
+				$this->ijf->getProductOwner()->form->showLegend(false);
+				$output .= $this->ijf->getProductOwner()->form->readOnlyOutput($exceptions);
+			}
+			$output .= "</ijfReport>";
+			
+			
+			
+			
+			$output .= "<ijfReport orderId=\"" . $this->getOrderId() . "\">";
+			
+			
+			if ($outputType=="normal")
+			{
+				$output .= $this->ijf->getProductOwner()->getOrder($this->getOrderId())->form->output();
+			}
+			else 
+			{
+				$output .= $this->ijf->getProductOwner()->getOrder($this->getOrderId())->form->readOnlyOutput();
+			}
+			
+			$output .= "</ijfReport>";
+			
+			return $output;
+		}*/
+		
+		
+				
+		/*if ($this->getPageAction() == "addorder")
+		{
+			$this->setLocation("order");
+			$this->setOrderId($this->ijf->getProductOwner()->addOrder());
+			
+			$output .= "<orderControl id=\"".$this->getOrderId()."\" />";
+		
+				
+			$output .= "<ijfReport orderId=\"" . $this->getOrderId() . "\">";
+			$output .= $this->ijf->getProductOwner()->getOrder($this->getOrderId())->form->output();
+			$output .= "</ijfReport>";
+			
+			return $output;
+		}
+		
+
+		if (preg_match("/^removeorder_([0-9]+)$/", $this->getPageAction(), $match))
+		{
+			$this->ijf->getProductOwner()->removeOrder($match[1]);
+			$this->setLocation("demandPlanning");
+			
+			//$output .= "<attachmentControl />";
+			$output .= "<orderControl />";
+			
+			$output .= "<ijfReport>";
+			$output .= $this->ijf->getProductOwner()->form->output();
+			$output .= "</ijfReport>";
+			
+			return $output;
+		}*/
+		
+		
+		/*if ($this->getPageAction() == "commercialPlanning")
+		{
+			$this->setLocation("commercialPlanning");
+			
+			$output .= "<ijfReport id=\"" . $requestID . "\">";
+			if ($outputType=="normal")
+			{
+				$output .= $this->ijf->getcommercialPlanning()->form->output();
+			}
+			else 
+			{
+				$exceptions = array();
+				
+				$this->ijf->getcommercialPlanning()->form->showLegend(false);
+				$output .= $this->ijf->getcommercialPlanning()->form->readOnlyOutput($exceptions);
+			}
+			$output .= "</ijfReport>";
+			
+			return $output;
+		}
+		
+		if ($this->getPageAction() == "finance")
+		{
+			$this->setLocation("finance");
+			
+			$output .= "<ijfReport id=\"" . $requestID . "\">";
+			if ($outputType=="normal")
+			{
+				$output .= $this->ijf->getFinance()->form->output();
+			}
+			else 
+			{
+				$exceptions = array();
+				
+				$this->ijf->getFinance()->form->showLegend(false);
+				$output .= $this->ijf->getFinance()->form->readOnlyOutput($exceptions);
+			}
+			$output .= "</ijfReport>";
+			
+			return $output;
+		}*/
+		
+		
+		if ($this->getPageAction() == "complaint")
+		{
+			$this->setLocation("complaint");
+			//$this->complaint->sfID = $this->sfID;
+			$today = date("Y-m-d");
+			$today_date = strtotime($today);
+			//$complaintDate = strtotime(page::transformDateForMYSQL($this->complaint->form->get("customerComplaintDate")->getValue()));
+			
+			if($complaintDate > $today_date)
+			{
+				$this->complaint->form->get("customerComplaintDate")->setValid(false);
+			}
+			
+			//$receptionDate = strtotime(page::transformDateForMYSQL($this->complaint->form->get("sampleReceptionDate")->getValue()));
+			
+			if($receptionDate > $today_date)
+			{
+				$this->complaint->form->get("sampleReceptionDate")->setValid(false);
+			}
+						
+			
+			// content
+			
+			$output .= "<complaintReport id=\"" . $requestID . "\">";
+			if ($outputType=="normal")
+			{
+				$output .= $this->complaint->form->output();
+			}
+			else 
+			{
+				
+				$exceptions = array();
+				
+				// $this->complaint->form->processDependencies();
+				
+				//$this->complaint->form->get("sapName")->setVisible(true);
+				//$this->complaint->form->get("externalSalesName")->setVisible(true);
+				//$this->complaint->form->get("submitOnBehalf")->setVisible(true);
+				$this->complaint->form->get("salesOffice")->setVisible(true);
+				$this->complaint->form->showLegend(false);
+				$output .= $this->complaint->form->readOnlyOutput($exceptions);		
+				//$output .= $this->complaint->form->processDependencies();
+			}
+			
+			$output .= "</complaintReport>";
+			
+			return $output;
+		}	
+		
+	}
+		
+	
+	
+	public function getLocation()
+	{
+		if (!isset($_SESSION['apps'][$GLOBALS['app']]['location']))
+		{
+			page::addDebug("DEFAULT SETTING LOCATION TO complaint", __FILE__, __LINE__);
+			$_SESSION['apps'][$GLOBALS['app']]['location'] = 'complaint';
+		}
+		
+		return $_SESSION['apps'][$GLOBALS['app']]['location'];
+	}
+	
+	public function setLocation($location)
+	{
+		page::addDebug("set location $location", __FILE__, __LINE__);
+		$_SESSION['apps'][$GLOBALS['app']]['location'] = $location;
+	}
+	
+	
+	
+	
+	public function getPageAction()
+	{
+		if (!isset($this->pageAction))
+		{
+			if (isset($_POST['action']))
+			{
+				$this->pageAction = $_POST['action'];
+			}
+			else 
+			{
+				if (isset($_REQUEST['action']))
+				{
+					$this->pageAction = $_REQUEST['action'];
+				}
+				else 
+				{
+					$this->pageAction = "complaint";
+				}
+			}
+		}
+		
+		return $this->pageAction;
+		
+	}
+	
+	public function setPageAction($pageAction)
+	{
+		$this->pageAction = $pageAction;
+	}
+	
+	public function buildMenu()
+	{
+		// report root
+		
+		
+		$output = sprintf('<reportNav item="%s" valid="%s" selected="%s">',
+			"complaint",
+			$this->complaint->form->isValid() ? 'true' : 'false',
+			$this->getLocation() == 'complaint' ? 'true' : 'false'
+		);		
+		$output .= "</reportNav>";
+		
+		
+		if ($this->complaint->getEvaluation())
+		{
+			$output .= sprintf('<reportNav item="%s" valid="%s" selected="%s">',
+			"evaluation",
+			$this->complaint->getEvaluation()->form->isValid() ? 'true' : 'false',
+			$this->getLocation() == 'evaluation' ? 'true' : 'false'
+		);	
+		$output .= "</reportNav>";
+		}
+		
+		if ($this->complaint->getConclusion())
+		{
+			$output .= sprintf('<reportNav item="%s" valid="%s" selected="%s">',
+			"conclusion",
+			$this->complaint->getConclusion()->form->isValid() ? 'true' : 'false',
+			$this->getLocation() == 'conclusion' ? 'true' : 'false'
+		);	
+		$output .= "</reportNav>";
+		}
+		
+		/*if ($this->ijf->getProduction())
+		{
+			$output .= sprintf('<reportNav item="%s" valid="%s" selected="%s">',
+			"production",
+			$this->ijf->getProduction()->form->isValid() ? 'true' : 'false',
+			$this->getLocation() == 'production' ? 'true' : 'false'
+		);	
+		$output .= "</reportNav>";
+		}
+		
+		if ($this->ijf->getProductOwner())
+		{
+			$output .= sprintf('<reportNav item="%s" valid="%s" selected="%s">',
+			"demandPlanning",
+			$this->ijf->getProductOwner()->form->isValid() ? 'true' : 'false',
+			$this->getLocation() == 'productOwner' ? 'true' : 'false'
+		);	
+		
+		
+		//for ($order=0; $order < count($this->ijf->getProductOwner()->getOrders()); $order++)
+		//{			
+		//	$output .= sprintf('<orderNav id="%u"  valid="%s" selected="%s">',
+		//		$order,
+		//		$this->ijf->getProductOwner()->getOrder($order)->form->isValid() ? 'true' : 'false',
+		//		($this->getLocation() == 'order' && $this->getOrderId()==$order) ? 'true' : 'false'
+		//	);
+		//	
+		//	$output .= "</orderNav>";
+		//	
+		//}
+		
+		
+		$output .= "</reportNav>";
+		}
+		
+		if ($this->ijf->getCommercialPlanning())
+		{
+			$output .= sprintf('<reportNav item="%s" valid="%s" selected="%s">',
+			"commercialPlanning",
+			$this->ijf->getCommercialPlanning()->form->isValid() ? 'true' : 'false',
+			$this->getLocation() == 'commercialPlanning' ? 'true' : 'false'
+		);	
+		$output .= "</reportNav>";
+		}
+		
+		if ($this->ijf->getFinance())
+		{
+			$output .= sprintf('<reportNav item="%s" valid="%s" selected="%s">',
+			"finance",
+			$this->ijf->getFinance()->form->isValid() ? 'true' : 'false',
+			$this->getLocation() == 'finance' ? 'true' : 'false'
+		);	
+		$output .= "</reportNav>";
+		}
+		
+		/*if ($this->ijf->getProductionSite())
+		{
+			$output .= sprintf('<reportNav item="%s" valid="%s" selected="%s">',
+			"productionSite",
+			$this->ijf->getProductionSite()->form->isValid() ? 'true' : 'false',
+			$this->getLocation() == 'productionSite' ? 'true' : 'false'
+		);	
+		$output .= "</reportNav>";
+		}
+		*/
+		
+
+		return $output;
+	}
+	
+	public function getOrderId()
+	{
+		if (!isset($this->orderId))
+		{
+			$this->orderId = isset($_POST['orderId']) ? $_POST['orderId'] : "0";
+		}
+		
+		return $this->orderId;
+	}
+	
+	public function setOrderId($orderId)
+	{
+		$this->orderId = $orderId;
+	}
+	
+}
+
+?>

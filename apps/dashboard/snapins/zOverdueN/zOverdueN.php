@@ -1,0 +1,650 @@
+<?php
+
+include("./apps/dashboard/lib/zoverduen/zoverduenLib.php");
+
+/**
+ * @package snapins
+ * @copyright Scapa Ltd.
+ * @author Jason Matthews
+ * @version 06/05/2010
+ */
+class zOverdueN extends snapin
+{
+	/**
+	 * @param string $area the area of the page the snapin should appear in
+	 */
+
+	public $graphXML = "";
+	private $chartName = "z_overdue_n_summary_chart";
+	private $chartHeight = 300;
+	public $zoverduenLib;
+
+	public $currentMonthCountToDayNo;
+	public $currentMonthCountToMonthNo;
+	public $currentMonthCountToYearNo;
+
+	public $previousMonthCountToDayNo;
+	public $previousMonthCountToMonthNo;
+	public $previousMonthCountToYearNo;
+
+	public $monthToDisplayInChart;
+
+	private $total;
+	private $total2;
+	private $arrData = array();
+
+	private $anchorRadius = 3;
+
+	private $openTitle = "Open";
+	private $overdueTitle = "Overdue";
+	private $open30DaysTitle = "Open 28 Days";
+
+
+	function __construct()
+	{
+		$this->setName(translate::getInstance()->translate($this->chartName));
+		$this->setClass(__CLASS__);
+		$this->setCanClose(true);
+		$this->setColourScheme("title-box2");
+
+		$this->zoverduenLib = new zoverduenLib();
+
+		// This will get filters on the page
+		$this->zoverduenLib->getFilters();
+
+		$this->getSQLDates();
+	}
+
+	public function output()
+	{
+		$this->anchorRadius = 1;
+		$this->overdueTitle = "Ov.";
+		$this->openTitle = "Op.";
+
+		$this->xml .= "<zOverdueN>";
+
+		// Format Chart with Height and Name
+		$this->xml .= "<chartName>" . $this->chartName . "</chartName>";
+		$this->xml .= "<chartHeight>" . $this->chartHeight . "</chartHeight>";
+
+		$this->xml .= "<allowed>1</allowed>";
+
+		/**
+		 * ZOVERDUEN START
+		 * Generate ZOVERDUEN report
+		 */
+		$this->generateZOverdueNChart();
+			$this->xml .= "<graphChartLocation>" . fusionChartsCache::getFusionPowerChartsLocation() . "</graphChartLocation>";
+			$this->xml .= "<graphChartData>" . $this->graphXML . "</graphChartData>";
+
+		$this->xml .= "</zOverdueN>";
+
+		return $this->xml;
+	}
+
+	public function getSQLDates()
+	{
+		// thisYear and monthNumber are brought across from getFilters()
+
+		$currentDay = date("j", mktime(0,0,0,date("n"),(date("j") - 1),date("Y")));
+
+		$currentMonth = $this->zoverduenLib->monthNumber;
+
+		$currentYear = $this->zoverduenLib->thisYear;
+
+//		if($this->zoverduenLib->monthNumber == 1)
+//		{
+//			$currentMonth = 12;
+//			$currentYear = $this->zoverduenLib->thisYear - 1;
+//		}
+//		elseif(date("d") == 1 && $this->zoverduenLib->monthNumber != 1)
+//		{
+//			$currentMonth = $this->zoverduenLib->monthNumber - 1;
+//			$currentYear = $this->zoverduenLib->thisYear;
+//		}
+//		else
+//		{
+//			$currentMonth = $this->zoverduenLib->monthNumber;
+//			$currentYear = $this->zoverduenLib->thisYear;
+//		}
+
+		$this->currentMonthCountToDayNo = $currentDay; // This is used in for and while loop in place of 31
+		$this->currentMonthCountToMonthNo = $currentMonth; // This is used within the SQL statement
+		$this->currentMonthCountToYearNo = $currentYear; // This is used within the SQL statement
+
+		//---------
+	//	date("d") == 1 ? $previousDay = 31 : $previousDay = date("d");
+		$previousDay = $currentDay;
+
+		if($currentMonth == 1)
+		{
+			$previousMonth = 12;
+			$previousYear = $currentYear - 1;
+		}
+//		elseif($this->currentMonthCountToDayNo == 1 && $this->zoverduenLib->monthNumber != 1)
+//		{
+//			$previousMonth = $currentMonth - 1;
+//			$previousYear = $this->zoverduenLib->thisYear;
+//		}
+		else
+		{
+			$previousMonth = $currentMonth - 1;
+			$previousYear = $currentYear;
+		}
+
+		$this->previousMonthCountToDayNo = $previousDay;
+		$this->previousMonthCountToMonthNo = $previousMonth;
+		$this->previousMonthCountToYearNo = $previousYear;
+
+//		if(date("d") == 1)
+//		{
+//			$this->monthToDisplayInChart = common::getMonthNameByNumber($this->currentMonthCountToMonthNo);
+//		}
+//		else
+//		{
+			$this->monthToDisplayInChart = common::getMonthNameByNumber($this->previousMonthCountToMonthNo) . " - " . common::getMonthNameByNumber($this->currentMonthCountToMonthNo);
+		//}
+	}
+
+	/**
+	 * This is the ZOVERDUEN report by Sales Organisation
+	 *
+	 * @param string $salesOrganisation (The sales organisation we are searching for)
+	 * @param array $filters (| seperated)
+	 */
+	public function generateZOverdueNChart()
+	{
+		if(!isset($this->zoverduenLib->plantName))
+		{
+			if (isset($_REQUEST['OpenandOverdue']))
+			{
+				$plant = "Selection";
+			}
+			else
+			{
+				$plant = "Group";
+			}
+		}
+		else
+		{
+			$plant = str_replace("'", "", $this->zoverduenLib->plantName);
+		}
+
+		if((isset($this->zoverduenLib->bu)) && ($this->zoverduenLib->bu != "All"))
+		{
+			$bu = $this->zoverduenLib->bu;
+		}
+		else
+		{
+			$bu = "All";
+		}
+
+		$allValuesArray = array();
+
+
+		$this->graphXML = "&#60;chart caption='Open/Overdue Orders (" . $this->monthToDisplayInChart . ") (" . $plant . ") (BU: " . $bu . ")' xAxisName='Time' showValues='0' rotateNames='1' divLineAlpha='100' numVDivLines='31' vDivLineAlpha='0' showAlternateVGridColor='1' alternateVGridAlpha='5' exportEnabled='1' exportAtClient='1' exportHandler='fcExporter1' exportFileName='zoverduenChart' clickURL='/apps/dashboard/zoverduenDrillDown?' &#62;";
+
+		// Display Categories
+		$this->graphXML .= "&#60;categories&#62;";
+			$this->getCategories();
+		$this->graphXML .= "&#60;/categories&#62;";
+
+
+
+		if(isset($_POST['OpenandOverdue']))
+		{
+
+
+			$colorArr = array('#99ccff', '#33ff66', '#ff6633', '#ff3333', '#006699',
+				'#9900ff', '#ffccff', '#ffff33', '#999933', '#8467D7', '#800517',
+				'#48CCCD', '#254117', '#FBB117', '#7F462C', '#ECD672');
+
+			$colorPos = 0;
+
+			$this->graphXML .= "&#60;axis title='" . $this->openTitle . "' titlePos='left' numDivLines='14' tickWidth='10' color='" . $colorArr[$colorPos] . "' divlineisdashed='1' &#62;";
+
+			foreach($this->zoverduenLib->getOpenPlantsSelected() as $openPlantSelected)
+			{
+				// Initiate <dataset> elements
+				$this->graphXML .= "&#60;dataset seriesName='Open - " . $openPlantSelected . "' color='" . $colorArr[$colorPos] . "' &#62;";
+				$colorPos++;
+
+				$this->zoverduenLib->plant = $this->zoverduenLib->getPlantAbr($openPlantSelected);
+
+				$this->getOpenOrders();
+
+//				foreach ($this->arrData as $arSubData)
+//				{
+//					// Add <set value='...' /> to both the datasets
+//					$this->graphXMLDataset .= "&#60;set value='" . $arSubData[2] . "' /&#62;";
+//
+//					// Push the value to the array to be used to calculate the minimum y axis point
+//					array_push($allValuesArray, $arSubData[2]);
+//				}
+
+				// Close <dataset> elements
+				$this->graphXML .= "&#60;/dataset&#62;";
+			}
+
+			$this->graphXML .= "&#60;/axis&#62;";
+
+			// Open 30 days order book
+			$colorArr = array('#99ccff', '#33ff66', '#ff6633', '#ff3333', '#006699',
+				'#9900ff', '#ffccff', '#ffff33', '#999933', '#8467D7', '#800517',
+				'#48CCCD', '#254117', '#FBB117', '#7F462C', '#ECD672');
+
+			$colorPos = 0;
+
+			$this->graphXML .= "&#60;axis title='" . $this->open30DaysTitle . "' titlePos='left' numDivLines='14' tickWidth='10' color='" . $colorArr[$colorPos] . "' divlineisdashed='1' &#62;";
+
+			foreach($this->zoverduenLib->getOpenPlantsSelected() as $openPlantSelected)
+			{
+				// Initiate <dataset> elements
+				$this->graphXML .= "&#60;dataset seriesName='Open 28 Days - " . $openPlantSelected . "' color='" . $colorArr[$colorPos] . "' &#62;";
+				$colorPos++;
+
+				$this->zoverduenLib->plant = $this->zoverduenLib->getPlantAbr($openPlantSelected);
+
+				$this->getOpen30DaysOrders();
+
+//				foreach ($this->arrData as $arSubData)
+//				{
+//					// Add <set value='...' /> to both the datasets
+//					$this->graphXMLDataset .= "&#60;set value='" . $arSubData[2] . "' /&#62;";
+//
+//					// Push the value to the array to be used to calculate the minimum y axis point
+//					array_push($allValuesArray, $arSubData[2]);
+//				}
+
+				// Close <dataset> elements
+				$this->graphXML .= "&#60;/dataset&#62;";
+			}
+
+			$this->graphXML .= "&#60;/axis&#62;";
+
+
+			$colorArr = array('#FF8000', '#00FFFF', '#0080FF', '#0000FF', '#8000FF', '#FF00FF',
+				'#FF0080', '#A9F5A9', '#F5A9A9', '#8181F7', '#F7BE81', '#FFE87C', '#80FF00', '#00FF00',
+				'#00FF80', '#FF2222' );
+
+			$colorPos = 0;
+
+			$this->graphXML .= "&#60;axis title='" . $this->overdueTitle . "' titlepos='right' axisOnLeft='0' numDivLines='10' tickWidth='10' color='" . $colorArr[$colorPos] . "' divlineisdashed='1'&#62;";
+			foreach($this->zoverduenLib->getOverduePlantsSelected() as $overduePlantSelected)
+			{
+
+
+				// Initiate <dataset> elements
+				$this->graphXML .= "&#60;dataset seriesName='Overdue - " . $overduePlantSelected . "' color='" . $colorArr[$colorPos] . "' &#62;";
+				$colorPos++;
+
+				$this->zoverduenLib->plant = $this->zoverduenLib->getPlantAbr($overduePlantSelected);
+
+				$this->getOverdueOrders();
+
+//				foreach ($this->arrData as $arSubData)
+//				{
+//					// Add <set value='...' /> to both the datasets
+//					$this->graphXMLDataset .= "&#60;set value='" . $arSubData[3] . "' /&#62;";
+//
+//					// Push the value to the array to be used to calculate the minimum y axis point
+//					//array_push($allValuesArray, $arSubData[3]);
+//				}
+
+				// Close <dataset> elements
+				$this->graphXML .= "&#60;/dataset&#62;";
+
+			}
+			$this->graphXML .= "&#60;/axis&#62;";
+
+		}
+		else
+		{
+			// Initiate <dataset> elements
+			$this->graphXML .= "&#60;axis title='" . $this->openTitle . "' titlePos='left' numDivLines='14' tickWidth='10' divlineisdashed='1' &#62;";
+
+			$this->graphXML .= "&#60;dataset seriesName='Open - Group' &#62;";
+
+			$this->getOpenOrders();
+
+//			foreach ($this->arrData as $arSubData)
+//			{
+//				// Add <set value='...' /> to both the datasets
+//				$strDataOpen .= "&#60;set value='" . $arSubData[2] . "' anchorBorderColor='000000' anchorBorderThickness='3' /&#62;";
+//
+//				// Push the value to the array to be used to calculate the minimum y axis point
+//				array_push($allValuesArray, $arSubData[2]);
+//			}
+
+			$this->graphXML .= "&#60;/dataset&#62;";
+			$this->graphXML .= "&#60;/axis&#62;";
+
+			// 30 days open order book
+			$this->graphXML .= "&#60;axis title='" . $this->open30DaysTitle . "' titlePos='left' numDivLines='14' tickWidth='10' divlineisdashed='1' &#62;";
+
+			$this->graphXML .= "&#60;dataset seriesName='Open 28 Days - Group' &#62;";
+
+			$this->getOpen30DaysOrders();
+
+//			foreach ($this->arrData as $arSubData)
+//			{
+//				// Add <set value='...' /> to both the datasets
+//				$strDataOpen .= "&#60;set value='" . $arSubData[2] . "' anchorBorderColor='000000' anchorBorderThickness='3' /&#62;";
+//
+//				// Push the value to the array to be used to calculate the minimum y axis point
+//				array_push($allValuesArray, $arSubData[2]);
+//			}
+
+			$this->graphXML .= "&#60;/dataset&#62;";
+			$this->graphXML .= "&#60;/axis&#62;";
+
+			$this->graphXML .= "&#60;axis title='" . $this->overdueTitle . "' titlepos='left' axisOnLeft='0' numDivLines='10' tickWidth='10' divlineisdashed='1'&#62;";
+			$this->graphXML .= "&#60;dataset seriesName='Overdue - Group' &#62;";
+
+			$this->getOverdueOrders();
+
+//			foreach ($this->arrData as $arSubData)
+//			{
+//				// Add <set value='...' /> to both the datasets
+//				$strDataOverdue .= "&#60;set value='" . $arSubData[3] . "' anchorBorderColor='000000' anchorBorderThickness='3' /&#62;";
+//
+//				// Push the value to the array to be used to calculate the minimum y axis point
+//				array_push($allValuesArray, $arSubData[3]);
+//			}
+
+			// Close <dataset> elements
+			$this->graphXML .= "&#60;/dataset&#62;";
+			$this->graphXML .= "&#60;/axis&#62;";
+		}
+
+
+//		// Display Open Orders
+//		$this->graphXML .= "&#60;axis title='Open Orders' titlePos='left' numDivLines='14' tickWidth='10' divlineisdashed='1' &#62;";
+//			$this->graphXML .= "&#60;dataset seriesName='Open'&#62;";
+//				$this->getOpenOrders();
+//			$this->graphXML .= "&#60;/dataset&#62;";
+//		$this->graphXML .= "&#60;/axis&#62;";
+//
+//		// Display Overdue Orders
+//		$this->graphXML .= "&#60;axis title='Overdue Orders' titlepos='right' axisOnLeft='0' numDivLines='10' tickWidth='10' divlineisdashed='1'&#62;";
+//			$this->graphXML .= "&#60;dataset seriesName='Overdue'&#62;";
+//				$this->getOverdueOrders();
+//			$this->graphXML .= "&#60;/dataset&#62;";
+//		$this->graphXML .= "&#60;/axis&#62;";
+
+
+
+
+		$this->graphXML .= "&#60;/chart&#62;";
+
+		return $this->graphXML;
+	}
+
+	/**
+	 * Get the list of categories (days) for the x axis
+	 *
+	 */
+	private function getCategories()
+	{
+		// ******************************** DAY NUMBER (Previous Month) ********************************
+
+		$this->previousDays = $this->currentMonthCountToDayNo - 1;
+
+		for($i = $this->currentMonthCountToDayNo; $i <= 31; $i++)
+		{
+			if (checkdate($this->previousMonthCountToMonthNo,$i,$this->previousMonthCountToYearNo))
+			{
+				$value = $i;
+
+				$this->arrData[$i][1] = $value;
+
+				$this->graphXML .= "&#60;category label='" . $value . "' /&#62;";
+
+				$this->previousDays++;
+			}
+		}
+
+		// ******************************** DAY NUMBER (Current Month) ********************************
+
+		//echo $this->currentMonthCountToDayNo . "<br />";
+
+		for($i = 0; $i < $this->currentMonthCountToDayNo; $i++)
+		{
+			$value = $i + 1;
+
+			$this->arrData[$i][1] = $value;
+
+			$this->graphXML .= "&#60;category label='" . $value . "' /&#62;";
+		}
+	}
+
+	/**
+	 * Get the list of open orders by day
+	 *
+	 */
+	private function getOpenOrders()
+	{
+		// ******************************** (Previous Month) ********************************
+
+		$dayValue = $this->currentMonthCountToDayNo;
+
+		while($dayValue <= $this->previousDays)
+		{
+			if(!isset($this->zoverduenLib->plant))
+			{
+				$sql = "SELECT sum(openAmount) AS openAmount
+					FROM zoverduen
+					WHERE reportDate = '" . $this->previousMonthCountToYearNo . "-" . $this->previousMonthCountToMonthNo . "-" . $dayValue . "'" . $this->zoverduenLib->businessUnit;
+			}
+			else
+			{
+				$sql = "SELECT sum(openAmount) AS openAmount
+					FROM zoverduen
+					WHERE reportDate = '" . $this->previousMonthCountToYearNo . "-" . $this->previousMonthCountToMonthNo . "-" . $dayValue . "'
+					AND plant IN(" . $this->zoverduenLib->plant .  ")" . $this->zoverduenLib->businessUnit;
+			}
+
+			$datasetPrev = mysql::getInstance()->selectDatabase("SAP")->Execute($sql);
+
+			$fieldsPrev = mysql_fetch_array($datasetPrev);
+
+			$this->graphXML .= "&#60;set value='" . $fieldsPrev['openAmount'] . "' anchorRadius='" . $this->anchorRadius . "' /&#62;";
+
+			$dayValue++;
+		}
+
+//		for($i = $this->currentMonthCountToDayNo; $i < 31; $i++)
+//		{
+//			$value = $i + 1;
+//
+//			$this->arrData[$i][2] = $this->total[$value] == 0 ? '' : $this->total[$value];
+//		}
+
+
+		// ******************************** (Current Month) ********************************
+
+		$dayValue = 1;
+
+		while($dayValue <= $this->currentMonthCountToDayNo)
+		{
+			if(!isset($this->zoverduenLib->plant))
+			{
+				$sql = "SELECT sum(openAmount) AS openAmount
+					FROM zoverduen
+					WHERE reportDate = '" . $this->currentMonthCountToYearNo . "-" . $this->currentMonthCountToMonthNo . "-" . $dayValue . "'" . $this->zoverduenLib->businessUnit;
+			}
+			else
+			{
+				$sql = "SELECT sum(openAmount) AS openAmount
+					FROM zoverduen
+					WHERE reportDate = '" . $this->currentMonthCountToYearNo . "-" . $this->currentMonthCountToMonthNo . "-" . $dayValue . "'
+					AND plant IN(" . $this->zoverduenLib->plant .  ")" . $this->zoverduenLib->businessUnit;
+			}
+
+			$datasetCur = mysql::getInstance()->selectDatabase("SAP")->Execute($sql);
+
+			$fieldsCur = mysql_fetch_array($datasetCur);
+
+			$this->graphXML .= "&#60;set value='" . $fieldsCur['openAmount'] . "' anchorRadius='" . $this->anchorRadius . "' /&#62;";
+
+			$dayValue++;
+		}
+
+//		for($i = 0; $i < $this->currentMonthCountToDayNo; $i++)
+//		{
+//			$value = $i + 1;
+//
+//			$this->arrData[$i][2] = $this->total[$value] == 0 ? '' : $this->total[$value];
+//		}
+	}
+
+	/**
+	 * Get the list of open orders by day
+	 *
+	 */
+	private function getOpen30DaysOrders()
+	{
+		// ******************************** (Previous Month) ********************************
+
+		$dayValue = $this->currentMonthCountToDayNo;
+
+		while($dayValue <= $this->previousDays)
+		{
+			if(!isset($this->zoverduenLib->plant))
+			{
+				$sql = "SELECT sum(openAmount) AS openAmount
+					FROM zoverduen
+					WHERE confirmedGIDa <= DATE_ADD('" . $this->previousMonthCountToYearNo . "-" . $this->previousMonthCountToMonthNo . "-" . $dayValue . "', INTERVAL 28 DAY)" . $this->zoverduenLib->businessUnit .
+					"AND reportDate <= '" . $this->previousMonthCountToYearNo . "-" . $this->previousMonthCountToMonthNo . "-" . $dayValue . "' GROUP BY reportDate DESC LIMIT 1";
+			}
+			else
+			{
+				$sql = "SELECT sum(openAmount) AS openAmount
+					FROM zoverduen
+					WHERE confirmedGIDa <= DATE_ADD('" . $this->previousMonthCountToYearNo . "-" . $this->previousMonthCountToMonthNo . "-" . $dayValue . "', INTERVAL 28 DAY)
+					AND plant IN(" . $this->zoverduenLib->plant .  ") AND reportDate <= '" . $this->previousMonthCountToYearNo . "-" . $this->previousMonthCountToMonthNo . "-" . $dayValue . "'" . $this->zoverduenLib->businessUnit . " GROUP BY reportDate DESC LIMIT 1";
+			}
+
+			$datasetPrev = mysql::getInstance()->selectDatabase("SAP")->Execute($sql);
+
+			$fieldsPrev = mysql_fetch_array($datasetPrev);
+
+			$this->graphXML .= "&#60;set value='" . $fieldsPrev['openAmount'] . "' anchorRadius='" . $this->anchorRadius . "' /&#62;";
+
+			$dayValue++;
+		}
+
+//		for($i = $this->currentMonthCountToDayNo; $i < 31; $i++)
+//		{
+//			$value = $i + 1;
+//
+//			$this->arrData[$i][2] = $this->total[$value] == 0 ? '' : $this->total[$value];
+//		}
+
+
+		// ******************************** (Current Month) ********************************
+
+		$dayValue = 1;
+
+		while($dayValue <= $this->currentMonthCountToDayNo)
+		{
+			if(!isset($this->zoverduenLib->plant))
+			{
+				$sql = "SELECT sum(openAmount) AS openAmount
+					FROM zoverduen
+					WHERE confirmedGIDa <= DATE_ADD('" . $this->currentMonthCountToYearNo . "-" . $this->currentMonthCountToMonthNo . "-" . $dayValue . "', INTERVAL 28 DAY)" . $this->zoverduenLib->businessUnit .
+					"AND reportDate <= '" . $this->currentMonthCountToYearNo . "-" . $this->currentMonthCountToMonthNo . "-" . $dayValue . "' GROUP BY reportDate DESC LIMIT 1";
+			}
+			else
+			{
+				$sql = "SELECT sum(openAmount) AS openAmount
+					FROM zoverduen
+					WHERE confirmedGIDa <= DATE_ADD('" . $this->currentMonthCountToYearNo . "-" . $this->currentMonthCountToMonthNo . "-" . $dayValue . "', INTERVAL 28 DAY)
+					AND plant IN(" . $this->zoverduenLib->plant .  ") AND reportDate <= '" . $this->currentMonthCountToYearNo . "-" . $this->currentMonthCountToMonthNo . "-" . $dayValue . "'" . $this->zoverduenLib->businessUnit . " GROUP BY reportDate DESC LIMIT 1";
+			}
+
+			$datasetCur = mysql::getInstance()->selectDatabase("SAP")->Execute($sql);
+
+			$fieldsCur = mysql_fetch_array($datasetCur);
+
+			$this->graphXML .= "&#60;set value='" . $fieldsCur['openAmount'] . "' anchorRadius='" . $this->anchorRadius . "' /&#62;";
+
+			$dayValue++;
+		}
+
+//		for($i = 0; $i < $this->currentMonthCountToDayNo; $i++)
+//		{
+//			$value = $i + 1;
+//
+//			$this->arrData[$i][2] = $this->total[$value] == 0 ? '' : $this->total[$value];
+//		}
+	}
+
+	/**
+	 * Get the list of overdue orders by day
+	 *
+	 */
+	private function getOverdueOrders()
+	{
+		// ******************************** (Previous Month) ********************************
+
+		$dayValue = $this->currentMonthCountToDayNo;
+
+		while($dayValue <= $this->previousDays)
+		{
+			if(!isset($this->zoverduenLib->plant))
+			{
+				$datasetPrev = mysql::getInstance()->selectDatabase("SAP")->Execute("SELECT sum(openAmount) AS openAmount FROM zoverduen WHERE daysOverdue < 0 AND openQty != 0 AND reportDate = '" . $this->previousMonthCountToYearNo . "-" . $this->previousMonthCountToMonthNo . "-" . $dayValue . "'" . $this->zoverduenLib->businessUnit);
+			}
+			else
+			{
+				$datasetPrev = mysql::getInstance()->selectDatabase("SAP")->Execute("SELECT sum(openAmount) AS openAmount FROM zoverduen WHERE daysOverdue < 0 AND openQty != 0 AND reportDate = '" . $this->previousMonthCountToYearNo . "-" . $this->previousMonthCountToMonthNo . "-" . $dayValue . "' AND plant IN(" . $this->zoverduenLib->plant .  ")" . $this->zoverduenLib->businessUnit);
+			}
+
+			$fieldsPrev = mysql_fetch_array($datasetPrev);
+
+			$this->graphXML .= "&#60;set value='" . $fieldsPrev['openAmount'] . "' anchorRadius='" . $this->anchorRadius . "' /&#62;";
+
+			$dayValue++;
+		}
+
+//		for($i = $this->currentMonthCountToDayNo; $i < 31; $i++)
+//		{
+//			$value = $i + 1;
+//
+//			$this->arrData[$i][3] = $this->total2[$value] == 0 ? '' : $this->total2[$value];
+//		}
+
+
+		// ******************************** (Current Month) ********************************
+
+		$dayValue = 1;
+
+		while($dayValue <= $this->currentMonthCountToDayNo)
+		{
+			if(!isset($this->zoverduenLib->plant))
+			{
+				$datasetCur = mysql::getInstance()->selectDatabase("SAP")->Execute("SELECT sum(openAmount) AS openAmount FROM zoverduen WHERE daysOverdue < 0 AND openQty != 0 AND reportDate = '" . $this->currentMonthCountToYearNo . "-" . $this->currentMonthCountToMonthNo . "-" . $dayValue . "'" . $this->zoverduenLib->businessUnit);
+			}
+			else
+			{
+				$datasetCur = mysql::getInstance()->selectDatabase("SAP")->Execute("SELECT sum(openAmount) AS openAmount FROM zoverduen WHERE daysOverdue < 0 AND openQty != 0 AND reportDate = '" . $this->currentMonthCountToYearNo . "-" . $this->currentMonthCountToMonthNo . "-" . $dayValue . "' AND plant IN(" . $this->zoverduenLib->plant .  ")" . $this->zoverduenLib->businessUnit);
+			}
+
+			$fieldsCur = mysql_fetch_array($datasetCur);
+
+			$this->graphXML .= "&#60;set value='" . $fieldsCur['openAmount'] . "' anchorRadius='" . $this->anchorRadius . "' /&#62;";
+
+			$dayValue++;
+		}
+
+//		for($i = $this->currentMonthCountToDayNo; $i < 31; $i++)
+//		{
+//			$value = $i + 1;
+//
+//			$this->arrData[$i][3] = $this->total2[$value] == 0 ? '' : $this->total2[$value];
+//		}
+	}
+}
+
+?>

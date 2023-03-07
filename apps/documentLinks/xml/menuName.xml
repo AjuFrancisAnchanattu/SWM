@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8" ?> 
+<envelope>
+	<item display="Home" value="home" />
+	<item display="Admin" value="admin" />
+	<item display="Applications" value="applications" />
+	<item display="Corporate" value="corporate" />
+	<item display="SAP" value="sap" />
+	<item display="Documents" value="documents" />
+</envelope>

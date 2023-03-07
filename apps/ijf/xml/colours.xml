@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8" ?> 
+<envelope>
+	<item display="{TRANSLATE:beige}" value="{TRANSLATE:beige}" />
+	<item display="{TRANSLATE:black}" value="{TRANSLATE:black}" />
+	<item display="{TRANSLATE:blue}" value="{TRANSLATE:blue}" />
+	<item display="{TRANSLATE:brown}" value="{TRANSLATE:brown}" />
+	<item display="{TRANSLATE:green}" value="{TRANSLATE:green}" />
+	<item display="{TRANSLATE:grey}" value="{TRANSLATE:grey}" />
+	<item display="{TRANSLATE:pink}" value="{TRANSLATE:pink}" />
+	<item display="{TRANSLATE:purple}" value="{TRANSLATE:purple}" />
+	<item display="{TRANSLATE:red}" value="{TRANSLATE:red}" />
+	<item display="{TRANSLATE:translucent}" value="{TRANSLATE:translucent}" />	
+	<item display="{TRANSLATE:transparent}" value="{TRANSLATE:transparent}" />
+	<item display="{TRANSLATE:white}" value="{TRANSLATE:white}" />
+	<item display="{TRANSLATE:other}" value="{TRANSLATE:other}" />
+</envelope>

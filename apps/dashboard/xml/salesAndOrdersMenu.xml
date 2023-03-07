@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<menu>
+	<item title="Business Units" url="/apps/dashboard/salesAndOrders?" perms="dashboard_saoBU" />
+<!--	<item title="Sales Manager" url="/apps/dashboard/salesAndOrdersSalesManager?" />-->
+	<item title="Sales Employee" url="/apps/dashboard/salesAndOrdersSalesEmp?" perms="dashboard_saoSalesEmployee" />
+	<item title="Key Customer Groups" url="/apps/dashboard/salesAndOrdersKCG?" perms="dashboard_saoKCG" />
+</menu>

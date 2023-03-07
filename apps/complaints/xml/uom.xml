@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8" ?> 
+<envelope>
+	<item display="kg" value="kg" />	
+	<item display="m2" value="m2" />
+	<item display="m" value="m" />
+	<item display="mm" value="mm" />
+	<item display="roll" value="roll" />
+	<item display="ea" value="ea" />
+	<item display="carton" value="carton" />
+	<item display="inch" value="inch" />
+	<item display="yard" value="yard" />
+	<item display="feet" value="feet" />
+	<item display="logs" value="logs" />
+	<item display="litre" value="litre" />
+	<item display="gallon" value="gallon" />
+	<item display="pound" value="pound" />
+	<item display="sq feet" value="sqfeet" />
+	<item display="sq yards" value="sqyards" />
+	<item display="squares" value="squares" />
+	<item display="n/a" value="n/a" />
+</envelope>

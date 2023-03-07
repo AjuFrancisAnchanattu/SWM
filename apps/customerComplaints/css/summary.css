@@ -1,0 +1,163 @@
+@CHARSET "ISO-8859-1";
+table.availableReports td
+{
+	border: none; 
+	padding: 2px 0 0 0; 
+	margin: 0;
+	width: 120px;
+}
+table.availableReports td.lock
+{
+	width: 300px;
+	text-align: left;
+}
+table.availableReports td.availableReportsFieldName 
+{
+	width: 80px;
+}
+
+#complaintStatus td
+{
+	border: none;
+	width: 220px;
+}
+table.indented 
+{
+	border-bottom: 1px solid #aaa;
+}
+img.titleIcon 
+{
+	float: left;
+	margin-right: 4px;
+}
+
+
+#invoices .invoiceToggle
+{
+	border: none;
+	font-weight: bold;
+}
+
+#invoices .invoiceToggle a:hover
+{
+	cursor: pointer;
+}
+
+#invoices .invoiceToggle img
+{
+	margin: 0 0 -5px 0;
+	
+}
+
+#invoices .invoice table, #invoices .invoice table tr, #invoices .invoice table th, #invoices .invoice table td, 
+#changesTable, #changesTable tr, #changesTable th, #changesTable td
+{
+	margin: 0;
+	padding: 0;
+	border: 0;
+	font-weight: inherit;
+	font-style: inherit;
+	font-size: 100%;
+	line-height: 1;
+	font-family: inherit;
+	text-align: left;
+	vertical-align: baseline;
+}
+
+#invoices .invoice
+{
+	margin: 0 12px;
+	text-align: left;
+}
+
+#invoices .invoice table
+{
+	border-collapse: collapse;
+	border-spacing: 0;
+	background: #EFEFEF;
+	text-align: left;
+	border: 1px solid #aaa;
+	margin: 8px 0 8px 0;
+	width: 100%;
+}
+
+#invoices .invoice table td
+{
+	background: #EFEFEF;
+	padding: 5px 5px;
+	border: none;
+}
+
+
+#changesTable
+{
+	border-collapse: collapse;
+	border-spacing: 0;
+	background: #e9e9e9;
+	text-align: left;
+	border: 1px solid #aaa;
+	margin: 6px 0 10px 0;
+	width: 100%;
+}
+
+#changesTable td, #changesTable th
+{
+	background: #e9e9e9;
+	padding: 5px 5px;
+	border: none;
+}
+
+#changesTable td
+{
+	border-top: 1px solid #aaa;
+}
+
+#changesTable tr.highlight td
+{
+	
+}
+
+
+#changesTable td
+{
+	
+}
+
+#changesTable td.left
+{
+	width: 20%;
+	border-right: 1px solid #aaa;
+}
+
+#changesTable th, #changesTable td.tdHeader
+{	
+	font-weight: bold;
+	font-style: italic;
+}
+#changesTable th.left, #changesTable th.middle
+{
+	border-right: 1px solid #aaa;
+}
+#changesTable td.middle
+{
+	width: 40%;
+	border-right: 1px solid #aaa;
+}
+
+#changesTable td.right
+{
+	width: 40%;
+}
+
+#changesTable td.footer
+{
+	font-size: 0.8em;
+	font-style: italic;
+	border: none;
+	text-align: left;
+}
+
+.logDate 
+{
+	font-family: "Lucida Console";
+}

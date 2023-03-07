@@ -1,0 +1,299 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<envelope>
+  	<item title="HOME" url="/">
+	   <child title="dashboard" url="/home/dashboard?" />
+	   <child title="PREFERENCES" url="/home/details?" />
+	   <child title="CORPORATE_HOME" url="http://www.scapa.com/" hideInLocale="USA,CANADA,MALAYSIA,KOREA,CHINA" />
+	   <child title="CORPORATE_HOME" url="http://www.scapaasia.com/" showInLocale="MALAYSIA,KOREA,CHINA" />
+	   <child title="CORPORATE_HOME" url="http://www.scapana.com/" showInLocale="USA,CANADA" />
+	   <child title="Phone Lists" url="#">
+	   	<grandchild title="Renfrew - Short" url="/apps/documentLinks/retrieve?docId=497" target="_blank" />
+	   	<grandchild title="Renfrew - Long" url="/apps/documentLinks/retrieve?docId=495" target="_blank" />
+	   	<grandchild title="Renfrew - Outside" url="/apps/documentLinks/retrieve?docId=491" target="_blank" />
+	   	<grandchild title="Windsor - Short" url="/apps/documentLinks/retrieve?docId=501" target="_blank" />
+	   	<grandchild title="Windsor - Long" url="/apps/documentLinks/retrieve?docId=499" target="_blank" />
+	   	<grandchild title="Windsor - Outside" url="/apps/documentLinks/retrieve?docId=493" target="_blank" />
+	   	
+	   </child>
+  	</item>
+  
+	<item title="Admin" url="#" showInLocale="" hideInLocale="" perms="admin,translations_admin">
+		<child title="Clear Cache" url="/home/clearCache" showInLocale="" hideInLocale="" perms="admin" />
+		<child title="Clear Session" url="/home/clearSession" showInLocale="" hideInLocale="" perms="admin" />
+		<child title="Document Links" url="/apps/documentLinks/" perms="admin" />
+		<!--<child title="Documentation" url="/doc/index.html" showInLocale="" hideInLocale="" perms="admin" />-->
+		<!--<child title="myscapa2 Menu Editor" url="http://myscapa2/apps/menuEditor/default.aspx" showInLocale="" hideInLocale="" perms="admin" />-->
+		<!--<child title="Statistics" url="/apps/stats/" showInLocale="" hideInLocale="" perms="admin" />-->
+		<!--<child title="Trac Project Management" url="/trac/" showInLocale="" hideInLocale="" perms="admin" />-->
+		<child title="Translations" url="/apps/translations/" showInLocale="" hideInLocale="" perms="admin,translations_admin" />
+		<!--<child title="User Manager" url="" showInLocale="" hideInLocale="" perms="admin">
+	   	<grandchild title="myscapa2" url="http://myscapa2/apps/hr/usrman_default.aspx" />
+	   	<grandchild title="scapanet" url="/apps/usermanager/" />
+	   </child>-->
+	   <!--<child title="Intranets" url="" showInLocale="" hideInLocale="" perms="admin">
+	   	<grandchild title="myscapa2" url="http://myscapa2/" perms="admin" />
+			<grandchild title="scapanet" url="http://scapanet/" perms="admin" />
+			<grandchild title="scapanetdev" url="http://scapanetdev/" perms="admin" />
+		</child>-->
+	</item>
+
+	<item title="APPLICATIONS" url="#">
+		<!--<child title="AMO Management" url="http://myscapa2/apps/hr/amo_admin.aspx" showInLocale="" hideInLocale="" perms="" />-->
+		<child title="TECHNICAL" url="/apps/technical/" />  
+		<child title="BPC" url="http://10.14.199.43/osoft" showInLocale="" hideInLocale="" perms="" />
+  		<!--<child title="Appraisal" url="/apps/appraisal/" showInLocale="" hideInLocale="" perms="" />-->
+		<child title="COMPLAINTS" url="/apps/complaints/" showInLocale="" hideInLocale="" perms="">
+	    	<grandchild title="Complaints System" url="/apps/complaints/" />
+	   </child>
+	   <!--<child title="Customer Contact Report" url="/apps/ccr/" showInLocale="" hideInLocale="" perms="" />-->
+	   <child title="dashboards" url="" showInLocale="" hideInLocale="" perms="">
+	   	<grandchild title="cash_position" url="/apps/dashboard/cashPosition?" perms="dashboard_cashPosition" />
+	   	<grandchild title="CLIP/RLIP" url="/apps/dashboard/dddpDrillDown?" perms="" />
+		<!--<grandchild title="health_and_safety_site" url="/apps/hse/redirect" perms="" />
+		<grandchild title="health_and_safety_group" url="/apps/hse/redirect" perms="dashboard_healthAndSafety_Group" />-->
+	   	<grandchild title="Inventory" url="/apps/dashboard/inventoryDrillDown?" perms="" />
+		<grandchild title="zoverduen" url="/apps/dashboard/zoverduenDrillDown?" perms="" />
+		<grandchild title="Order Book" url="http://scapaconnectstaging/Apps/Dashboards/OrderBook/" perms="dashboard_saoBU" />
+		<grandchild title="Sales and Orders" url="http://scapaconnectstaging/Apps/Dashboards/SAO/" perms="dashboard_saoBU" />
+		<grandchild title="This Day in History" url="http://scapaconnectstaging/Apps/Dashboards/ThisDayInHistory/" perms="dashboard_saoBU" />
+	   </child>
+	   <child title="Document Management System" url="/apps/sharepoint/" showInLocale="" hideInLocale="" perms="" />
+		<!--<child title="employeedb" url="/apps/employeedb/" perms="admin, employeedb_global,employeedb_global,employeedb_personal_detail,employeedb_job_role,employeedb_employment_history,employeedb_it_information,employeedb_asset_data,employeedb_training,employeedb_ppe_and_hse" showInLocale="" hideInLocale="" />-->
+	   <!--<child title="Global Information System" url="/apps/gis/" showInLocale="" hideInLocale="" perms="admin,gis_admin">
+	    	<grandchild title="Global Information System - New" url="/apps/gis/" perms="admin,gis_admin"/>
+	   </child>-->
+	   <!--<child title="Help Application" url="/apps/help/" perms="admin" showInLocale="" hideInLocale="" />-->
+	   
+	   <child title="Health and Safety" url="#" perms="">
+			<grandchild title="Integrated Risk Management System" url="/apps/hse/redirect" perms="" />
+			<grandchild title="EHS System (New)" url="http://scapaconnectstaging/Apps/EHS/" perms="" />
+		</child>
+	   
+	   <child title="IJF" url="/apps/ijf/">
+			<grandchild title="IJF - New" url="/apps/ijf/" perms="" />
+			<grandchild title="IJF - Old" url="http://intranet/apps/IJF%20System/eng/menu.asp" />
+		</child>
+		<child title="Internal Communications" url="/apps/comms/" perms="comm_admin" />
+		
+	   <child title="INTRANET_PRODUCT_DATABASE" url="/apps/productdb/search?" showInLocale="" hideInLocale="" perms="" />
+		<!--<child title="Image Gallery" url="/apps/gallery/" />-->
+		<child title="Service Desk" url="/apps/serviceDesk/" showInLocale="" hideInLocale=" " perms="" />
+	   <child title="GNPI" url="/apps/npi/" showInLocale="" hideInLocale="MALAYSIA " perms="">
+			<grandchild title="GNPI" url="/apps/npi/" showInLocale="" hideInLocale="" perms="" />
+			<grandchild title="OLD_SYSTEM" url="http://myscapa2/apps/npi/default.aspx" showInLocale="" hideInLocale="" perms="" />
+			<grandchild title="Legacy System" url="http://intranet/apps/npi/menu.asp" showInLocale="" hideInLocale="MALAYSIA" perms="" />
+		</child>
+		<!--<child title="Outlook Web Access" url="https://owa.scapa.com" showInLocale="" hideInLocale="" perms="" />-->
+		<!--<child title="policy_handbook" url="/apps/policys/" showInLocale="" hideInLocale="" perms="admin" />-->
+		<!--<child title="PRICING" url="/apps/pricing/" showInLocale="" hideInLocale="" />-->
+		<child title="Quality" url="#">
+  			<grandchild title="european_procedure_index" url="http://intranet/en/procedures/qualityprocedures.asp" />
+  			<grandchild title="european_policy_index" url="http://intranet/en/procedures/european%20policy.asp" />
+  		</child>
+  		
+  		<child title="Rebates" url="/apps/rebatesNEW" showInLocale="" hideInLocale="" perms="" />
+  		
+  		<!--<child title="Risk Suite / Tracker" url="" showInLocale="" hideInLocale="">
+			<grandchild title="Risk Suite" url="http://10.1.199.40/symbiantRiskSuite/StartPage.aspx" showInLocale="" hideInLocale="" perms="" />
+			<grandchild title="Tracker" url="http://10.1.199.40/SymbiantTracker/StartPage.aspx" showInLocale="" hideInLocale="" perms="" />
+		</child>-->
+	
+		
+		<!--<child title="video" url="/apps/video/" perms="" />-->
+	</item>
+	  
+	
+	
+	
+	
+	<item title="Corporate" url="">
+		<child title="CORPORATE_HOME" url="http://www.scapa.com/" hideInLocale="USA,CANADA,MALAYSIA,KOREA,CHINA" />
+	    <child title="CORPORATE_HOME" url="http://www.scapaasia.com/" showInLocale="MALAYSIA,KOREA,CHINA" />
+	    <child title="CORPORATE_HOME" url="http://www.scapana.com/" showInLocale="USA,CANADA" />
+	    <child title="CORPORATE_PRESENTATIONS" url="#" showInLocale="" hideInLocale="">
+		<grandchild title="English" url="/apps/documentLinks/retrieve?docId=309" target="_blank" showInLocale="" hideInLocale="" perms="" />
+		<!--<grandchild title="German" url="/apps/documentLinks/retrieve?docId=311" target="_blank" showInLocale="" hideInLocale="" perms="" />-->
+		<!--<grandchild title="Italian" url="/apps/documentLinks/retrieve?docId=315" target="_blank" showInLocale="" hideInLocale="" perms="" />-->
+		<!--<grandchild title="French" url="/apps/documentLinks/retrieve?docId=313" target="_blank" showInLocale="" hideInLocale="" perms="" />-->
+		<!--<grandchild title="Spanish" url="/apps/documentLinks/retrieve?docId=353" target="_blank" showInLocale="" hideInLocale="" perms="" />-->
+	    </child>
+	    <!--<child title="Euro Link" url="" showInLocale="" hideInLocale="USA,CANADA,MALAYSIA,KOREA,CHINA" perms="">
+	      <grandchild title="English" url="/apps/documentLinks/retrieve?docId=119" target="_blank" showInLocale="" hideInLocale="" perms="" />
+	      <grandchild title="Francais" url="/apps/documentLinks/retrieve?docId=123" target="_blank" showInLocale="" hideInLocale="" perms="" />
+	      <grandchild title="Deutsche" url="/apps/documentLinks/retrieve?docId=121" target="_blank" showInLocale="" hideInLocale="" perms="" />
+	      <grandchild title="Italiana" url="/apps/documentLinks/retrieve?docId=117" target="_blank" showInLocale="" hideInLocale="" perms="" />
+	    </child>-->
+	    <!-- <child title="Organisation Chart" url="/apps/orgChart" showInLocale="" hideInLocale="" perms="" /> -->
+	    <!--<child title="Tech Service Contact Sheet " url="/apps/documentLinks/retrieve?docId=127" target="_blank" showInLocale="" hideInLocale="" perms="" />-->
+	    <!--<child title="Tech Service mission statement" url="/apps/documentLinks/retrieve?docId=125" target="_blank" showInLocale="" hideInLocale="" perms="" />
+	    <child title="Tech Service Activities statement" url="/apps/documentLinks/retrieve?docId=307" target="_blank" showInLocale="" hideInLocale="" perms="" />-->
+	    <child title="lean_six_sigma" url="/apps/documentLinks/retrieve?docId=129" target="_blank" showInLocale="" hideInLocale="" perms="" />
+	    <child title="Corporate Identity Guidelines" url="/apps/documentLinks/retrieve?docId=461" target="_blank" showInLocale="" hideInLocale="" perms="" />
+	    <child title="Scapa Logo" url="/apps/documentLinks/retrieve?docId=463" target="_blank" showInLocale="" hideInLocale="" perms="" />
+	    <child title="Corporate Presentation Template" url="/apps/documentLinks/retrieve?docId=465" target="_blank" showInLocale="" hideInLocale="" perms="" />
+	    <child title="Scapa Word Template" url="/apps/documentLinks/retrieve?docId=467" target="_blank" showInLocale="" hideInLocale="" perms="" />
+	    <child title="Group Telephone Directory" url="/apps/documentLinks/retrieve?docId=557" target="_blank" showInLocale="" hideInLocale="" perms="" />
+	 </item>
+    
+	 
+	<item title="SAP" url="#">
+	    <child title="RELATED_INFORMATION" url="#" hideInLocale="MALAYSIA">
+	      <grandchild title="SAP_FUNCTIONS" url="file://Stdunbdc001/SAPFIN/START2.HTM" />
+	      <grandchild title="SAP_HOMEPAGE" url="http://www.sap.com" />
+	    </child>
+	    <child title="MATERIAL_MASTER_FIELDS" url="file://ukdunfp009/SHARES/A3 Visio Procedures/Material master fields - Intranet/Material master field settings view by view on Intranet.xls" hideInLocale="MALAYSIA" />
+	    <child title="STT" url="http://myscapa2/stt.aspx">
+	      <grandchild title="INTRODUCTION" url="http://myscapa2/stt.aspx" />
+	      <grandchild title="MATERIAL_MANAGEMENT" url="http://myscapa2/stt.aspx?mode=material" />
+	      <grandchild title="PRODUCTION_PLANNING" url="http://myscapa2/stt.aspx?mode=production" />
+	      <grandchild title="SALES" url="http://myscapa2/stt.aspx?mode=sales" />
+	    </child>
+	    <child title="SAP Training - Admin" url="http://intranet/apps/std/menu.asp " showInLocale="" hideInLocale="" perms="admin,saptd_admin" />
+	    <child title="SAP Training Documents" url="#" showInLocale="" hideInLocale="" perms="">
+	      <grandchild title="General / Tools" url="http://myscapa2/apps/SAPTrainingDocuments/default.aspx?mode=general" showInLocale="" hideInLocale="" perms="" />
+	      <grandchild title="Planning" url="http://myscapa2/apps/SAPTrainingDocuments/default.aspx?mode=planning" showInLocale="" hideInLocale="" perms="" />
+	      <grandchild title="Production" url="http://myscapa2/apps/SAPTrainingDocuments/default.aspx?mode=production" showInLocale="" hideInLocale="" perms="" />
+	      <grandchild title="Finance &amp; CO" url="http://myscapa2/apps/SAPTrainingDocuments/default.aspx?mode=finance" showInLocale="" hideInLocale="" perms="" />
+	      <grandchild title="Purchasing" url="http://myscapa2/apps/SAPTrainingDocuments/default.aspx?mode=purchasing" showInLocale="" hideInLocale="" perms="" />
+	      <grandchild title="Sales" url="http://myscapa2/apps/SAPTrainingDocuments/default.aspx?mode=sales" showInLocale="" hideInLocale="" perms="" />
+	      <grandchild title="Warehousing" url="http://myscapa2/apps/SAPTrainingDocuments/default.aspx?mode=warehousing" showInLocale="" hideInLocale="" perms="" />
+	    </child>
+	</item>
+  
+	
+	<item title="Documents" url="">
+		
+		<child title="Code for Securities Transactions" url="/apps/documentLinks/retrieve?docId=503" target="_blank" showInLocale="" hideInLocale="" perms="" />
+		
+		<child title="competition_complian_policy" url="/apps/documentLinks/retrieve?docId=421" target="_blank" showInLocale="" hideInLocale="" perms="" />
+		
+		<child title="Concur" url="">
+			<grandchild title="Concur Link" url="https://www.concursolutions.com/" target="_blank" showInLocale="" hideInLocale="" />
+			<grandchild title="Login Instructions" url="/apps/documentLinks/retrieve?docId=645" target="_blank" showInLocale="" hideInLocale="" />
+			<grandchild title="How to submit an Expense Claim" url="/apps/documentLinks/retrieve?docId=647" target="_blank" showInLocale="" hideInLocale="" />
+			<grandchild title="Introduction Presentation" url="/apps/documentLinks/retrieve?docId=649" target="_blank" showInLocale="" hideInLocale="" />
+		</child>
+		
+		<child title="Corruption and Anti-Bribery Policy" url="/apps/documentLinks/retrieve?docId=585" target="_blank" showInLocale="" hideInLocale="" perms="" />
+		
+		<child title="CRM Documents" url="#">
+			<grandchild title="Project Trial Report" url="/apps/documentLinks/retrieve?docId=369" target="_blank" showInLocale="" hideInLocale="" perms="" />
+			<grandchild title="Technical Audit Document" url="/apps/documentLinks/retrieve?docId=371" target="_blank" showInLocale="" hideInLocale="" perms="" />
+			<grandchild title="Visit Report" url="/apps/documentLinks/retrieve?docId=373" target="_blank" showInLocale="" hideInLocale="" perms="" />
+			<grandchild title="CRM Account Change" url="/apps/documentLinks/retrieve?docId=379" target="_blank" showInLocale="" hideInLocale="" perms="" />
+			<grandchild title="Quote Template" url="/apps/documentLinks/retrieve?docId=381" target="_blank" showInLocale="" hideInLocale="" perms="" />
+		</child>
+		
+		<child title="Documentazione di Sistema" url="http://intranet/it/procedures/qualityghislarengo.asp" showInLocale="ITALY">
+		 	<grandchild title="Elenco delle procedure europee QPP e documenti collegati" url="http://intranet/it/procedures/qualityghislarengo.asp" showInLocale="ITALY" hideInLocale="" />
+		 	<grandchild title="Elenco delle procedure europee BPP e documenti collegati" url="http://intranet/it/procedures/BusinessGhislarengo.asp" showInLocale="ITALY" hideInLocale="" />
+		 	<grandchild title="Elenco delle politiche europee" url="http://intranet/it/procedures/european%20policy.asp" showInLocale="ITALY" hideInLocale="" />
+		 </child>
+		 
+		 <child title="Documentations" url="" showInLocale="FRANCE">
+		 	<grandchild title="QPP_AND_IOS" url="http://intranet/fr/procedures/qualitybellegardevalence.asp" showInLocale="FRANCE" hideInLocale="" />
+		 	<grandchild title="BPP" url="http://intranet/fr/procedures/BusinessBellegardeValence.asp" showInLocale="FRANCE" hideInLocale="" />
+		 	<grandchild title="Euro_Politics" url="http://intranet/fr/procedures/european%20policy.asp" showInLocale="FRANCE" hideInLocale="" />
+		 	<grandchild title="Index de documentation locale France" url="http://intranet/fr/LOCALfr.asp" showInLocale="FRANCE" hideInLocale="" />
+		 	<grandchild title="formations_of_procedures" url="http://intranet/fr/formation.asp" showInLocale="FRANCE" hideInLocale="" />
+		 </child>
+		 
+		 <child title="Expense Policy" url="/apps/documentLinks/retrieve?docId=627" target="_blank">
+			<grandchild title="UK Business Mileage Report" url="/apps/documentLinks/retrieve?docId=355" target="_blank"/>
+			<grandchild title="UK Fuel Card Usage Declaration" url="/apps/documentLinks/retrieve?docId=359" target="_blank" />
+			<grandchild title="UK Expenses Claim Form" url="/apps/documentLinks/retrieve?docId=361" target="_blank" />
+			<grandchild title="UK Mileage Rates" url="/apps/documentLinks/retrieve?docId=417" target="_blank" />
+			<grandchild title="Group Travel Policy - English" url="/apps/documentLinks/retrieve?docId=527" target="_blank" />
+			<grandchild title="Group Travel Policy - German" url="/apps/documentLinks/retrieve?docId=637" target="_blank" />
+			<grandchild title="Group Travel Policy - Italian" url="/apps/documentLinks/retrieve?docId=639" target="_blank" />
+			<grandchild title="Group Travel Authorisation Form" url="/apps/documentLinks/retrieve?docId=529" target="_blank" />
+			<grandchild title="Credit Card Policy" url="/apps/documentLinks/retrieve?docId=627" target="_blank" />
+		</child>
+		
+		<child title="finance_one_way_procedures" url="/apps/documentLinks/retrieve?docId=453" target="_blank" showInLocale="" hideInLocale="" perms="" />
+		
+		<child title="Gifts and Hospitality Policy" url="/apps/documentLinks/retrieve?docId=587" target="_blank" showInLocale="" hideInLocale="" perms="" />
+		
+		<!--<child title="HR" url="">
+			<grandchild title="SkillPort Training Guide" url="/apps/documentLinks/retrieve?docId=575" />
+		</child>-->
+		
+		<child title="IT" url="#">
+			<grandchild title="Change/Enhancement Request" url="/apps/documentLinks/retrieve?docId=651" target="_blank" showInLocale="" hideInLocale="" perms="" />
+			<grandchild title="How to use Outlook Web Access" url="/apps/documentLinks/retrieve?docId=115" target="_blank" showInLocale="" hideInLocale="" perms="" />
+			<grandchild title="IT Training Videos" url="http://myscapa2/apps/training/TrainingVideos.aspx" showInLocale="" hideInLocale="" perms="" />
+			<grandchild title="IT_TRAINING_DOCS" url="http://intranet/apps/training/menu.asp" />
+			<grandchild title="IJF Training Documents" url="http://myscapa2/apps/training/IJFTrainingDocuments.aspx" showInLocale="" hideInLocale="" perms="" />
+		</child>
+		
+		<child title="IT STAFF ONLY" url="#" showInLocale="" hideInLocale="" perms="it_staff">
+			<grandchild title="Monthly Helpdesk report" url="file://ukdunfp009/reports$/monthlyhelpdeskreport.xls" showInLocale="" hideInLocale="" perms="" />
+			<grandchild title="Project List" url="file://ukdunfp009/reports$/projectlist.xls" showInLocale="" hideInLocale="" perms="" />
+			<grandchild title="Monthly Project Report" url="file://ukdunfp009/reports$/monthlyprojectreport.doc" showInLocale="" hideInLocale="" perms="" />
+		</child>
+		
+		
+		<!--<child title="QUALITY" url="/apps/docman/section?quality" />-->
+		
+		<!--<child title="SAP" url="/apps/docman/section?quality" />-->
+		
+		<child title="LSS Tool Kit" url="/apps/documentLinks/retrieve?docId=173" />
+		
+		<child title="Minimum Control Standards" url="">
+			<grandchild title="Europe and NA Sites" url="/apps/documentLinks/retrieve?docId=457"></grandchild>
+			<grandchild title="Asia Sites" url="/apps/documentLinks/retrieve?docId=427"></grandchild>
+			<grandchild title="Group Authority Matrix" url="/apps/documentLinks/retrieve?docId=459"></grandchild></child>
+			
+		<child title="medical_literature" url="#">
+			<grandchild title="English" url="/apps/documentLinks/retrieve?docId=131" target="_blank"/>
+			<grandchild title="Francais" url="/apps/documentLinks/retrieve?docId=135" target="_blank" />
+			<grandchild title="Deutsche" url="/apps/documentLinks/retrieve?docId=133" target="_blank" />
+		</child>
+		
+		<child title="NA ISO Docs" url="http://scapanet/apps/sharepoint/" ></child>
+		
+		<child title="new_account_opening_documents" url="#">	
+			<grandchild title="Doc (English) Aug 08" url="/apps/documentLinks/retrieve?docId=145" target="_blank"/>
+			<grandchild title="Doc (French) Aug 08" url="/apps/documentLinks/retrieve?docId=147" target="_blank"/>
+			<grandchild title="Doc (Italian) Aug 08" url="/apps/documentLinks/retrieve?docId=149" target="_blank"/>
+			<grandchild title="Form (English) Mar 08" url="/apps/documentLinks/retrieve?docId=139" target="_blank"/>
+			<grandchild title="Form (French) Mar 08" url="/apps/documentLinks/retrieve?docId=141" target="_blank"/>
+			<grandchild title="Form (Italian) Mar 08" url="/apps/documentLinks/retrieve?docId=143" target="_blank"/>
+			<grandchild title="Form (Spanish) Mar 08" url="/apps/documentLinks/retrieve?docId=137" target="_blank"/>
+		</child>
+		
+		<child title="QUALITY" url="">
+			<grandchild title="European Procedure Index" url="http://intranet/en/procedures/qualityprocedures.asp" />
+			<grandchild title="European Policy Index" url="http://intranet/en/procedures/european%20policy.asp" />
+			<grandchild title="Document Management" url="http://intranet/apps/DocManSystem/menu.asp" />
+			<grandchild title="Procedure Locali" url="http://myscapa2/apps/docmanagement/defaultlocalproceduresIT.aspx" showInLocale="ITALY" />
+		</child>
+		
+		<child title="quality_contact_list" url="/apps/documentLinks/retrieve?docId=151" target="_blank" />
+
+		<child title="Risk Suite" url="">
+			<grandchild title="Tracker Tutorial" url="/apps/documentLinks/retrieve?docId=155" />
+			<grandchild title="Risk Suite Tutorial" url="/apps/documentLinks/retrieve?docId=157" />
+			<grandchild title="Risk Suite/Tracker User Guide" url="/apps/documentLinks/retrieve?docId=153" />
+		</child>
+		
+		<child title="Scapa Group Finance Policy Manual" url="file://10.14.199.11/public/Group Finance Policy Manual - Hyperlink - do not change!/Group%20Policy%20Manual%20Index.doc" />
+		
+		<child title="standard_credit_terms" url="/apps/documentLinks/retrieve?docId=159" />
+		
+		<child title="Supply Chain Information" url="#">
+			<grandchild title="Guidlines for Dunstable Materials" url="/apps/documentLinks/retrieve?docId=161" target="_blank" showInLocale="" hideInLocale="" perms="" />
+			<grandchild title="Supply Chain Responsibilities List" url="/apps/documentLinks/retrieve?docId=163" target="_blank" showInLocale="" hideInLocale="" perms="" />
+			<grandchild title="S&amp;OP dates" url="/apps/documentLinks/retrieve?docId=165" target="_blank" showInLocale="" hideInLocale="" perms="" />
+		</child>
+		
+		<child title="Systemdokumentation" url="" showInLocale="SWITZERLAND">
+		 	<grandchild title="QPP" url="http://intranet/ch/procedures/qualityde.asp" showInLocale="SWITZERLAND" hideInLocale="" />
+		 	<grandchild title="BPP_german" url="http://intranet/ch/procedures/Businessde.asp" showInLocale="SWITZERLAND" hideInLocale="" />
+		 	<grandchild title="Verzeichnis europ. Politiken" url="http://intranet/ch/procedures/european%20policy.asp" showInLocale="SWITZERLAND" hideInLocale="" />
+		 </child>
+		
+		<child title="Top Products Guide" url="/apps/documentLinks/retrieve?docId=531" target="_blank" showInLocale="" hideInLocale="" perms="" />
+	</item>
+    
+</envelope>

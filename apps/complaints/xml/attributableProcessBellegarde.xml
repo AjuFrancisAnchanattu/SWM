@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8" ?> 
+<envelope>
+	<item display="Mixer P1" value="Mixer P1" />
+	<item display="Mixer P2" value="Mixer P2" />
+	<item display="Mixer P12" value="Mixer P12" />
+	<item display="Mixer P15" value="Mixer P15" />
+	<item display="PTZL 1" value="PTZL 1" />
+	<item display="PTZL 2" value="PTZL 2" />
+	<item display="Coater 9" value="Coater 9" />
+	<item display="Coater 10" value="Coater 10" />
+	<item display="Herold 1" value="Herold 1" />
+	<item display="Herold 2" value="Herold 2" />
+	<item display="Dynatour" value="Dynatour" />
+	<item display="Scapatour" value="Scapatour" />
+	<item display="Tour Cevenini" value="Tour Cevenini" />
+	<item display="Del Bosco" value="Del Bosco" />
+	<item display="FA300" value="FA300" />
+	<item display="Ghezzi " value="Ghezzi " />
+	<item display="Bobineuse Cevenini" value="Bobineuse Cevenini" />
+	<item display="Scall" value="Scall" />
+	<item display="Scapamousse" value="Scapamousse" />
+	<item display="Incoming material" value="Incoming material" />
+	<item display="Planning" value="Planning" />
+	<item display="Quality " value="Quality " />
+	<item display="Customer care" value="Customer care" />
+	<item display="Shipment" value="Shipment" />
+	<item display="Production" value="Production" />
+	<item display="Human resource" value="Human resource" />
+	<item display="procurement" value="procurement" />
+	<item display="accounting" value="accounting" />
+	<item display="Health and safety" value="Health and safety" />
+	<item display="Sales" value="Sales" />
+</envelope>

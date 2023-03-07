@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" ?> 
+<envelope>
+	<item display="Coater 1" value="Coater 1" />
+	<item display="Coater 2" value="Coater 2" />
+	<item display="Coater 3" value="Coater 3" />
+	<item display="Coater 4 (pilot)" value="Coater 4 (pilot)" />
+	<item display="Slitter 1" value="Slitter 1" />
+	<item display="Slitter 2" value="Slitter 2" />
+	<item display="Slitter 3 (rewinder)" value="Slitter 3 (rewinder)" />
+	<item display="Slitter 4" value="Slitter 4" />
+	<item display="Slitter 5" value="Slitter 5" />
+	<item display="Slitter 6" value="Slitter 6" />
+	<item display="Slitter 7 (core cutter)" value="Slitter 7 (core cutter)" />
+	<item display="Slitter 8" value="Slitter 8" />
+	<item display="Slitter 9" value="Slitter 9" />
+	<item display="Slitter 10" value="Slitter 10" />
+	<item display="Slitter 11" value="Slitter 11" />
+	<item display="Slitter 12" value="Slitter 12" />
+	<item display="Sheeter" value="Sheeter" />
+	<item display="Shipping" value="Shipping" />
+	<item display="Receiving" value="Receiving" />
+	<item display="Warehouse" value="Warehouse" />
+	<item display="other" value="other" />
+</envelope>

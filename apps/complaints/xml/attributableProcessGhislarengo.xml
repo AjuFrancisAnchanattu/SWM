@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8" ?> 
+<envelope>
+	<item display="10 - ACCETTAZZIONE ARRIVI" value="10 - ACCETTAZZIONE ARRIVI" />
+	<item display="20 - PREPARAZIONE ADESIVO" value="20 - PREPARAZIONE ADESIVO" />
+	<item display="30 - CONTROLLO ADESIVO" value="30 - CONTROLLO ADESIVO" />
+	<item display="40 - SPALMATURA" value="40 - SPALMATURA" />
+	<item display="50 - TRATTAMENTO TERMICO" value="50 - TRATTAMENTO TERMICO" />
+	<item display="60 - PRODOTTO FINITO (taglio/finitura)" value="60 - PRODOTTO FINITO (taglio/finitura)" />
+	<item display="70 - AFFIDABILITA' PRODOTTO" value="70 - AFFIDABILITA' PRODOTTO" />
+	<item display="80 - SPEDIZIONE" value="80 - SPEDIZIONE" />
+	<item display="90 - AUDIT PRODOTTO FINITO" value="90 - AUDIT PRODOTTO FINITO" />
+	<item display="200 - VERIFICA ORDINI DI PRODUZIONE" value="200 - VERIFICA ORDINI DI PRODUZIONE" />
+	<item display="201 - ERRORE FATTURAZIONE" value="201 - ERRORE FATTURAZIONE" />
+	<item display="202 - ERRORE ESTENSIO/CREAZIONE ARTICOLO" value="202 - ERRORE ESTENSIO/CREAZIONE ARTICOLO" />
+	<item display="Process M1 - Gestione strategica (site Team)" value="Process M1 - Gestione strategica (site Team)" />
+	<item display="Process C1 - Vendite-Customer care" value="Process C1 - Vendite-Customer care" />
+	<item display="Process C2 - Sviluppo prodotto  &#38; Processo" value="Process C2 - Sviluppo prodotto  &#38; Processo" />
+	<item display="Process C3.2 - Supply chain - Pianificazione" value="Process C3.2 - Supply chain - Pianificazione" />
+	<item display="Process C3.3 - Supply chain - Acquisti" value="Process C3.3 - Supply chain - Acquisti" />
+	<item display="Process C3.4 - Supply chain- Produzione" value="Process C3.4 - Supply chain- Produzione" />
+	<item display="Process C3.5 - Supply chain- Logistica" value="Process C3.5 - Supply chain- Logistica" />
+	<item display="Process C3.6 - Supply chain- Spedizione" value="Process C3.6 - Supply chain- Spedizione" />
+	<item display="Process C3.7 - Supply chain- Amministrazione dati" value="Process C3.7 - Supply chain- Amministrazione dati" />
+	<item display="Process S1 - Sistema integrato (QHSE)" value="Process S1 - Sistema integrato (QHSE)" />
+	<item display="Process S2 - Risorse umane" value="Process S2 - Risorse umane" />
+	<item display="Process S3 - Supporto finanaziario" value="Process S3 - Supporto finanaziario" />
+	<item display="Process S4 - Servizio tecnico" value="Process S4 - Servizio tecnico" />
+	<item display="Process S5 - Supporto manutenzione" value="Process S5 - Supporto manutenzione" />
+	<item display="Process S6 - Supporto Informatico" value="Process S6 - Supporto Informatico" />
+</envelope>

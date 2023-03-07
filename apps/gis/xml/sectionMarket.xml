@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8" ?> 
+
+<envelope>
+	<item value="m_marketSizeAndGrowth" display="Market Size And Growth" />
+	<item value="m_competitors" display="Competitors" />
+	<item value="m_technologyChanges" display="Technology Changes" />
+	<item value="m_legislation" display="Legislation" />
+</envelope>

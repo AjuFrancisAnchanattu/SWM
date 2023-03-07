@@ -1,0 +1,33 @@
+<refentry id="{@id}">
+ <refnamediv>
+  <refname>Scapa Intranet Documentation</refname>
+ </refnamediv>
+ <refsynopsisdiv>
+  <author>
+   Dan Eltis
+   <authorblurb>
+    {@link mailto:dan.eltis@scapa.com dan.eltis@scapa.com}
+   </authorblurb>
+  </author>
+ </refsynopsisdiv>
+ {@toc}
+ <refsect1 id="{@id docoverview}">
+  <title>Documentation Overview</title>
+  <para>The documentation project intends to provide a live in-depth technical specification for the systems on the intranet. This online documentation is genearated automatically from the intranet source code each day, it is also available in PDF format by request (Contact {@link mailto:dan.eltis@scapa.com Dan Eltis}).</para>
+  <para>Information on how to write documentation will be linked to here</para>
+  <programlisting role="php">
+   <![CDATA[  
+// hack to fix /usr/local/lib/php/PhpDocumentor/phpDocumentor/Converter.inc
+// line 1530 ish
+// pass by reference fatal error
+
+$a = $this->getTutorialLink($kid,false,false,array($parent->package));
+
+$_1 = $this->returnSee($a);
+$_2 = $testlinks[$parent->name]['links'];
+
+if (in_array($_1,$_2))
+   ]]>  
+  </programlisting>
+ </refsect1>
+</refentry>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8" ?> 
+<envelope>
+	<item display="id" value="id"/>
+	<item display="owner" value="owner"/>
+	<item display="report_date" value="reportDate"/>
+	<item display="contact_date" value="contactDate"/>
+	<item display="contact_type" value="contactType"/>
+	<item display="existing_new_business" value="existingNewBusiness" />
+	<item display="status" value="status"/>
+	<item display="customer" value="name"/>
+</envelope>

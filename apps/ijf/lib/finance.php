@@ -1,0 +1,635 @@
+<?php
+
+/**
+ * This is the IJF Application.
+ *
+ * This is the finance class.  This class is used to conduct the finance inspection part of the IJF process.
+ *
+ * @package apps
+ * @subpackage IJF
+ * @copyright Scapa Ltd.
+ * @author Jason Matthews
+ * @version 11/05/2006
+ */
+class finance extends ijfProcess
+{
+	/**
+	 * The constructor, which the IJF is passed to.
+	 *
+	 * @param IJF $ijg
+	 */
+	function __construct($ijf)
+	{
+		parent::__construct($ijf);
+
+		$this->defineForm();
+
+		$this->form->get('ijfId')->setValue($this->ijf->getId());
+
+		$this->form->setStoreInSession(true);
+
+		$this->form->loadSessionData();
+
+		if (isset($_SESSION['apps'][$GLOBALS['app']]['finance']['loadedFromDatabase']))
+		{
+			page::addDebug("Checking loadedFromDatabase is being set!!",__FILE__,__LINE__);
+			$this->loadedFromDatabase = true;		//checks if the IJF is loaded from the database
+		}
+
+//		 Checks for Bar/Mann view!
+		if ($this->ijf->form->get('barManView')->getValue() == 'yes')
+		{
+			$this->form->get('barMan')->setValue('This IJF requires a Bar/Man View Request');
+
+		}
+		else
+		{
+			$this->form->get('barMan')->setValue('N/A');
+		}
+
+		$this->form->processDependencies();
+
+		$datasetDA = mysql::getInstance()->selectDatabase("IJF")->Execute("SELECT * FROM dataAdministration WHERE ijfId = "  . $this->form->get('ijfId')->getValue());
+		$fieldsDA = mysql_fetch_array($datasetDA);
+
+		$this->form->get('daSapPartNumber')->setValue($fieldsDA['daSapPartNumber']);
+
+
+		$datasetDA = mysql::getInstance()->selectDatabase("IJF")->Execute("SELECT * FROM ijf WHERE id = "  . $this->form->get('ijfId')->getValue());
+		$fieldsDA = mysql_fetch_array($datasetDA);
+
+		$this->form->get('wipPartNumbers')->setValue($fieldsDA['wipPartNumbers']);
+		$this->form->get('costedLotSize')->setValue($fieldsDA['costedLotSize']);
+
+//		if($this->ijf->form->get("costedLotSize")->getValue() != "")
+//		{
+//			$this->form->get('costedLotSize')->setValue($this->ijf->form->get("costedLotSize")->getValue());
+//		}
+
+		$this->ijf->getPurchasing() ? $this->form->get('puSapPartNumber')->setValue($this->ijf->form->get('puSapPartNumber')->getValue()) : "";
+
+
+		// 	$this->form->get('puSapPartNumber')->setValue($this->ijf->form->get("puSapPartNumber")->getValue());
+
+
+
+	}
+
+	public function load($id)
+	{
+		if (!is_numeric($id))
+		{
+			return false;
+		}
+
+		$this->id = $id;
+		$this->form->setStoreInSession(true);
+
+
+//		$dataset = mysql::getInstance()->selectDatabase("IJF")->Execute("SELECT * FROM ijf INNER JOIN finance ON finance.ijfId=ijf.id RIGHT JOIN dataAdministration ON dataAdministration.ijfId = ijf.id WHERE finance.ijfId = "  . $id);
+		$dataset = mysql::getInstance()->selectDatabase("IJF")->Execute("SELECT * FROM ijf INNER JOIN finance ON finance.ijfId=ijf.id WHERE finance.ijfId = "  . $id);
+
+		
+//		echo mysql_num_rows($dataset);
+//		
+//		die();
+
+		if (mysql_num_rows($dataset) == 1)
+		{
+			$this->loadedFromDatabase = true;
+			$_SESSION['apps'][$GLOBALS['app']]['finance']['loadedFromDatabase'] = true;
+
+			$fields = mysql_fetch_array($dataset);
+
+
+			foreach ($fields as $key => $value)
+			{
+				if ($this->form->get($key))
+				{
+					$this->form->get($key)->setValue($value);
+				}
+			}
+
+			$this->form->get('updatedDate')->setValue(page::transformDateForPHP($this->form->get('updatedDate')->getValue()));
+
+			$this->form->putValuesInSession();
+
+			$this->form->processDependencies();
+
+			return true;
+		}
+		else
+		{
+			unset($_SESSION['apps'][$GLOBALS['app']]['finance']);
+
+			return false;
+		}
+
+	}
+
+	public function save()
+	{
+		$this->determineStatus();
+
+		if ($this->loadedFromDatabase)
+		{
+			$this->getIJF()->form->get("updatedDate")->setValue(common::nowDateForMysql());
+
+			$this->getIJF()->form->get("initialSubmissionDate")->setIgnore(true);
+
+			$this->form->get("owner")->setValue($this->form->get("finance_owner")->getValue());
+
+			// update
+			mysql::getInstance()->selectDatabase("IJF")->Execute("UPDATE finance " . $this->form->generateUpdateQuery("finance") . " WHERE ijfId='" . $this->getIjfId() . "'");
+			mysql::getInstance()->selectDatabase("IJF")->Execute("UPDATE ijf " . $this->form->generateUpdateQuery("ijf") . " WHERE id='" . $this->getIjfId() . "'");
+
+
+
+			// save new data
+
+
+			$this->addLog("Finance report updated");
+
+			// send Email
+
+			$this->getEmailNotification("finance", $this->getIjfId(), $this->form->get("status")->getValue(),usercache::getInstance()->get($this->form->get("owner")->getValue())->getEmail(),usercache::getInstance()->get(currentuser::getInstance()->getNTlogon())->getEmail(), utf8_encode($this->form->get("email_text")->getValue()));
+			$this->getEmailNotification("finance_cc", $this->getIjfId(), $this->form->get("status")->getValue(),$this->form->get("delegate_owner")->getValue(), usercache::getInstance()->get(currentuser::getInstance()->getNTlogon())->getEmail(), utf8_encode($this->form->get("email_text")->getValue()));
+
+		}
+		else
+		{
+
+			$this->form->get("owner")->setValue($this->form->get("finance_owner")->getValue());
+
+			// set report date
+			$this->form->get("updatedDate")->setValue(common::nowDateForMysql());
+
+
+
+			// begin transaction
+			mysql::getInstance()->selectDatabase("IJF")->Execute("BEGIN");
+
+			// insert
+
+			mysql::getInstance()->selectDatabase("IJF")->Execute("UPDATE ijf " . $this->form->generateUpdateQuery("ijf") . "WHERE id= '" . $this->getIjfId() . "'");
+
+
+			mysql::getInstance()->selectDatabase("IJF")->Execute("COMMIT");
+
+
+			mysql::getInstance()->selectDatabase("IJF")->Execute("INSERT INTO finance " . $this->form->generateInsertQuery("finance"));
+
+			$this->addLog(translate::getInstance()->translate("finance_completed"));
+
+			// Send Email
+			$datasetEmail = mysql::getInstance()->selectDatabase("IJF")->Execute("SELECT id FROM ijf ORDER BY id DESC LIMIT 1");
+			$fields = mysql_fetch_array($datasetEmail);
+			$this->getEmailNotification("finance", $this->getIjfId(), $this->form->get("status")->getValue(),usercache::getInstance()->get($this->form->get("owner")->getValue())->getEmail(),usercache::getInstance()->get(currentuser::getInstance()->getNTlogon())->getEmail(), utf8_encode($this->form->get("email_text")->getValue()));
+			//$this->getEmailNotification("finance_cc", $this->getIjfId(), $this->form->get("status")->getValue(),$this->form->get("delegate_owner")->getValue(), usercache::getInstance()->get(currentuser::getInstance()->getNTlogon())->getEmail(), utf8_encode($this->form->get("email_text")->getValue()));
+
+			if ($this->status == 'complete')
+			{
+				$this->addLog(translate::getInstance()->translate("finance_completed_disposed"));
+			}
+			else
+			{
+				$this->addLog(translate::getInstance()->translate("sent_to_" . $this->form->get("status")->getValue()) . " (" . usercache::getInstance()->get($this->form->get("owner")->getValue())->getName() .")");
+			}
+
+	}
+
+		page::redirect("/apps/ijf/");
+	}
+
+
+
+	public function addLog($action)
+	{
+		mysql::getInstance()->selectDatabase("IJF")->Execute(sprintf("INSERT INTO log (ijfId, NTLogon, action, logDate, comment) VALUES (%u, '%s', '%s', '%s', '%s')",
+			$this->getIJF()->form->get("id")->getValue(),
+			currentuser::getInstance()->getNTLogon(),
+			$action,
+			common::nowDateTimeForMysql(),
+			$this->form->get("email_text")->getValue()
+		));
+	}
+
+
+	public function getOwner()
+	{
+		return $_SESSION['apps'][$GLOBALS['app']]['owner'];
+	}
+
+	public function getId()
+	{
+		return $this->id;
+	}
+
+
+	public function validate()
+	{
+		$valid = true;
+
+		if (!$this->form->validate())
+		{
+			$valid = false;
+		}
+
+		return $valid;
+	}
+
+	public function isComplete()
+	{
+		return $_SESSION['apps'][$GLOBALS['app']]['complete'];
+	}
+
+	public function showCompletionBits($outputType)
+	{
+		if ($outputType == "readOnly")
+		{
+			$this->form->get('status')->setVisible(true);
+			$this->form->get('completionDate')->setVisible(true);
+
+			if (currentuser::getInstance()->getNTLogon() == $this->getOwner() || $this->isComplete())
+			{
+				$this->form->get('finalComments')->setVisible(true);
+			}
+		}
+
+		if ($outputType == "normal")
+		{
+			if (currentuser::getInstance()->getNTLogon() == $this->getOwner() && !$this->isComplete())
+			{
+				$this->form->get('finalComments')->setVisible(true);
+			}
+		}
+	}
+
+	public function determineStatus()
+	{
+		/*if ($this->ijf->form->get("barManView")->getValue() == 'yes')
+		{
+			$this->status = 'dataAdministration';
+			$this->form->get('status')->setValue("dataAdministration");
+		}
+		else if ($this->ijf->form->get("barManView")->getValue() == 'no')
+		{
+			$this->status = 'commercialPlanning';
+			$this->form->get('status')->setValue("commercialPlanning");
+		}*/
+
+		if ($_REQUEST['location_owner'])
+		{
+				$location = $_REQUEST['location_owner'];
+				$this->status = $location;
+				$this->form->get('status')->setValue($location);
+		}
+
+		//if ($this->getIJF()->form->get("material_type")->getValue() == 'raw_material')
+		//{
+		//	$this->status = 'purchasing';
+		//	$this->form->get('status')->setValue("purchasing");
+		//}
+		//elseif ($this->getIJF()->form->get("material_type")->getValue() == 'semi_finished')
+		//{
+		//	$this->status = 'production';
+		//	$this->form->get('status')->setValue("production");
+		//}
+		//elseif ($this->getiIJF()->form->get("material_type")->getValue() == 'finished_traded_goods')
+		//{
+		//	$this->status = 'commercialPlanning';
+		//	$this->form->get('status')->setValue("commercialPlanning");
+		//}
+		//elseif ($this->getIJF()->form->get("material_type")->getValue() == 'finished_traded')
+		//{
+		//	$this->status = 'commercialPlanning';
+		//	$this->form->get('status')->setValue("commercialPlanning");
+		//}
+
+	}
+
+	public function defineForm()
+	{
+		$today = date("d/m/Y",time());
+
+		// define the actual form
+		$this->form = new form("finance");
+		$this->form->setStoreInSession(true);
+		$this->form->showLegend(true);
+
+		$ijf = new group("ijf");
+		$finance_t = new group("finance_t");
+		$finance = new group("finance");
+		$barManGroup = new group("barManGroup");
+		$sentTo = new group("sentTo");
+		$submitGroup = new group("submitGroup");
+		$barManViewShow = new group("barManViewShow");
+
+
+
+		$ijfId = new invisibletext("ijfId");
+		$ijfId->setTable("finance");
+		$ijfId->setVisible(false);
+		$ijfId->setGroup("ijf");
+		$ijfId->setDataType("number");
+		$ijfId->setValue(0);
+		$ijf->add($ijfId);
+
+		$updatedDate = new textbox("updatedDate");
+		$updatedDate->setValue($today);
+		$updatedDate->setTable("ijf");
+		$updatedDate->setVisible(false);
+		$ijf->add($updatedDate);
+
+
+		$daSapPartNumber = new readonly("daSapPartNumber");
+		$daSapPartNumber->setTable("ijf");
+		$daSapPartNumber->setVisible(true);
+		$daSapPartNumber->setDataType("string");
+		$daSapPartNumber->setRequired(false);
+		$daSapPartNumber->setLabel("IJF Details");
+		$daSapPartNumber->setRowTitle("da_sap_part_number");
+		$finance_t->add($daSapPartNumber);
+
+		$puSapPartNumber = new readonly("puSapPartNumber");
+		$puSapPartNumber->setTable("ijf");
+		$puSapPartNumber->setVisible(true);
+		$puSapPartNumber->setDataType("string");
+		$puSapPartNumber->setRequired(false);
+		$puSapPartNumber->setRowTitle("pu_sap_part_number");
+		$finance_t->add($puSapPartNumber);
+
+
+		$smc = new textbox("smc");
+		$smc->setTable("finance");
+		$smc->setVisible(true);
+		$smc->setLabel("Finance Details");
+		$smc->setGroup("finance");
+		$smc->setDataType("string");
+		$smc->setRequired(false);
+		$smc->setRowTitle("smc");
+		$smc->setHelpId(2208);
+		$finance->add($smc);
+
+		$smc_per_unit = new textbox("smc_per_unit");
+		$smc_per_unit->setTable("finance");
+		$smc_per_unit->setVisible(true);
+		$smc_per_unit->setGroup("finance");
+		$smc_per_unit->setDataType("number");
+		$smc_per_unit->setRequired(false);
+		$smc_per_unit->setValue(0);
+		$smc_per_unit->setRowTitle("smc_per_unit");
+		$smc_per_unit->setHelpId(2118);;
+		$finance->add($smc_per_unit);
+
+		$smc_unit_of_measurement = new textbox("smc_unit_of_measurement");
+		$smc_unit_of_measurement->setTable("finance");
+		$smc_unit_of_measurement->setVisible(true);
+		$smc_unit_of_measurement->setGroup("finance");
+		$smc_unit_of_measurement->setDataType("string");
+		$smc_unit_of_measurement->setRequired(false);
+		$smc_unit_of_measurement->setRowTitle("smc_unit_of_measurement");
+		$smc_unit_of_measurement->setHelpId(2118);;
+		$finance->add($smc_unit_of_measurement);
+
+		$wipPartNumbers = new textarea("wipPartNumbers");
+		$wipPartNumbers->setLength(240);
+		$wipPartNumbers->setTable("ijf");
+		$wipPartNumbers->setRowTitle("wip_part_numbers");
+		$wipPartNumbers->setRequired(false);
+		$wipPartNumbers->setVisible(true);
+		$wipPartNumbers->setDataType("text");
+		$wipPartNumbers->setHelpId(2068);
+		$finance->add($wipPartNumbers);
+
+
+		$currency1 = new dropdown("currency1");
+		$currency1->setTable("finance");
+		$currency1->setVisible(true);
+		$currency1->setGroup("finance");
+		$currency1->setDataType("string");
+		$currency1->setXMLSource("./apps/ijf/xml/currency.xml");
+		$currency1->setValue("GBP");
+		$currency1->setRequired(false);
+		$currency1->setRowTitle("currency");
+		$currency1->setHelpId(2205);
+		$finance->add($currency1);
+
+		$intercoPrice = new textbox("intercoPrice");
+		$intercoPrice->setTable("finance");
+		$intercoPrice->setVisible(true);
+		$intercoPrice->setGroup("finance");
+		$intercoPrice->setDataType("string");
+		$intercoPrice->setRequired(false);
+		$intercoPrice->setRowTitle("interco_price");
+		$intercoPrice->setHelpId(2119);
+		$finance->add($intercoPrice);
+
+		$interco_per_unit = new textbox("interco_per_unit");
+		$interco_per_unit->setTable("finance");
+		$interco_per_unit->setVisible(true);
+		$interco_per_unit->setGroup("finance");
+		$interco_per_unit->setDataType("number");
+		$interco_per_unit->setRequired(false);
+		$interco_per_unit->setValue("0");
+		$interco_per_unit->setRowTitle("interco_per_unit");
+		$interco_per_unit->setHelpId(2206);
+		$finance->add($interco_per_unit);
+
+		$interco_unit_of_measurement = new textbox("interco_unit_of_measurement");
+		$interco_unit_of_measurement->setTable("finance");
+		$interco_unit_of_measurement->setVisible(true);
+		$interco_unit_of_measurement->setGroup("finance");
+		$interco_unit_of_measurement->setDataType("string");
+		$interco_unit_of_measurement->setRequired(false);
+		$interco_unit_of_measurement->setRowTitle("interco_unit_of_measurement");
+		$interco_unit_of_measurement->setHelpId(2206);
+		$finance->add($interco_unit_of_measurement);
+
+		$currency2 = new dropdown("currency2");
+		$currency2->setTable("finance");
+		$currency2->setVisible(true);
+		$currency2->setGroup("finance");
+		$currency2->setDataType("string");
+		$currency2->setXMLSource("./apps/ijf/xml/currency.xml");
+		$currency2->setValue("GBP");
+		$currency2->setRequired(false);
+		$currency2->setRowTitle("currency");
+		$currency2->setHelpId(2200);
+		$finance->add($currency2);
+
+		$costedLotSize = new textbox("costedLotSize");
+		$costedLotSize->setTable("ijf");
+		$costedLotSize->setVisible(true);
+		$costedLotSize->setGroup("finance");
+		$costedLotSize->setDataType("string");
+		$costedLotSize->setRequired(false);
+		$costedLotSize->setRowTitle("cls");
+		$costedLotSize->setHelpId(2201);
+		$finance->add($costedLotSize);
+
+//		$costedLotSizeMeasurement = new textbox("costedLotSizeMeasurement");
+//		$costedLotSizeMeasurement->setTable("ijf");
+//		$costedLotSizeMeasurement->setVisible(true);
+//		$costedLotSizeMeasurement->setDataType("string");
+//		$costedLotSizeMeasurement->setRequired(false);
+//		$costedLotSizeMeasurement->setRowTitle("costed_lot_size_measurement");
+//		$costedLotSizeMeasurement->setHelpId(2067);;
+//		$finance->add($costedLotSizeMeasurement);
+
+		$financeComments = new textarea("financeComments");
+		$financeComments->setGroup("no_offer_for_sale");
+		$financeComments->setRowTitle("comments");
+		$financeComments->setTable("finance");
+		$financeComments->setDataType("text");
+		$financeComments->setHelpId(2202);
+		$finance->add($financeComments);
+
+		$barManShow = new readonly("barManShow");
+		$barManShow->setGroup("barManGroup");
+		$barManShow->setDataType("string");
+		$barManShow->setLabel("Bar/Man View");
+		$barManShow->setLength(50);
+		$barManShow->setRowTitle("bar_man_selector");
+		$barManShow->setRequired(false);
+		$barManShow->setVisible(true);
+		$barManShow->setHelpId(2019);
+		$barManGroup->add($barManShow);
+
+		$barMan = new readonly("barMan");
+		$barMan->setLength(240);
+		$barMan->setTable("ijf");
+		$barMan->setRowTitle("bar_man");
+		$barMan->setLabel("Bar/Man View");
+		$barMan->setRequired(false);
+		$barManViewShow->add($barMan);
+
+		$barManViewComplete = new radio("barManViewComplete");
+		$barManViewComplete->setGroup("barManViewShow");
+		$barManViewComplete->setDataType("string");
+		$barManViewComplete->setLength(50);
+		$barManViewComplete->setRowTitle("bar_man_selector");
+		$barManViewComplete->setRequired(false);
+		$barManViewComplete->setArraySource(array(
+			array('value' => 'yes', 'display' => 'Yes'),
+			array('value' => 'no', 'display' => 'No')
+		));
+		$barManViewComplete->setTable("ijf");
+		$barManViewComplete->setValue('no');
+		//$barManViewComplete->setHelpId(2019);
+		$barManViewShow->add($barManViewComplete);
+
+		$status = new textbox("status");
+		$status->setValue("finance");
+		$status->setGroup("sentTo");
+		$status->setTable("ijf");
+		$status->setVisible(false);
+		$sentTo->add($status);
+
+
+		$location_owner = new dropdown("location_owner");
+		$location_owner->setGroup("sendTo");
+		$location_owner->setLength(250);
+		$location_owner->setTable("finance");
+		$location_owner->setRowTitle("send_ijf_to_location");
+		$location_owner->setLabel("User Delivery Options");
+		$location_owner->setRequired(true);
+		$location_owner->setHelpId(1008);
+		$location_owner->setXMLSource("./apps/ijf/xml/departments.xml");
+		$sentTo->add($location_owner);
+
+		$finance_owner = new dropdown("finance_owner");
+		$finance_owner->setLength(250);
+		$finance_owner->setTable("finance");
+		$finance_owner->setRowTitle("pass_ijf_to");
+		$finance_owner->setSQLSource("membership","SELECT DISTINCT CONCAT(firstName, ' ',lastName) AS name, employee.NTLogon AS value FROM `permissions` INNER JOIN `employee` ON employee.ntlogon=permissions.ntlogon WHERE permission LIKE 'ijf%' ORDER BY employee.firstName, employee.lastName");
+		$finance_owner->setRequired(true);
+		$finance_owner->setVisible(true);
+		$finance_owner->setHelpId(2207);
+		$sentTo->add($finance_owner);
+
+		$owner = new dropdown("owner");
+		$owner->setLength(250);
+		$owner->setTable("ijf");
+		$owner->setRowTitle("pass_ijf_to");
+		$owner->setSQLSource("membership","SELECT DISTINCT CONCAT(firstName, ' ',lastName) AS name, employee.NTLogon AS value FROM `permissions` INNER JOIN `employee` ON employee.ntlogon=permissions.ntlogon WHERE permission LIKE 'ijf%' ORDER BY employee.firstName, employee.lastName");
+		$owner->setRequired(false);
+		$owner->setVisible(false);
+		$owner->setHelpId(2204);
+		$sentTo->add($owner);
+
+		$delegate_owner = new multipleCC("delegate_owner");
+		$delegate_owner->setGroup("sendTo");
+		$delegate_owner->setLength(250);
+		$delegate_owner->setTable("ijf");
+		$delegate_owner->setDataType('text');
+		$delegate_owner->setRowTitle("cc_to_ijf");
+		$delegate_owner->setRequired(false);
+		$delegate_owner->setHelpId(2010);
+		$sentTo->add($delegate_owner);
+
+		$email_text = new textarea("email_text");
+		$email_text->setGroup("sentTo");
+		$email_text->setDataType("text");
+		$email_text->setRowTitle("email_text");
+		$email_text->setHelpId(1500);
+		$email_text->setTable("ijf");
+		$sentTo->add($email_text);
+
+		$submit = new submit("submit");
+		$submit->setGroup("sentTo");
+		$submit->setVisible(true);
+		$submitGroup->add($submit);
+
+
+		$this->form->add($ijf);
+		$this->form->add($finance_t);
+		$this->form->add($finance);
+		$this->form->add($barManGroup);
+		$this->form->add($barManViewShow);
+		$this->form->add($sentTo);
+		$this->form->add($submitGroup);
+
+
+
+	}
+
+	public function getEmailNotification($action, $id, $status, $owner, $sender, $email_text)
+	{
+
+		// newAction, email the owner
+		$dom = new DomDocument;
+		$dom->loadXML("<$action><status>" . $status . "</status><action>" . $id . "</action><completionDate>" . common::transformDateForPHP($this->ijf->form->get("ijfDueDate")->getValue()) . "</completionDate><email_text>" . $this->form->get("email_text")->getValue() . "</email_text><sent_from>" . usercache::getInstance()->get(currentuser::getInstance()->getNTlogon())->getName() . "</sent_from><emailSectionName>" . translate::getInstance()->translate($status) . "</emailSectionName></$action>");
+
+		// load xsl
+		$xsl = new DomDocument;
+		$xsl->load("./apps/ijf/xsl/email.xsl");
+
+		// transform xml using xsl
+		$proc = new xsltprocessor;
+		$proc->importStyleSheet($xsl);
+
+		$email = $proc->transformToXML($dom);
+		//$cc = $this->form->get("delegate_owner")->getValue();
+
+		$subjectText = (translate::getInstance()->translate("new_ijf_action") . " - ID: " . $id);
+
+		if($owner == "marie.jamieson@scapa.com" || $owner == "Owais.Hassan@scapa.com" || $owner == "alexandra.harrison@scapa.com")
+		{
+			$cc = "European.FinanceCostings@scapa.com";
+		}
+		else
+		{
+			$cc = $this->form->get("delegate_owner")->getValue();
+		}
+
+//		if($action == "finance_cc") $subjectText = "CC - " . $subjectText;
+
+		email::send($owner, /*"intranet@scapa.com"*/ $sender, $subjectText, "$email", "$cc");
+
+		return true;
+	}
+
+}
+
+?>

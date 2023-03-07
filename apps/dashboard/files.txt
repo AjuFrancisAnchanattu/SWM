@@ -1,0 +1,150 @@
+<!-- GROUP -->
+			
+			<xsl:if test="allowedGroup='1'">
+				<tr>
+					<td><strong>{TRANSLATE:group}</strong></td>
+				</tr>
+				<tr>
+					<td><img src="/images/point.jpg" align="center" style="padding-right: 5px;" /><a href="healthandsafetyGroupLevel?">{TRANSLATE:view_all_group}</a></td>
+				</tr>
+				<tr>
+					<td><hr /></td>
+				</tr>
+			</xsl:if>
+			
+			<!-- EUROPE -->
+			
+			<xsl:if test="allowedRegionEurope='1'">
+				<tr>
+					<td><strong>{TRANSLATE:europe}</strong></td>
+				</tr>
+				<tr>
+					<td><img src="/images/point.jpg" align="center" style="padding-right: 5px;" /><a href="healthandsafetyRegionLevel?region=EUROPE">{TRANSLATE:view_all_europe}</a></td>
+				</tr>
+			</xsl:if>
+			
+				<!-- Europe Sites -->
+			
+				<xsl:if test="allowedSiteAshton='1'">
+					<tr>
+						<td><img src="/images/point.jpg" align="center" style="padding-right: 5px;" /><a href="healthandsafetySiteLevel?site=Ashton">{TRANSLATE:view_ashton}</a></td>
+					</tr>
+				</xsl:if>
+				
+				<xsl:if test="allowedSiteBarcelona='1'">
+					<tr>
+						<td><img src="/images/point.jpg" align="center" style="padding-right: 5px;" /><a href="healthandsafetySiteLevel?site=Barcelona">{TRANSLATE:view_barcelona}</a></td>
+					</tr>
+				</xsl:if>
+				
+				<xsl:if test="allowedSiteDunstable='1'">
+					<tr>
+						<td><img src="/images/point.jpg" align="center" style="padding-right: 5px;" /><a href="healthandsafetySiteLevel?site=Dunstable">{TRANSLATE:view_dunstable}</a></td>
+					</tr>
+				</xsl:if>
+				
+				<xsl:if test="allowedSiteGhislarengo='1'">
+					<tr>
+						<td><img src="/images/point.jpg" align="center" style="padding-right: 5px;" /><a href="healthandsafetySiteLevel?site=Ghislarengo">{TRANSLATE:view_ghislarengo}</a></td>
+					</tr>
+				</xsl:if>
+				
+				<xsl:if test="allowedSiteMannheim='1'">
+					<tr>
+						<td><img src="/images/point.jpg" align="center" style="padding-right: 5px;" /><a href="healthandsafetySiteLevel?site=Mannheim">{TRANSLATE:view_mannheim}</a></td>
+					</tr>
+				</xsl:if>
+				
+				<xsl:if test="allowedSiteRorschach='1'">
+					<tr>
+						<td><img src="/images/point.jpg" align="center" style="padding-right: 5px;" /><a href="healthandsafetySiteLevel?site=Rorschach">{TRANSLATE:view_rorschach}</a></td>
+					</tr>
+				</xsl:if>
+				
+				<xsl:if test="allowedSiteValence='1'">
+					<tr>
+						<td><img src="/images/point.jpg" align="center" style="padding-right: 5px;" /><a href="healthandsafetySiteLevel?site=Valence">{TRANSLATE:view_valence}</a></td>
+					</tr>
+				</xsl:if>
+				
+				<tr>
+					<td><hr /></td>
+				</tr>
+			
+			<!-- NA -->
+			
+			<xsl:if test="allowedRegionNA='1'">
+				<tr>
+					<td><strong>{TRANSLATE:na}</strong></td>
+				</tr>
+				<tr>
+					<td><img src="/images/point.jpg" align="center" style="padding-right: 5px;" /><a href="healthandsafetyRegionLevel?region=NA">{TRANSLATE:view_all_na}</a></td>
+				</tr>
+			</xsl:if>
+			
+				<!-- NA Sites -->
+			
+				<xsl:if test="allowedSiteCarlstadt='1'">
+					<tr>
+						<td><img src="/images/point.jpg" align="center" style="padding-right: 5px;" /><a href="healthandsafetySiteLevel?site=Carlstadt">{TRANSLATE:view_carlstadt}</a></td>
+					</tr>
+				</xsl:if>
+				
+				<xsl:if test="allowedSiteInglewood='1'">
+					<tr>
+						<td><img src="/images/point.jpg" align="center" style="padding-right: 5px;" /><a href="healthandsafetySiteLevel?site=Inglewood">{TRANSLATE:view_inglewood}</a></td>
+					</tr>
+				</xsl:if>
+				
+				<xsl:if test="allowedSiteRenfrew='1'">
+					<tr>
+						<td><img src="/images/point.jpg" align="center" style="padding-right: 5px;" /><a href="healthandsafetySiteLevel?site=Renfrew">{TRANSLATE:view_renfrew}</a></td>
+					</tr>
+				</xsl:if>
+				
+				<xsl:if test="allowedSiteSyracuse='1'">
+					<tr>
+						<td><img src="/images/point.jpg" align="center" style="padding-right: 5px;" /><a href="healthandsafetySiteLevel?site=Syracuse">{TRANSLATE:view_syracuse}</a></td>
+					</tr>
+				</xsl:if>
+				
+				<xsl:if test="allowedSiteWindsor='1'">
+					<tr>
+						<td><img src="/images/point.jpg" align="center" style="padding-right: 5px;" /><a href="healthandsafetySiteLevel?site=Windsor">{TRANSLATE:view_windsor}</a></td>
+					</tr>
+				</xsl:if>
+				
+				<tr>
+					<td><hr /></td>
+				</tr>
+				
+			<!-- ASIA -->
+			
+			<xsl:if test="allowedRegionAsia='1'">
+				<tr>
+					<td><strong>{TRANSLATE:asia}</strong></td>
+				</tr>
+				<tr>
+					<td><img src="/images/point.jpg" align="center" style="padding-right: 5px;" /><a href="healthandsafetyRegionLevel?region=ASIA">{TRANSLATE:view_all_asia}</a></td>
+				</tr>
+			</xsl:if>
+			
+				<!-- Asia Sites -->
+			
+				<xsl:if test="allowedSiteMalaysia='1'">
+					<tr>
+						<td><img src="/images/point.jpg" align="center" style="padding-right: 5px;" /><a href="healthandsafetySiteLevel?site=Malaysia">{TRANSLATE:view_malaysia}</a></td>
+					</tr>
+				</xsl:if>
+				
+				<xsl:if test="allowedSiteKorea='1'">
+					<tr>
+						<td><img src="/images/point.jpg" align="center" style="padding-right: 5px;" /><a href="healthandsafetySiteLevel?site=Korea">{TRANSLATE:view_korea}</a></td>
+					</tr>
+				</xsl:if>
+				
+				<xsl:if test="allowedSiteChina='1'">
+					<tr>
+						<td><img src="/images/point.jpg" align="center" style="padding-right: 5px;" /><a href="healthandsafetySiteLevel?site=China">{TRANSLATE:view_china}</a></td>
+					</tr>
+				</xsl:if>

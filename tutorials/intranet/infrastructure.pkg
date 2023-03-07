@@ -1,0 +1,95 @@
+<refentry id="{@id}">
+ <refnamediv>
+  <refname>Infrastructure</refname>
+  <para>bla bla bla</para>
+  <para>The current intranet set-up consists of several machines. Diagram to go here. Explanation etc.</para>
+ </refnamediv>
+ {@toc}
+ <refsect1 id="{@id servers}">
+  <title>Servers</title>
+  <refsect2 id="{@id dellintranet1}">
+   <title>dellintranet1</title>
+   <para>Live PHP web server</para>
+   <programlisting>
+    <![CDATA[
+Dell Poweredge 2850 2U rackmount server
+Operating system: Redhat Fedora Core 4
+Hostname: dellintranet1
+eth0: 10.1.10.6
+eth1: 10.1.50.1
+]]>
+   </programlisting>
+  </refsect2>
+  <refsect2 id="{@id dellintranet2}">
+   <title>dellintranet2</title>
+   <para>Fallback PHP web server</para>
+   <programlisting>
+    <![CDATA[
+Dell Poweredge 2850 2U rackmount server
+Operating system: Redhat Fedora Core 4
+Hostname: dellintranet2
+eth0: 10.1.10.6
+eth1: 10.1.50.2
+]]>
+   </programlisting>
+  </refsect2>
+  <refsect2 id="{@id myscapa2}">
+   <title>myscapa2</title>
+   <para>Legacy .NET web server</para>
+   <programlisting>
+    <![CDATA[
+Compaq P4 desktop
+Operating system: Windows 2000
+Hostname: myscapa2
+eth0: 10.1.10.2
+]]>
+   </programlisting>
+  </refsect2>
+  <refsect2 id="{@id intranet}">
+   <title>intranet</title>
+   <para>Legacy ASP web server</para>
+   <programlisting>
+    <![CDATA[
+Some old thing
+Operating system: Windows NT
+Hostname: intranet
+eth0: 10.1.0.16
+]]>
+   </programlisting>
+  </refsect2>
+  <refsect2 id="{@id mysql1}">
+   <title>mysql1</title>
+   <para>Linux MySQL server</para>
+   <programlisting>
+    <![CDATA[
+IBM Quad Xeon
+Operating system: Redhat Fedora Core 4
+Hostname: mysql1
+eth0: 10.1.10.105
+]]>
+   </programlisting>
+  </refsect2>
+  <refsect2 id="{@id scapasql001}">
+   <title>scapasql001</title>
+   <para>Legacy Microsoft SQL server</para>
+   <programlisting>
+    <![CDATA[
+IBM Dual Xeon
+Operating system: Windows 2000
+Hostname: scapasql001
+eth0: 10.1.10.10
+]]>
+   </programlisting>
+  </refsect2>
+ </refsect1>
+ <refsect1 id="{@id disaster}">
+  <title>Disaster Recovery</title>
+  <para>Overview. Link to detailed info.</para>
+  
+  <para>Server set-up</para>
+  <para><graphic fileref="/images/logo.gif" format="GIF"/></para>
+
+  
+ </refsect1>
+
+</refentry>

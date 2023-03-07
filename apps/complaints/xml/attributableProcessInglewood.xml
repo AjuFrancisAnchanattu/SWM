@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8" ?> 
+<envelope>
+	<item display="Press 1 " value="Press 1 " />
+	<item display="Press 2" value="Press 2" />
+	<item display="Press 3" value="Press 3" />
+	<item display="Press 4" value="Press 4" />
+	<item display="Press 5" value="Press 5" />
+	<item display="Press 6" value="Press 6" />
+	<item display="Press 7" value="Press 7" />
+	<item display="Press 8" value="Press 8" />
+	<item display="Shipping" value="Shipping" />
+	<item display="Receiving" value="Receiving" />
+	<item display="Warehouse" value="Warehouse" />
+	<item display="other" value="other" />
+</envelope>

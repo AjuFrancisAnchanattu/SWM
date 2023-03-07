@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<menu>
+<!--	<item title="Summary" url="/apps/customerComplaints/" />-->
+<item title="Home" url="/apps/customerComplaints/index?" />
+<item title="Reports (Supplier/Internal)" url="/apps/complaints/search?" />
+<item title="Reports (Customer)" url="/apps/customerComplaints/search?clear=true" />
+<item title="Dashboard View" url="/apps/customerComplaints/" perms="" />
+</menu>

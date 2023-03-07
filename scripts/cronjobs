@@ -1,0 +1,56 @@
+###
+### Use SSH and crontab /home/live/cronjobs to import any changes
+###
+
+#
+# Send CCR email reminders at 9am each morning
+#
+
+0	9	*	*	*	/usr/bin/php /home/live/apps/ccr/cron/emailcron.php >/dev/null 2>&1
+
+
+
+
+#
+# Statistics and graphs
+#
+
+*	*	*	*	*	/home/live/apps/stats/bin/cpu_load.sh >/dev/null 2>&1
+*	*	*	*	*	/home/live/apps/stats/bin/disk_usage.sh >/dev/null 2>&1
+*	*	*	*	*	/home/live/apps/stats/bin/network_usage.sh >/dev/null 2>&1
+*	*	*	*	*	/home/live/apps/stats/bin/number_processes.sh >/dev/null 2>&1
+
+*/15	*	*	*	*	/home/live/apps/stats/bin/network_usage_graphs.sh >/dev/null 2>&1
+*/15	*	*	*	*	/home/live/apps/stats/bin/disk_usage_graphs.sh >/dev/null 2>&1
+*/15	*	*	*	*	/home/live/apps/stats/bin/cpu_load_graphs.sh >/dev/null 2>&1
+*/15	*	*	*	*	/home/live/apps/stats/bin/number_processes_graphs.sh >/dev/null 2>&1
+
+
+#
+# Time
+#
+
+47	*	*	*	*	/usr/sbin/ntpdate -b -u -s ntp2a.mcc.ac.uk > /dev/null 2>&1
+
+
+
+#
+# Local backups
+#
+
+5	*	*	*	*	/home/scripts/hourlybackup.sh > /dev/null 2>&1
+
+
+
+#
+# Sync between live and backup servers every 15 minutes
+#
+# config files
+#
+#*/15	*	*	*	*	rsync -av --delete /etc/httpd/conf/intranet.* rsync://root@10.1.50.2/APACHE/ > /dev/null 2>&1
+#*/15	*	*	*	*	rsync -av --delete /etc/php.ini rsync://root@10.1.50.2/PHP/ > /dev/null 2>&1
+
+#
+# intranet data
+#
+*/15	*	*	*	*	rsync -av --delete --exclude-from=/home/scripts/replicate_exclude_file.txt /home/* rsync://root@10.1.50.2/INTRANET/ > /dev/null 2>&1

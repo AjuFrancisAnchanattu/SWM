@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<envelope>
+	<item value="automotive" />
+	<item value="cable" />
+	<item value="construction" />
+	<item value="industrial_assembly" />
+	<item value="medical" />
+	<item value="printing_and_graphics" />
+	<item value="sports_and_entertainment" />
+</envelope>

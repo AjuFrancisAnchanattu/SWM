@@ -1,0 +1,31 @@
+Video application.
+
+
+Summary:
+
+Allows admins to add videos to the intranet for users to view.
+
+
+Permissions:
+
+No permissions are currently used in this application
+
+
+Database:
+
+id: 				autoincrement unique id
+videoName:		name of the video that appears on the intranet
+videoSrc:		location url of the video
+videoLocation:	the group that the video belongs to
+type:				extension type for the video (mov, wmv, etc)
+
+
+Storage:
+
+The video and the thumbnail for the video are stored in the /data/videos folder.
+The thumbnail for the video is the same name and location as the video, but as a .jpg file.
+
+
+Adding a video:
+
+Store the video and thumbnail in the /data/videos folder, then add the details manually to the database. Fin!

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8" ?> 
+<envelope>
+	<item value="BENELUX" />
+	<item value="CANADA" />
+	<item value="CHINA" />
+	<item value="FRANCE" />
+	<item value="GERMANY" />
+	<item value="IRELAND" />
+	<item value="ITALY" />
+	<item value="KOREA" />
+	<item value="MALAYSIA" />
+	<item value="SPAIN" />
+	<item value="SWITZERLAND" />
+	<item value="UK" />
+	<item value="USA" />
+</envelope>
